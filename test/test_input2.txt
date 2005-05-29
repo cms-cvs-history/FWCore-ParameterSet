@@ -1,0 +1,59 @@
+//----------------------------------------------------------------------
+// This is an input file for parser_t.
+// $Id: test_input2.txt,v 1.3 2005/05/26 19:06:59 paterno Exp $
+//----------------------------------------------------------------------
+
+process USER = 
+{
+	source = PoolInput
+	{
+		string filename = "here"
+	}
+
+	source s2 = PoolInput
+	{
+		string filename = "not here"
+	}
+
+	block p1 = {
+		    int32 x = 2
+		    int32 y = 9
+		   }
+	PSet  p2 = {
+	            using p1
+	            int32 x = 3
+	           }
+
+	module m1 = MidpointJetProducer
+	{
+		using p2
+	}
+
+        module m2 = MidpointJetProducer
+	{
+		using p2
+		int32 x=4
+	}
+
+	block b1 = { double y = 1.1 }
+	block b2 = { double x = 2.2 }
+
+	module A = UnconfigurableModule { }
+	module B = UnconfigurableModule { }
+	module C = UnconfigurableModule { }
+	module D = UnconfigurableModule { }
+	module E = UnconfigurableModule { }
+	module G = UnconfigurableModule { }
+	module filter = UnconfigurableFilter { }
+
+	sequence s0a = { A}
+	sequence s0b = { A,B}
+	sequence s0c = { A&B}
+	sequence s1 = { A,B&C,(D,E)&G }
+	sequence s2 = { C&(A,B), m1,m2,s1 }
+
+	path t1 = { (A,B&C,D),s0a,filter }
+	path t2 = { A,B,C,D }
+	endpath te = { A&B }
+
+}

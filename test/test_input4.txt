@@ -1,0 +1,16 @@
+//----------------------------------------------------------------------
+// This is an input file for parser_t.
+// $Id: test_input4.txt,v 1.2 2005/05/26 19:06:59 paterno Exp $
+//----------------------------------------------------------------------
+
+VPSet vp1 = { p1 }
+VPSet vp1a = { p1,px }
+VPSet vp1b = { { int32 i=1 } }
+VPSet vp1c = { { int32 i=1 },{ int32 i=1 },p1 }
+
+VPSet vp2 = {
+      { int32 i=1 },
+      p1,
+      px,
+      { int32 i=2 int32 j=3 }
+} 

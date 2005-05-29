@@ -1,0 +1,24 @@
+
+process PROD = 
+{
+
+	source = PoolInput { }
+
+	es_source = S1 { int32 x = 1 }
+	es_source es1 = S2 { int32 x=2 }
+
+	es_module = M1 { int32 x = 3 }
+	es_module esm1 = M2 { int32 x = 4 }
+
+	PSet p1 = { int32 x = 2 }
+	PSet p2 = {
+	      using blob
+	      int32 x = 3
+	       }
+
+	module m1 = ThingMod { int32 x = 5 }
+
+	path t1 = { m1 }
+	endpath te = { a}
+
+}

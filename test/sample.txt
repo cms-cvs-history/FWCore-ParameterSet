@@ -1,0 +1,36 @@
+//----------------------------------------------------------------------
+// This is an input file for parser_t.
+// $Id: sample.txt,v 1.2 2005/05/26 19:06:59 paterno Exp $
+//----------------------------------------------------------------------
+
+process PROD = 
+ {
+  source = FakeInputSource {
+    string module_type = "output_thing"
+    string filename = "myFile"
+  }
+
+  module mc5 = MidpointCone5 {
+    // using ps_ID   = 1234
+    double radius = 0.5
+  }
+
+  module JetOutput = PoolOutputModule {
+    string filename = "MyOutputFile"
+  }
+
+  module silireco = SiliconReco {
+    PSet ISL = { double Zpos = .05 }
+    PSet L0  = { double Zpos = .25 }
+    PSet SVX = { double Zpos = .15 }
+  }
+
+  // sequence appears not to be ready yet
+  // sequence m5 = MidpointCone5
+
+  path p0 = { (A & B) , (C & D) }
+  path p1 = { A & B , C & D }
+  path p2 = { A , B & C , D }
+  path p3 = { E,F }
+  path p4 = { G & H }
+}

@@ -1,0 +1,2 @@
+bool  Vladimir = true ;
+bool  Igor     = { true } ;
