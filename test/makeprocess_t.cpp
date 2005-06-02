@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Copyright 2005 __MyCompanyName__. All rights reserved.
  * 
- * $Id: makeprocess_t.cc,v 1.8 2005/05/27 16:15:17 chrjones Exp $
+ * $Id: makeprocess_t.cpp,v 1.1 2005/05/29 02:29:55 wmtan Exp $
  */
 
 #include <iostream>
@@ -188,4 +188,27 @@ BOOST_AUTO_UNIT_TEST( empty_pset_test )
     }
 
    throw  std::runtime_error("empty pset not discovered");
+}
+
+
+BOOST_AUTO_UNIT_TEST( sequence_subst_test )
+{
+  const char * kTest = "process test = {\n"
+   "module cone1 = PhonyConeJet { int32 i = 5 }\n"
+   "module cone2 = PhonyConeJet { int32 i = 7 }\n"
+   "sequence cones = { cone1, cone2 }\n"
+   "path path1 = { cones, jtanalyzer }\n"
+
+   "} ";
+
+  boost::shared_ptr<edm::ParameterSet> test = edm::makeProcessPSet(kTest);
+  
+  typedef std::vector<std::string> Strs;
+  
+  Strs s = test->getVString("temporary_single_path");
+  BOOST_CHECK( s[0]=="cone1" );
+  BOOST_CHECK( s[1]=="cone2" );
+  BOOST_CHECK( s[2]=="jtanalyzer" );
+  
+
 }
