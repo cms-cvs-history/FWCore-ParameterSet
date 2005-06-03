@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Copyright 2005 __MyCompanyName__. All rights reserved.
  * 
- * $Id: makeprocess_t.cpp,v 1.2 2005/06/02 14:14:38 argiro Exp $
+ * $Id: makeprocess_t.cpp,v 1.3 2005/06/02 15:08:59 argiro Exp $
  */
 
 #include <iostream>
@@ -84,7 +84,7 @@ BOOST_AUTO_UNIT_TEST( simple_path_test )
 
   typedef std::vector<std::string> Strs;
 
-  Strs s = test->getVString("temporary_single_path");
+  Strs s = test->getVString("p");
   BOOST_CHECK( s[0]=="a" );
   BOOST_CHECK( s[1]=="b" );
   BOOST_CHECK( s[2]=="c" );
@@ -208,12 +208,43 @@ BOOST_AUTO_UNIT_TEST( sequence_subst_test )
   
   typedef std::vector<std::string> Strs;
   
-  Strs s = test->getVString("temporary_single_path");
+  Strs s = test->getVString("path1");
   BOOST_CHECK( s[0]=="cone1" );
   BOOST_CHECK( s[1]=="cone2" );
   BOOST_CHECK( s[2]=="somejet1" );
   BOOST_CHECK( s[3]=="somejet2" );
   BOOST_CHECK( s[4]=="jtanalyzer" );
   
+
+}
+
+BOOST_AUTO_UNIT_TEST( multiple_paths_test){
+
+   const char * kTest = "process test = {\n"
+   "module cone1 = PhonyConeJet { int32 i = 5 }\n"
+   "module cone2 = PhonyConeJet { int32 i = 7 }\n"
+   "module somejet1 = PhonyJet { int32 i = 7 }\n"
+   "module somejet2 = PhonyJet { int32 i = 7 }\n"
+   "module jtanalyzer = PhonyConeJet { int32 i = 7 }\n"
+   "sequence cones = { cone1, cone2 }\n"
+   "sequence jets = { somejet1, somejet2 }\n"
+   "path path1 = { cones, jtanalyzer }\n"
+   "path path2 = { jets, jtanalyzer }\n"
+   "} ";
+
+  boost::shared_ptr<edm::ParameterSet> test = edm::makeProcessPSet(kTest);
+  
+  typedef std::vector<std::string> Strs;
+
+  Strs s = test->getVString("path1");
+  BOOST_CHECK( s[0]=="cone1" );
+  BOOST_CHECK( s[1]=="cone2" );
+  BOOST_CHECK( s[2]=="jtanalyzer" );
+
+
+  s = test->getVString("path2");
+  BOOST_CHECK( s[0]=="somejet1" );
+  BOOST_CHECK( s[1]=="somejet2" );
+  BOOST_CHECK( s[2]=="jtanalyzer" );
 
 }
