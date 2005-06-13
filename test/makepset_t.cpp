@@ -4,7 +4,7 @@
  *
  *  Created by Chris Jones on 5/18/05.
  *
- * $Id: makepset_t.cc,v 1.6 2005/05/27 03:47:12 jbk Exp $
+ * $Id: makepset_t.cpp,v 1.1 2005/05/29 02:29:55 wmtan Exp $
  */
 
 #include <iostream>
@@ -46,34 +46,34 @@ BOOST_AUTO_UNIT_TEST( types_test )
    boost::shared_ptr<edm::ParameterSet> test = edm::pset::makePSet(*nodeList );
    std::cout << test->toString() << std::endl;
    
-   BOOST_CHECK( 1 == test->getInt32("i") );
+   BOOST_CHECK( 1 == edm::getP<int>(*test, "i") );
    BOOST_CHECK( test->retrieve("i").isTracked() );
-   BOOST_CHECK( 1 == test->getUInt32("ui"));
-   BOOST_CHECK( 1 == test->getDouble("d"));
-   std::cout <<test->getString("s")<<std::endl;
-   BOOST_CHECK( "this string" == test->getString("s") );
-   BOOST_CHECK( 3 == test->getVString("vs").size() );
-   BOOST_CHECK( test->getVString("vs").size() && "1" == test->getVString("vs")[0] );
-   BOOST_CHECK( test->getVString("vs").size() >1 && "2" == test->getVString("vs")[1] );
-   BOOST_CHECK( test->getVString("vs").size() >1 && "a" == test->getVString("vs")[2] );
-   std::cout <<"\""<<test->getVString("vs")[0]<<"\" \""<<test->getVString("vs")[1]<<"\" \""
-      <<test->getVString("vs")[2]<<"\""<<std::endl;
+   BOOST_CHECK( 1 == edm::getP<unsigned int>(*test, "ui"));
+   BOOST_CHECK( 1 == edm::getP<double>(*test, "d"));
+   std::cout << edm::getP<std::string>(*test, "s") << std::endl;
+   BOOST_CHECK( "this string" == edm::getP<std::string>(*test, "s") );
+   BOOST_CHECK( 3 == edm::getP<std::vector<std::string> >(*test, "vs").size() );
+   BOOST_CHECK( edm::getP<std::vector<std::string> >(*test, "vs").size() && "1" == edm::getP<std::vector<std::string> >(*test, "vs")[0] );
+   BOOST_CHECK( edm::getP<std::vector<std::string> >(*test, "vs").size() >1 && "2" == edm::getP<std::vector<std::string> >(*test, "vs")[1] );
+   BOOST_CHECK( edm::getP<std::vector<std::string> >(*test, "vs").size() >1 && "a" == edm::getP<std::vector<std::string> >(*test, "vs")[2] );
+   std::cout <<"\""<<edm::getP<std::vector<std::string> >(*test, "vs")[0]<<"\" \""<<edm::getP<std::vector<std::string> >(*test, "vs")[1]<<"\" \""
+      <<edm::getP<std::vector<std::string> >(*test, "vs")[2]<<"\""<<std::endl;
    
    static const unsigned int vuia[] = {1,2};
    static const std::vector<unsigned int> vui(vuia, vuia+sizeof(vuia)/sizeof(unsigned int));
-   BOOST_CHECK( vui == test->getVUInt32("vui") );
+   BOOST_CHECK( vui == edm::getP<std::vector<unsigned int> >(*test, "vui") );
    
    static const  int via[] = {1,-2};
    static const std::vector< int> vi(via, via+sizeof(vuia)/sizeof(unsigned int));
-   test->getVInt32("vi");
-   BOOST_CHECK( true == test->getBool("b") );
+   edm::getP<std::vector<int> >(*test, "vi");
+   BOOST_CHECK( true == edm::getP<bool>(*test, "b") );
    BOOST_CHECK( test->retrieve("vi").isTracked() );
-   //test->get_vBool("vb");
-   edm::ParameterSet ps = test->getPSet("ps");
-   BOOST_CHECK( true == ps.getBool("b2") );
-   std::vector<edm::ParameterSet> vps = test->getVPSet("vps");
+   //edm::getP<std::vector<bool> >(*test, "vb");
+   edm::ParameterSet ps = edm::getP<edm::ParameterSet>(*test, "ps");
+   BOOST_CHECK( true == edm::getUntrackedP<bool>(ps, "b2", false) );
+   std::vector<edm::ParameterSet> vps = edm::getP<std::vector<edm::ParameterSet> >(*test, "vps");
    BOOST_CHECK( 1 == vps.size() );
-   BOOST_CHECK( false == vps.front().getBool("b3") );
+   BOOST_CHECK( false == edm::getP<bool>(vps.front(), "b3") );
    
    //BOOST_CHECK_THROW(edm::pset::makePSet( *nodeList ), std::runtime_error );
 
@@ -95,7 +95,7 @@ BOOST_AUTO_UNIT_TEST( using_test )
    blocks.insert( make_pair(kName, ublock ) );
    boost::shared_ptr<edm::ParameterSet> test = edm::pset::makePSet(*nodeList, blocks );
 
-   BOOST_CHECK( true == test->getBool(kName) );
+   BOOST_CHECK( true == edm::getP<bool>(*test, kName) );
 }
 
 
@@ -116,5 +116,5 @@ BOOST_AUTO_UNIT_TEST( pset_ref_test )
    psets.insert( make_pair(kName, ref ) );
    boost::shared_ptr<edm::ParameterSet> test = edm::pset::makePSet(*nodeList, blocks,psets );
    
-   BOOST_CHECK( true == test->getPSet("test").getBool("ref") );
+   BOOST_CHECK( true == edm::getP<bool>(edm::getP<edm::ParameterSet>(*test, "test"), "ref") );
 }
