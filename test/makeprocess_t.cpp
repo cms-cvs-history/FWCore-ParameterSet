@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Copyright 2005 __MyCompanyName__. All rights reserved.
  * 
- * $Id: makeprocess_t.cpp,v 1.5 2005/06/13 23:59:29 wmtan Exp $
+ * $Id: makeprocess_t.cpp,v 1.6 2005/06/14 23:15:13 wmtan Exp $
  */
 
 #include <iostream>
@@ -30,7 +30,7 @@ BOOST_AUTO_UNIT_TEST( simple_process_test )
    
    boost::shared_ptr<edm::ProcessDesc> test = edm::pset::makeProcess( nodeList );
 
-   BOOST_CHECK( edm::getParameter<std::string>(test->pset_, "process_name") == "test" );   
+   BOOST_CHECK( test->pset_.getParameter<std::string>("process_name") == "test" );   
 }
 
 BOOST_AUTO_UNIT_TEST( using_test )
@@ -44,9 +44,9 @@ BOOST_AUTO_UNIT_TEST( using_test )
    
    boost::shared_ptr<edm::ProcessDesc> test = edm::pset::makeProcess( nodeList );
    
-   //BOOST_CHECK( edm::getParameter<edm::ParameterSet>(test->pset_, "dummy").getBool("b") == true );   
-   BOOST_CHECK( edm::getParameter<bool>(edm::getParameter<edm::ParameterSet>(test->pset_, "include"), "b") == true );   
-   BOOST_CHECK( edm::getParameter<bool>(edm::getParameter<edm::ParameterSet>(test->pset_, "include2"), "d") == true );   
+   //BOOST_CHECK( test->pset_.getParameter<edm::ParameterSet>("dummy").getBool("b") == true );   
+   BOOST_CHECK( test->pset_.getParameter<edm::ParameterSet>("include").getParameter<bool>("b") == true );   
+   BOOST_CHECK( test->pset_.getParameter<edm::ParameterSet>("include2").getParameter<bool>("d") == true );   
 }
 
 BOOST_AUTO_UNIT_TEST( path_test )
@@ -63,7 +63,7 @@ BOOST_AUTO_UNIT_TEST( path_test )
    
    boost::shared_ptr<edm::ProcessDesc> test = edm::pset::makeProcess( nodeList );
    
-   BOOST_CHECK( edm::getParameter<std::string>(test->pset_, "process_name") == "test" );
+   BOOST_CHECK( test->pset_.getParameter<std::string>("process_name") == "test" );
    BOOST_CHECK( test->pathFragments_.size() == 3 );
 
    const edm::ParameterSet& myparams = test->pset_;
@@ -84,7 +84,7 @@ BOOST_AUTO_UNIT_TEST( simple_path_test )
 
   typedef std::vector<std::string> Strs;
 
-  Strs s = edm::getParameter<std::vector<std::string> >(*test, "p");
+  Strs s = test->getParameter<std::vector<std::string> >("p");
   BOOST_CHECK( s[0]=="a" );
   BOOST_CHECK( s[1]=="b" );
   BOOST_CHECK( s[2]=="c" );
@@ -118,8 +118,8 @@ BOOST_AUTO_UNIT_TEST( module_test )
 
    static const edm::ParameterSet kEmpty;
    const edm::ParameterSet kCone(modulePSet("cones", "Module") );
-   std::cout <<kCone.toString()<<std::endl;
-   std::cout <<edm::getParameter<edm::ParameterSet>(test->pset_, "cones").toString()<<std::endl;
+   std::cout << kCone.toString() << std::endl;
+   std::cout << test->pset_.getParameter<edm::ParameterSet>("cones").toString() << std::endl;
    
    const edm::ParameterSet kMainInput(modulePSet("main_input","InputService") );
    const edm::ParameterSet kOther(modulePSet("other","OtherInputService") );
@@ -129,26 +129,26 @@ BOOST_AUTO_UNIT_TEST( module_test )
    const edm::ParameterSet kNoLabelRetriever(modulePSet("", "NoLabelRetriever") );
    const edm::ParameterSet kLabelRetriever(modulePSet("label", "LabelRetriever") );
    
-   BOOST_CHECK( kEmpty != ( edm::getParameter<edm::ParameterSet>(test->pset_, "cones") ) );
-   BOOST_CHECK( kCone == edm::getParameter<edm::ParameterSet>(test->pset_, "cones") );
+   BOOST_CHECK( kEmpty != ( test->pset_.getParameter<edm::ParameterSet>("cones") ) );
+   BOOST_CHECK( kCone == test->pset_.getParameter<edm::ParameterSet>("cones") );
    
-   BOOST_CHECK( kEmpty != ( edm::getParameter<edm::ParameterSet>(test->pset_, "main_input") ) );
-   BOOST_CHECK( kMainInput == ( edm::getParameter<edm::ParameterSet>(test->pset_, "main_input") ) );
+   BOOST_CHECK( kEmpty != ( test->pset_.getParameter<edm::ParameterSet>("main_input") ) );
+   BOOST_CHECK( kMainInput == ( test->pset_.getParameter<edm::ParameterSet>("main_input") ) );
 
-   BOOST_CHECK( kEmpty != ( edm::getParameter<edm::ParameterSet>(test->pset_, "other") ) );
-   BOOST_CHECK( kOther == ( edm::getParameter<edm::ParameterSet>(test->pset_, "other") ) );
+   BOOST_CHECK( kEmpty != ( test->pset_.getParameter<edm::ParameterSet>("other") ) );
+   BOOST_CHECK( kOther == ( test->pset_.getParameter<edm::ParameterSet>("other") ) );
    
-   BOOST_CHECK( kEmpty != ( edm::getParameter<edm::ParameterSet>(test->pset_, "NoLabelModule@") ) );
-   BOOST_CHECK( kNoLabelModule == edm::getParameter<edm::ParameterSet>(test->pset_, "NoLabelModule@") );
+   BOOST_CHECK( kEmpty != ( test->pset_.getParameter<edm::ParameterSet>("NoLabelModule@") ) );
+   BOOST_CHECK( kNoLabelModule == test->pset_.getParameter<edm::ParameterSet>("NoLabelModule@") );
    
-   BOOST_CHECK( kEmpty != ( edm::getParameter<edm::ParameterSet>(test->pset_, "LabelModule@labeled") ) );
-   BOOST_CHECK( kLabelModule == edm::getParameter<edm::ParameterSet>(test->pset_, "LabelModule@labeled") );
+   BOOST_CHECK( kEmpty != ( test->pset_.getParameter<edm::ParameterSet>("LabelModule@labeled") ) );
+   BOOST_CHECK( kLabelModule == test->pset_.getParameter<edm::ParameterSet>("LabelModule@labeled") );
 
-   BOOST_CHECK( kEmpty != ( edm::getParameter<edm::ParameterSet>(test->pset_, "NoLabelRetriever@") ) );
-   BOOST_CHECK( kNoLabelRetriever == edm::getParameter<edm::ParameterSet>(test->pset_, "NoLabelRetriever@") );
+   BOOST_CHECK( kEmpty != ( test->pset_.getParameter<edm::ParameterSet>("NoLabelRetriever@") ) );
+   BOOST_CHECK( kNoLabelRetriever == test->pset_.getParameter<edm::ParameterSet>("NoLabelRetriever@") );
 
-   BOOST_CHECK( kEmpty != ( edm::getParameter<edm::ParameterSet>(test->pset_, "LabelRetriever@label") ) );
-   BOOST_CHECK( kLabelRetriever == edm::getParameter<edm::ParameterSet>(test->pset_, "LabelRetriever@label") );
+   BOOST_CHECK( kEmpty != ( test->pset_.getParameter<edm::ParameterSet>("LabelRetriever@label") ) );
+   BOOST_CHECK( kLabelRetriever == test->pset_.getParameter<edm::ParameterSet>("LabelRetriever@label") );
 }
 
 BOOST_AUTO_UNIT_TEST( empty_module_test )
@@ -162,7 +162,7 @@ BOOST_AUTO_UNIT_TEST( empty_module_test )
    
    boost::shared_ptr<edm::ProcessDesc> test = edm::pset::makeProcess( nodeList );
    
-   BOOST_CHECK( edm::getParameter<std::string>(test->pset_, "process_name") == "test" );
+   BOOST_CHECK( test->pset_.getParameter<std::string>("process_name") == "test" );
 
    const edm::ParameterSet& myparams = test->pset_;
    std::cout << "ParameterSet looks like:\n";
@@ -208,7 +208,7 @@ BOOST_AUTO_UNIT_TEST( sequence_subst_test )
   
   typedef std::vector<std::string> Strs;
   
-  Strs s = edm::getParameter<std::vector<std::string> >(*test, "path1");
+  Strs s = test->getParameter<std::vector<std::string> >("path1");
   BOOST_CHECK( s[0]=="cone1" );
   BOOST_CHECK( s[1]=="cone2" );
   BOOST_CHECK( s[2]=="somejet1" );
@@ -236,13 +236,13 @@ BOOST_AUTO_UNIT_TEST( multiple_paths_test){
   
   typedef std::vector<std::string> Strs;
 
-  Strs s = edm::getParameter<std::vector<std::string> >(*test, "path1");
+  Strs s = test->getParameter<std::vector<std::string> >("path1");
   BOOST_CHECK( s[0]=="cone1" );
   BOOST_CHECK( s[1]=="cone2" );
   BOOST_CHECK( s[2]=="jtanalyzer" );
 
 
-  s = edm::getParameter<std::vector<std::string> >(*test, "path2");
+  s = test->getParameter<std::vector<std::string> >("path2");
   BOOST_CHECK( s[0]=="somejet1" );
   BOOST_CHECK( s[1]=="somejet2" );
   BOOST_CHECK( s[2]=="jtanalyzer" );
