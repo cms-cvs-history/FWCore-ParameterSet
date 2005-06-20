@@ -4,7 +4,7 @@
 
 @brief test suit for process building and schedule validation
 
-@version: $Id$
+@version: $Id: processbuilder_t.cpp,v 1.1 2005/06/20 15:23:30 argiro Exp $
 @author : Stefano Argiro
 @date : 2005 06 17
 
@@ -81,6 +81,41 @@ BOOST_AUTO_UNIT_TEST( sequence_subst_test )
   BOOST_CHECK ( b.getDependencies("jtanalyzer")=="cone1,cone2,somejet1,somejet2,");
 
 }
+
+BOOST_AUTO_UNIT_TEST( nested_sequence_subst_test )
+{
+  const char * kTest = "process test = {\n"
+   "module a = PhonyConeJet { int32 i = 5 }\n"
+   "module b = PhonyConeJet { int32 i = 7 }\n"
+   "module c = PhonyJet { int32 i = 7 }\n"
+   "module d = PhonyJet { int32 i = 7 }\n"
+   "sequence s1 = { a, b }\n"
+   "sequence s2 = { s1, c }\n"
+   "path path1 = { s2,d }\n"
+   "} ";
+
+
+  ProcessPSetBuilder b(kTest);
+  boost::shared_ptr<ParameterSet> test = b.getProcessPSet();
+
+  typedef std::vector<std::string> Strs;
+  
+  Strs s = (*test).getParameter<std::vector<std::string> >("path1");
+  BOOST_CHECK( s[0]=="a" );
+  BOOST_CHECK( s[1]=="b" );
+  BOOST_CHECK( s[2]=="c" );
+  BOOST_CHECK( s[3]=="d" );
+ 
+
+
+  BOOST_CHECK ( b.getDependencies("a")=="");
+  BOOST_CHECK ( b.getDependencies("b")=="a,");
+  BOOST_CHECK ( b.getDependencies("c")=="a,b,");
+  BOOST_CHECK ( b.getDependencies("d")=="a,b,c,");
+
+
+}
+
 
 BOOST_AUTO_UNIT_TEST( sequence_subst_test2 ){
   const char * kTest = "process test = {\n"
