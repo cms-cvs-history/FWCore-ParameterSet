@@ -5,10 +5,9 @@
  *  Created by Chris Jones on 5/18/05.
  *  Copyright 2005 __MyCompanyName__. All rights reserved.
  * 
- * $Id: makeprocess_t.cpp,v 1.6 2005/06/14 23:15:13 wmtan Exp $
+ * $Id: makeprocess_t.cpp,v 1.7 2005/06/18 02:18:10 wmtan Exp $
  */
 
-#include <iostream>
 
 #define BOOST_AUTO_TEST_MAIN
 #include "boost/test/auto_unit_test.hpp"
@@ -71,27 +70,6 @@ BOOST_AUTO_UNIT_TEST( path_test )
    std::cout << myparams.toString() << std::endl;
 }
 
-BOOST_AUTO_UNIT_TEST( simple_path_test )
-{
-  std::string str = "process X = { \n"
-    " module a = A { int32 p = 3 } \n"
-    " module b = A { int32 p = 3 } \n"
-    " module c = A { int32 p = 3 } \n"
-    " path p = { a,b,c } \n"
-    " }";
-
-  boost::shared_ptr<edm::ParameterSet> test = edm::makeProcessPSet(str);
-
-  typedef std::vector<std::string> Strs;
-
-  Strs s = test->getParameter<std::vector<std::string> >("p");
-  BOOST_CHECK( s[0]=="a" );
-  BOOST_CHECK( s[1]=="b" );
-  BOOST_CHECK( s[2]=="c" );
-  
-  std::cout << s[0] << " " << s[1] << " " << s[2] << std::endl;
-  std::cout << test->toString() << std::endl;
-}
 
 edm::ParameterSet modulePSet( const std::string& iLabel, const std::string& iType ) {
    edm::ParameterSet temp;
@@ -188,63 +166,4 @@ BOOST_AUTO_UNIT_TEST( empty_pset_test )
     }
 
    throw  std::runtime_error("empty pset not discovered");
-}
-
-
-BOOST_AUTO_UNIT_TEST( sequence_subst_test )
-{
-  const char * kTest = "process test = {\n"
-   "module cone1 = PhonyConeJet { int32 i = 5 }\n"
-   "module cone2 = PhonyConeJet { int32 i = 7 }\n"
-   "module somejet1 = PhonyJet { int32 i = 7 }\n"
-   "module somejet2 = PhonyJet { int32 i = 7 }\n"
-   "module jtanalyzer = PhonyConeJet { int32 i = 7 }\n"
-   "sequence cones = { cone1, cone2 }\n"
-   "sequence jets = { somejet1, somejet2 }\n"
-   "path path1 = { cones,jets, jtanalyzer }\n"
-   "} ";
-
-  boost::shared_ptr<edm::ParameterSet> test = edm::makeProcessPSet(kTest);
-  
-  typedef std::vector<std::string> Strs;
-  
-  Strs s = test->getParameter<std::vector<std::string> >("path1");
-  BOOST_CHECK( s[0]=="cone1" );
-  BOOST_CHECK( s[1]=="cone2" );
-  BOOST_CHECK( s[2]=="somejet1" );
-  BOOST_CHECK( s[3]=="somejet2" );
-  BOOST_CHECK( s[4]=="jtanalyzer" );
-  
-
-}
-
-BOOST_AUTO_UNIT_TEST( multiple_paths_test){
-
-   const char * kTest = "process test = {\n"
-   "module cone1 = PhonyConeJet { int32 i = 5 }\n"
-   "module cone2 = PhonyConeJet { int32 i = 7 }\n"
-   "module somejet1 = PhonyJet { int32 i = 7 }\n"
-   "module somejet2 = PhonyJet { int32 i = 7 }\n"
-   "module jtanalyzer = PhonyConeJet { int32 i = 7 }\n"
-   "sequence cones = { cone1, cone2 }\n"
-   "sequence jets = { somejet1, somejet2 }\n"
-   "path path1 = { cones, jtanalyzer }\n"
-   "path path2 = { jets, jtanalyzer }\n"
-   "} ";
-
-  boost::shared_ptr<edm::ParameterSet> test = edm::makeProcessPSet(kTest);
-  
-  typedef std::vector<std::string> Strs;
-
-  Strs s = test->getParameter<std::vector<std::string> >("path1");
-  BOOST_CHECK( s[0]=="cone1" );
-  BOOST_CHECK( s[1]=="cone2" );
-  BOOST_CHECK( s[2]=="jtanalyzer" );
-
-
-  s = test->getParameter<std::vector<std::string> >("path2");
-  BOOST_CHECK( s[0]=="somejet1" );
-  BOOST_CHECK( s[1]=="somejet2" );
-  BOOST_CHECK( s[2]=="jtanalyzer" );
-
 }
