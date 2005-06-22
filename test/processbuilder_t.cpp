@@ -4,7 +4,7 @@
 
 @brief test suit for process building and schedule validation
 
-@version: $Id: processbuilder_t.cpp,v 1.1 2005/06/20 15:23:30 argiro Exp $
+@version: $Id: processbuilder_t.cpp,v 1.2 2005/06/20 15:45:04 argiro Exp $
 @author : Stefano Argiro
 @date : 2005 06 17
 
@@ -19,6 +19,23 @@
 
 
 using namespace edm;
+
+BOOST_AUTO_UNIT_TEST( trivial_path_test )
+{
+  std::string str = "process X = { \n"
+    " module a = A { int32 p = 3 } \n"
+    " path p = { a,b,c } \n"
+    " }";
+
+  ProcessPSetBuilder b(str);
+  boost::shared_ptr<ParameterSet> test = b.getProcessPSet();
+
+  typedef std::vector<std::string> Strs;
+
+  Strs s = (*test).getParameter<std::vector<std::string> >( "p");
+  BOOST_CHECK( s[0]=="a" );
+  BOOST_CHECK ( b.getDependencies("a")=="");
+}
 
 BOOST_AUTO_UNIT_TEST( simple_path_test )
 {
