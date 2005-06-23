@@ -1,3 +1,6 @@
+<environment>
+  <use name=boost>
+  <use name=FWCore/ParameterSet>	
 
 <bin file=parser_t.cpp> 
   <use name=boost>
@@ -24,8 +27,8 @@
   <use name=FWCore/ParameterSet>
 </bin>
 
-#Had to hard code in the -gcc-mt because I could find no
-# option in scram to tell it just to use boost_unit_test_framework
+<bin file=split.cpp>
+</bin>
 
 <bin file=processbuilder_t.cpp> 
 <lib name=boost_unit_test_framework-gcc-mt>
@@ -33,6 +36,15 @@
   <use name=FWCore/ParameterSet>
 </bin>
 
-
-<bin file=split.cpp>
+#
+#Initial target definition for cppunit-style testing
+#testRunner has the main, tests suites are registered in the other files. 
+#The executable "testParameterSet" will eventually run all the tests 
+#
+<bin name=testParameterSet file=testRunner.cpp,
+	                        processbuilder_t.cppunit.cc >
+   <use name=cppunit>	
 </bin>
+
+
+</environment>
