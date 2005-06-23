@@ -14,7 +14,7 @@ using namespace std;
 void read_from_stdin(std::string& buffer)
 {
   std::string line;
-  while ( std::getline(cin, line) ) { buffer += line; buffer += '\n'; }
+  while (std::getline(cin, line)) { buffer += line; buffer += '\n'; }
 }
 
 int main()
