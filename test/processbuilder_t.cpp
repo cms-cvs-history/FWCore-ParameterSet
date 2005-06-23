@@ -4,7 +4,7 @@
 
 @brief test suit for process building and schedule validation
 
-@version: $Id: processbuilder_t.cpp,v 1.2 2005/06/20 15:45:04 argiro Exp $
+@version: $Id: processbuilder_t.cpp,v 1.3 2005/06/22 07:19:00 argiro Exp $
 @author : Stefano Argiro
 @date : 2005 06 17
 
@@ -20,7 +20,7 @@
 
 using namespace edm;
 
-BOOST_AUTO_UNIT_TEST( trivial_path_test )
+BOOST_AUTO_UNIT_TEST(trivial_path_test)
 {
   std::string str = "process X = { \n"
     " module a = A { int32 p = 3 } \n"
@@ -32,12 +32,12 @@ BOOST_AUTO_UNIT_TEST( trivial_path_test )
 
   typedef std::vector<std::string> Strs;
 
-  Strs s = (*test).getParameter<std::vector<std::string> >( "p");
-  BOOST_CHECK( s[0]=="a" );
-  BOOST_CHECK ( b.getDependencies("a")=="");
+  Strs s = (*test).getParameter<std::vector<std::string> >("p");
+  BOOST_CHECK(s[0]=="a");
+  BOOST_CHECK(b.getDependencies("a")=="");
 }
 
-BOOST_AUTO_UNIT_TEST( simple_path_test )
+BOOST_AUTO_UNIT_TEST(simple_path_test)
 {
   std::string str = "process X = { \n"
     " module a = A { int32 p = 3 } \n"
@@ -51,19 +51,19 @@ BOOST_AUTO_UNIT_TEST( simple_path_test )
 
   typedef std::vector<std::string> Strs;
 
-  Strs s = (*test).getParameter<std::vector<std::string> >( "p");
-  BOOST_CHECK( s[0]=="a" );
-  BOOST_CHECK( s[1]=="b" );
-  BOOST_CHECK( s[2]=="c" );
+  Strs s = (*test).getParameter<std::vector<std::string> >("p");
+  BOOST_CHECK(s[0]=="a");
+  BOOST_CHECK(s[1]=="b");
+  BOOST_CHECK(s[2]=="c");
   
-  BOOST_CHECK ( b.getDependencies("a")=="");
-  BOOST_CHECK ( b.getDependencies("b")=="a,");
-  BOOST_CHECK ( b.getDependencies("c")=="a,b,");
+  BOOST_CHECK(b.getDependencies("a")=="");
+  BOOST_CHECK(b.getDependencies("b")=="a,");
+  BOOST_CHECK(b.getDependencies("c")=="a,b,");
     
 }
 
 
-BOOST_AUTO_UNIT_TEST( sequence_subst_test )
+BOOST_AUTO_UNIT_TEST(sequence_subst_test)
 {
   const char * kTest = "process test = {\n"
    "module cone1 = PhonyConeJet { int32 i = 5 }\n"
@@ -83,23 +83,23 @@ BOOST_AUTO_UNIT_TEST( sequence_subst_test )
   typedef std::vector<std::string> Strs;
   
   Strs s = (*test).getParameter<std::vector<std::string> >("path1");
-  BOOST_CHECK( s[0]=="cone1" );
-  BOOST_CHECK( s[1]=="cone2" );
-  BOOST_CHECK( s[2]=="somejet1" );
-  BOOST_CHECK( s[3]=="somejet2" );
-  BOOST_CHECK( s[4]=="jtanalyzer" );
+  BOOST_CHECK(s[0]=="cone1");
+  BOOST_CHECK(s[1]=="cone2");
+  BOOST_CHECK(s[2]=="somejet1");
+  BOOST_CHECK(s[3]=="somejet2");
+  BOOST_CHECK(s[4]=="jtanalyzer");
  
 
 
-  BOOST_CHECK ( b.getDependencies("cone1")=="");
-  BOOST_CHECK ( b.getDependencies("cone2")=="cone1,");
-  BOOST_CHECK ( b.getDependencies("somejet1")=="cone1,cone2,");
-  BOOST_CHECK ( b.getDependencies("somejet2")=="cone1,cone2,somejet1,");
-  BOOST_CHECK ( b.getDependencies("jtanalyzer")=="cone1,cone2,somejet1,somejet2,");
+  BOOST_CHECK(b.getDependencies("cone1")=="");
+  BOOST_CHECK(b.getDependencies("cone2")=="cone1,");
+  BOOST_CHECK(b.getDependencies("somejet1")=="cone1,cone2,");
+  BOOST_CHECK(b.getDependencies("somejet2")=="cone1,cone2,somejet1,");
+  BOOST_CHECK(b.getDependencies("jtanalyzer")=="cone1,cone2,somejet1,somejet2,");
 
 }
 
-BOOST_AUTO_UNIT_TEST( nested_sequence_subst_test )
+BOOST_AUTO_UNIT_TEST(nested_sequence_subst_test)
 {
   const char * kTest = "process test = {\n"
    "module a = PhonyConeJet { int32 i = 5 }\n"
@@ -118,23 +118,23 @@ BOOST_AUTO_UNIT_TEST( nested_sequence_subst_test )
   typedef std::vector<std::string> Strs;
   
   Strs s = (*test).getParameter<std::vector<std::string> >("path1");
-  BOOST_CHECK( s[0]=="a" );
-  BOOST_CHECK( s[1]=="b" );
-  BOOST_CHECK( s[2]=="c" );
-  BOOST_CHECK( s[3]=="d" );
+  BOOST_CHECK(s[0]=="a");
+  BOOST_CHECK(s[1]=="b");
+  BOOST_CHECK(s[2]=="c");
+  BOOST_CHECK(s[3]=="d");
  
 
 
-  BOOST_CHECK ( b.getDependencies("a")=="");
-  BOOST_CHECK ( b.getDependencies("b")=="a,");
-  BOOST_CHECK ( b.getDependencies("c")=="a,b,");
-  BOOST_CHECK ( b.getDependencies("d")=="a,b,c,");
+  BOOST_CHECK(b.getDependencies("a")=="");
+  BOOST_CHECK(b.getDependencies("b")=="a,");
+  BOOST_CHECK(b.getDependencies("c")=="a,b,");
+  BOOST_CHECK(b.getDependencies("d")=="a,b,c,");
 
 
 }
 
 
-BOOST_AUTO_UNIT_TEST( sequence_subst_test2 ){
+BOOST_AUTO_UNIT_TEST(sequence_subst_test2){
   const char * kTest = "process test = {\n"
    "module cone1 = PhonyConeJet { int32 i = 5 }\n"
    "module cone2 = PhonyConeJet { int32 i = 7 }\n"
@@ -154,23 +154,23 @@ BOOST_AUTO_UNIT_TEST( sequence_subst_test2 ){
   typedef std::vector<std::string> Strs;
   
   Strs s = (*test).getParameter<std::vector<std::string> >("path1");
-  BOOST_CHECK( s[0]=="cone1" );
-  BOOST_CHECK( s[1]=="cone2" );
-  BOOST_CHECK( s[2]=="cone3" );
-  BOOST_CHECK( s[3]=="somejet1" );
-  BOOST_CHECK( s[4]=="somejet2" );
-  BOOST_CHECK( s[5]=="jtanalyzer" );
+  BOOST_CHECK(s[0]=="cone1");
+  BOOST_CHECK(s[1]=="cone2");
+  BOOST_CHECK(s[2]=="cone3");
+  BOOST_CHECK(s[3]=="somejet1");
+  BOOST_CHECK(s[4]=="somejet2");
+  BOOST_CHECK(s[5]=="jtanalyzer");
  
 
-  BOOST_CHECK ( b.getDependencies("cone1")=="");
-  BOOST_CHECK ( b.getDependencies("cone2")=="cone1,");
-  BOOST_CHECK ( b.getDependencies("cone3")=="cone1,cone2,");
-  BOOST_CHECK ( b.getDependencies("somejet1")=="cone1,cone2,cone3,");
-  BOOST_CHECK ( b.getDependencies("somejet2")=="cone1,cone2,cone3,somejet1,");
-  BOOST_CHECK ( b.getDependencies("jtanalyzer")=="cone1,cone2,cone3,somejet1,somejet2,"); 
+  BOOST_CHECK(b.getDependencies("cone1")=="");
+  BOOST_CHECK(b.getDependencies("cone2")=="cone1,");
+  BOOST_CHECK(b.getDependencies("cone3")=="cone1,cone2,");
+  BOOST_CHECK(b.getDependencies("somejet1")=="cone1,cone2,cone3,");
+  BOOST_CHECK(b.getDependencies("somejet2")=="cone1,cone2,cone3,somejet1,");
+  BOOST_CHECK(b.getDependencies("jtanalyzer")=="cone1,cone2,cone3,somejet1,somejet2,"); 
 }
 
-BOOST_AUTO_UNIT_TEST( sequence_subst_test3 ){
+BOOST_AUTO_UNIT_TEST(sequence_subst_test3){
    const char * kTest = "process test = {\n"
    "module a = PhonyConeJet { int32 i = 5 }\n"
    "module b = PhonyConeJet { int32 i = 7 }\n"
@@ -198,40 +198,40 @@ BOOST_AUTO_UNIT_TEST( sequence_subst_test3 ){
   typedef std::vector<std::string> Strs;
   
   Strs s = (*test).getParameter<std::vector<std::string> >("path1");
-  BOOST_CHECK( s[0]=="a" );
-  BOOST_CHECK( s[1]=="b" );
-  BOOST_CHECK( s[2]=="c" );
-  BOOST_CHECK( s[3]=="aaa" );
-  BOOST_CHECK( s[4]=="bbb" );
-  BOOST_CHECK( s[5]=="ccc" );
-  BOOST_CHECK( s[6]=="ddd" );
-  BOOST_CHECK( s[7]=="eee" );
-  BOOST_CHECK( s[8]=="aa" );
-  BOOST_CHECK( s[9]=="bb" );
-  BOOST_CHECK( s[10]=="cc" );
-  BOOST_CHECK( s[11]=="dd" );
-  BOOST_CHECK( s[12]=="last" );
+  BOOST_CHECK(s[0]=="a");
+  BOOST_CHECK(s[1]=="b");
+  BOOST_CHECK(s[2]=="c");
+  BOOST_CHECK(s[3]=="aaa");
+  BOOST_CHECK(s[4]=="bbb");
+  BOOST_CHECK(s[5]=="ccc");
+  BOOST_CHECK(s[6]=="ddd");
+  BOOST_CHECK(s[7]=="eee");
+  BOOST_CHECK(s[8]=="aa");
+  BOOST_CHECK(s[9]=="bb");
+  BOOST_CHECK(s[10]=="cc");
+  BOOST_CHECK(s[11]=="dd");
+  BOOST_CHECK(s[12]=="last");
 
   
 
-  BOOST_CHECK ( b.getDependencies("a")=="");
-  BOOST_CHECK ( b.getDependencies("b")=="a,");
-  BOOST_CHECK ( b.getDependencies("c")=="a,b,");
-  BOOST_CHECK ( b.getDependencies("aaa")=="a,b,c,");
-  BOOST_CHECK ( b.getDependencies("bbb")=="a,aaa,b,c,");
-  BOOST_CHECK ( b.getDependencies("ccc")=="a,aaa,b,bbb,c,");
-  BOOST_CHECK ( b.getDependencies("ddd")=="a,aaa,b,bbb,c,ccc,");
-  BOOST_CHECK ( b.getDependencies("eee")=="a,aaa,b,bbb,c,ccc,ddd,");
-  BOOST_CHECK ( b.getDependencies("aa")=="a,aaa,b,bbb,c,ccc,ddd,eee,");
-  BOOST_CHECK ( b.getDependencies("bb")=="a,aa,aaa,b,bbb,c,ccc,ddd,eee,");
-  BOOST_CHECK ( b.getDependencies("cc")=="a,aa,aaa,b,bb,bbb,c,ccc,ddd,eee,");
-  BOOST_CHECK ( b.getDependencies("dd")=="a,aa,aaa,b,bb,bbb,c,cc,ccc,ddd,eee,");
-  BOOST_CHECK ( b.getDependencies("last")=="a,aa,aaa,b,bb,bbb,c,cc,ccc,dd,ddd,eee,");
+  BOOST_CHECK(b.getDependencies("a")=="");
+  BOOST_CHECK(b.getDependencies("b")=="a,");
+  BOOST_CHECK(b.getDependencies("c")=="a,b,");
+  BOOST_CHECK(b.getDependencies("aaa")=="a,b,c,");
+  BOOST_CHECK(b.getDependencies("bbb")=="a,aaa,b,c,");
+  BOOST_CHECK(b.getDependencies("ccc")=="a,aaa,b,bbb,c,");
+  BOOST_CHECK(b.getDependencies("ddd")=="a,aaa,b,bbb,c,ccc,");
+  BOOST_CHECK(b.getDependencies("eee")=="a,aaa,b,bbb,c,ccc,ddd,");
+  BOOST_CHECK(b.getDependencies("aa")=="a,aaa,b,bbb,c,ccc,ddd,eee,");
+  BOOST_CHECK(b.getDependencies("bb")=="a,aa,aaa,b,bbb,c,ccc,ddd,eee,");
+  BOOST_CHECK(b.getDependencies("cc")=="a,aa,aaa,b,bb,bbb,c,ccc,ddd,eee,");
+  BOOST_CHECK(b.getDependencies("dd")=="a,aa,aaa,b,bb,bbb,c,cc,ccc,ddd,eee,");
+  BOOST_CHECK(b.getDependencies("last")=="a,aa,aaa,b,bb,bbb,c,cc,ccc,dd,ddd,eee,");
 
 }
 
 
-BOOST_AUTO_UNIT_TEST( multiple_paths_test){
+BOOST_AUTO_UNIT_TEST(multiple_paths_test){
 
   const char * kTest = "process test = {\n"
     "module cone1 = PhonyConeJet { int32 i = 5 }\n"
@@ -254,30 +254,30 @@ BOOST_AUTO_UNIT_TEST( multiple_paths_test){
   typedef std::vector<std::string> Strs;
   
   Strs s = (*test).getParameter<std::vector<std::string> >("path1");
-  BOOST_CHECK( s[0]=="cone1" );
-  BOOST_CHECK( s[1]=="cone2" );
-  BOOST_CHECK( s[2]=="cone3" );
-  BOOST_CHECK( s[3]=="jtanalyzer" );
+  BOOST_CHECK(s[0]=="cone1");
+  BOOST_CHECK(s[1]=="cone2");
+  BOOST_CHECK(s[2]=="cone3");
+  BOOST_CHECK(s[3]=="jtanalyzer");
 
 
-  BOOST_CHECK ( b.getDependencies("cone1")=="");
-  BOOST_CHECK ( b.getDependencies("cone2")=="cone1,");
-  BOOST_CHECK ( b.getDependencies("cone3")=="cone1,cone2,");
-  BOOST_CHECK ( b.getDependencies("jtanalyzer")=="cone1,cone2,cone3,");
+  BOOST_CHECK(b.getDependencies("cone1")=="");
+  BOOST_CHECK(b.getDependencies("cone2")=="cone1,");
+  BOOST_CHECK(b.getDependencies("cone3")=="cone1,cone2,");
+  BOOST_CHECK(b.getDependencies("jtanalyzer")=="cone1,cone2,cone3,");
   
   s = (*test).getParameter<std::vector<std::string> >("path2");
-  BOOST_CHECK( s[0]=="somejet1" );
-  BOOST_CHECK( s[1]=="somejet2" );
-  BOOST_CHECK( s[2]=="anotherjtanalyzer" );
+  BOOST_CHECK(s[0]=="somejet1");
+  BOOST_CHECK(s[1]=="somejet2");
+  BOOST_CHECK(s[2]=="anotherjtanalyzer");
  
-  BOOST_CHECK ( b.getDependencies("somejet1")=="");
-  BOOST_CHECK ( b.getDependencies("somejet2")=="somejet1,");
-  BOOST_CHECK ( b.getDependencies("anotherjtanalyzer")=="somejet1,somejet2,");
+  BOOST_CHECK(b.getDependencies("somejet1")=="");
+  BOOST_CHECK(b.getDependencies("somejet2")=="somejet1,");
+  BOOST_CHECK(b.getDependencies("anotherjtanalyzer")=="somejet1,somejet2,");
 
 }
 
 
-BOOST_AUTO_UNIT_TEST( inconsistent_path_test){
+BOOST_AUTO_UNIT_TEST(inconsistent_path_test){
   const char * kTest = "process test = {\n"
    "module a = PhonyConeJet { int32 i = 5 }\n"
    "module b = PhonyConeJet { int32 i = 7 }\n"
@@ -290,7 +290,7 @@ BOOST_AUTO_UNIT_TEST( inconsistent_path_test){
 }
 
 
-BOOST_AUTO_UNIT_TEST( inconsistent_multiple_paths_test){
+BOOST_AUTO_UNIT_TEST(inconsistent_multiple_paths_test){
 
    const char * kTest = "process test = {\n"
    "module cone1 = PhonyConeJet { int32 i = 5 }\n"
