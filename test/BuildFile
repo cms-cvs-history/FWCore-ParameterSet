@@ -43,7 +43,7 @@
 #
 <bin name=testParameterSet file=testRunner.cpp,
 	                        processbuilder_t.cppunit.cc >
-   <use name=cppunit>	
+#   <use name=cppunit>	
 </bin>
 
 
