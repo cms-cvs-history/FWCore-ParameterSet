@@ -4,7 +4,7 @@
  *
  *  Created by Chris Jones on 5/18/05.
  *
- * $Id: makepset_t.cpp,v 1.4 2005/06/18 02:18:10 wmtan Exp $
+ * $Id: makepset_t.cpp,v 1.5 2005/06/23 19:57:23 wmtan Exp $
  */
 
 #include <iostream>
@@ -13,6 +13,7 @@
 
 #include "FWCore/ParameterSet/interface/Makers.h"
 #include "FWCore/ParameterSet/interface/parse.h"
+#include "FWCore/Utilities/interface/EDMException.h"
 #include <iostream>
 
 BOOST_AUTO_UNIT_TEST(empty_test)
@@ -23,7 +24,7 @@ BOOST_AUTO_UNIT_TEST(empty_test)
    
    // this should not be allowed, but is for the time being
    // only psets coming in from process sections cannot be empty
-   BOOST_CHECK_THROW(edm::pset::makePSet(*nodeList), std::runtime_error);
+   BOOST_CHECK_THROW(edm::pset::makePSet(*nodeList), edm::Exception);
 }
 
 BOOST_AUTO_UNIT_TEST(types_test)
@@ -75,7 +76,7 @@ BOOST_AUTO_UNIT_TEST(types_test)
    BOOST_CHECK(1 == vps.size());
    BOOST_CHECK(false == vps.front().getParameter<bool>("b3"));
    
-   //BOOST_CHECK_THROW(edm::pset::makePSet(*nodeList), std::runtime_error);
+   //BOOST_CHECK_THROW(edm::pset::makePSet(*nodeList), edm::Exception);
 
 }
 
@@ -86,7 +87,7 @@ BOOST_AUTO_UNIT_TEST(using_test)
    boost::shared_ptr<edm::pset::NodePtrList> nodeList = edm::pset::parse(kTest);
    BOOST_CHECK(0 != nodeList.get());
    
-   BOOST_CHECK_THROW(edm::pset::makePSet(*nodeList), std::runtime_error);
+   BOOST_CHECK_THROW(edm::pset::makePSet(*nodeList), edm::Exception);
 
    std::map< std::string, boost::shared_ptr<edm::ParameterSet> > blocks;
    const std::string kName("ublock");
@@ -106,7 +107,7 @@ BOOST_AUTO_UNIT_TEST(pset_ref_test)
    boost::shared_ptr<edm::pset::NodePtrList> nodeList = edm::pset::parse(kTest);
    BOOST_CHECK(0 != nodeList.get());
    
-   BOOST_CHECK_THROW(edm::pset::makePSet(*nodeList), std::runtime_error);
+   BOOST_CHECK_THROW(edm::pset::makePSet(*nodeList), edm::Exception);
    
    std::map< std::string, boost::shared_ptr<edm::ParameterSet> > blocks;
    std::map< std::string, boost::shared_ptr<edm::ParameterSet> > psets;

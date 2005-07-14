@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Copyright 2005 __MyCompanyName__. All rights reserved.
  * 
- * $Id: makeprocess_t.cpp,v 1.8 2005/06/20 15:23:19 argiro Exp $
+ * $Id: makeprocess_t.cpp,v 1.9 2005/06/23 19:57:23 wmtan Exp $
  */
 
 
@@ -15,6 +15,7 @@
 #include "FWCore/ParameterSet/interface/Makers.h"
 #include "FWCore/ParameterSet/interface/parse.h"
 #include "FWCore/ParameterSet/interface/MakeProcessPSet.h"
+#include "FWCore/Utilities/interface/EDMException.h"
 
 #include <iostream>
 #include <vector>
@@ -159,7 +160,7 @@ BOOST_AUTO_UNIT_TEST(empty_pset_test)
    try {
    boost::shared_ptr<edm::ProcessDesc> test = edm::pset::makeProcess(nodeList);
    }
-   catch(std::exception& e)
+   catch(edm::Exception& e)
    {
        std::cout << "empty pset detected" << std::endl;
 	return ;
