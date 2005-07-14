@@ -57,7 +57,8 @@ void testparser::mainparser1Test()
 // cout <<spec;
         }         file_op.close();
         cout <<endl;
-  return 0;
+  return;
+  //return 0;
 // reading from file is over
   ParseResults pr = edm::pset::parse(spec);
 
@@ -83,7 +84,7 @@ void testparser::mainparser2Test()
               file_op.getline(spec,2000);
         }         file_op.close();
         cout <<endl;
-  return 0;
+  return ;
   ParseResults pr = edm::pset::parse(spec);
 
   if(!pr)
@@ -106,7 +107,7 @@ void testparser::mainparser3Test()
               file_op.getline(spec,2000);
         }         file_op.close();
         cout <<endl;
-  return 0;
+  return ;
   ParseResults pr = edm::pset::parse(spec);
 
   if(!pr)
@@ -129,7 +130,7 @@ void testparser::mainparser4Test()
               file_op.getline(spec,2000);
         }         file_op.close();
         cout <<endl;
-  return 0;
+  return ;
   ParseResults pr = edm::pset::parse(spec);
 
   if(!pr)
@@ -152,7 +153,7 @@ void testparser::mainparser5Test()
               file_op.getline(spec,2000);
         }         file_op.close();
         cout <<endl;
-  return 0;
+  return ;
   ParseResults pr = edm::pset::parse(spec);
 
   if(!pr)
