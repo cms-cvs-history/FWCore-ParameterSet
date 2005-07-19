@@ -6,7 +6,7 @@
  *  Changed by Viji Sundararajan on 8-Jul-05.
  *  Copyright 2005 __MyCompanyName__. All rights reserved.
  * 
- * $Id: makeprocess_t.cpp,v 1.9 2005/06/23 19:57:23 wmtan Exp $
+ * $Id: makeprocess_t.cppunit.cc,v 1.1 2005/07/08 16:30:41 viji Exp $
  */
 
 
@@ -24,19 +24,16 @@
 class testmakeprocess: public CppUnit::TestFixture
 {
 CPPUNIT_TEST_SUITE(testmakeprocess);
-                                                                                                                     
 CPPUNIT_TEST(simpleProcessTest);
 CPPUNIT_TEST(usingTest);
 CPPUNIT_TEST(pathTest);
 CPPUNIT_TEST(moduleTest);
 CPPUNIT_TEST(emptyModuleTest);
-CPPUNIT_TEST(emptyPsetTest);
-                                                                                                                     
+CPPUNIT_TEST_EXCEPTION(emptyPsetTest,std::runtime_error);
 CPPUNIT_TEST_SUITE_END();
 public:
   void setUp(){}
   void tearDown(){}
-                                                                                                                     
   void simpleProcessTest();
   void usingTest();
   void pathTest();
@@ -182,8 +179,9 @@ void testmakeprocess::emptyPsetTest()
    "} ";
    boost::shared_ptr<edm::pset::NodePtrList> nodeList = edm::pset::parse(kTest);
    CPPUNIT_ASSERT(0 != nodeList.get());
+   boost::shared_ptr<edm::ProcessDesc> test = edm::pset::makeProcess(nodeList);
    
-   try {
+   /*try {
    boost::shared_ptr<edm::ProcessDesc> test = edm::pset::makeProcess(nodeList);
    }
    catch(std::exception& e)
@@ -192,5 +190,5 @@ void testmakeprocess::emptyPsetTest()
 	return ;
     }
 
-   throw  std::runtime_error("empty pset not discovered");
+   throw  std::runtime_error("empty pset not discovered");*/
 }
