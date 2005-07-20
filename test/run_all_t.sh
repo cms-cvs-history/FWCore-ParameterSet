@@ -1,8 +1,9 @@
 #!/bin/sh
 
+DIR=../../../../test/slc3_ia32_gcc323
+
 # Pass in name and status
 function die { echo $1: status $2 ;  exit $2; }
-
 # This following is a trivial test, and probably should be removed
 split || die 'Failed in split' $?
 
@@ -13,14 +14,14 @@ string_parser_t
 
 echo --------------
 echo Running makepset_t
-makepset_t || die 'Failed in makepset_t' $?
+${DIR}/makepset_t || die 'Failed in makepset_t' $?
 echo makepset_t succeeded
 echo --------------
 
 
 echo --------------
 echo Running makeprocess_t
-makeprocess_t || die 'Failed in makeprocess_t' $?
+${DIR}/makeprocess_t || die 'Failed in makeprocess_t' $?
 echo makeprocess_t succeeded
 echo --------------
 
