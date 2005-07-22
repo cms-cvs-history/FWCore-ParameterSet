@@ -31,17 +31,12 @@
 <bin file=split.cpp>
 </bin>
 
-<bin file=processbuilder_t.cpp> 
-<lib name=boost_unit_test_framework-gcc-mt>
-  <use name=boost>
-  <use name=FWCore/ParameterSet>
-</bin>
-
 
 #Initial target definition for cppunit-style testing
 #testRunner has the main, tests suites are registered in the other files. 
 #The executable "testParameterSet" will eventually run all the tests 
 #
+
 
 # This test hangs
 #<bin name=testParameterSet file=testRunner.cpp,processbuilder_t.cppunit.cc,makeprocess_t.cppunit.cc,makepset_t.cppunit.cc,parser_t.cppunit.cc>
