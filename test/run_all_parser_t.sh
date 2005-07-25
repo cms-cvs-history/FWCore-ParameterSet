@@ -1,6 +1,6 @@
 #!/bin/sh 
 
-DIR=../../../../test/slc3_ia32_gcc323
+DIR=../../../../test/`scramv1 arch`
 
 # Pass in name and status
 function die { echo Failed on $1 with status $2 ;  exit $2; }

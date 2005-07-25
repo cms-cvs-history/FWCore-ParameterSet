@@ -17,12 +17,12 @@
 # does not clean them up. The files are not large, and there are not
 # too many of them.
 #
-# $Id: parser_t.sh,v 1.1 2005/05/29 02:29:55 wmtan Exp $
+# $Id: parser_t.sh,v 1.2 2005/07/20 02:54:13 jbk Exp $
 #-----------------------------------------------------------
 #set -o verbose -o xtrace
 
 SCRIPTFILE=$1
-DIR=../../../../test/slc3_ia32_gcc323
+DIR=../../../../test/`scramv1 arch`
 
 if [ -z $1 ]; then
   echo Required argument was not supplied
