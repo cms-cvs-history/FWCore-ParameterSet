@@ -4,7 +4,7 @@
 
 @brief test suit for process building and schedule validation
 
-@version: $Id: processbuilder_t.cpp,v 1.3 2005/06/22 07:19:00 argiro Exp $
+@version: $Id: processbuilder_t.cppunit.cc,v 1.1 2005/06/23 11:57:28 argiro Exp $
 @author : Stefano Argiro
 @date : 2005 06 17
 
@@ -17,7 +17,7 @@
 #include <FWCore/ParameterSet/interface/ParameterSet.h>
 #include <FWCore/ParameterSet/interface/ProcessPSetBuilder.h>
 #include <FWCore/ParameterSet/src/ScheduleValidator.h>
-
+#include "FWCore/Utilities/interface/EDMException.h"
 
 using namespace edm;
 
@@ -32,8 +32,8 @@ class testProcessPSetBuilder: public CppUnit::TestFixture {
   CPPUNIT_TEST(sequenceSubstitutionTest2);
   CPPUNIT_TEST(sequenceSubstitutionTest3);
   CPPUNIT_TEST(multiplePathsTest);
-  CPPUNIT_TEST_EXCEPTION(inconsistentPathTest,std::runtime_error);
-  CPPUNIT_TEST_EXCEPTION(inconsistentMultiplePathTest,std::runtime_error);
+  CPPUNIT_TEST_EXCEPTION(inconsistentPathTest,edm::Exception);
+  CPPUNIT_TEST_EXCEPTION(inconsistentMultiplePathTest,edm::Exception);
 
   CPPUNIT_TEST_SUITE_END();
 

@@ -5,12 +5,13 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cpp,v 1.5 2005/06/23 19:57:23 wmtan Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.1 2005/07/11 13:43:48 viji Exp $
  */
 
 #include <iostream>
 #include <cppunit/extensions/HelperMacros.h>
 
+#include "FWCore/Utilities/interface/EDMException.h"
 #include "FWCore/ParameterSet/interface/Makers.h"
 #include "FWCore/ParameterSet/interface/parse.h"
 #include <iostream>
@@ -18,12 +19,12 @@
 class testmakepset: public CppUnit::TestFixture
 {
 CPPUNIT_TEST_SUITE(testmakepset);
-CPPUNIT_TEST_EXCEPTION(emptyTest,std::runtime_error);
+CPPUNIT_TEST_EXCEPTION(emptyTest,edm::Exception);
 CPPUNIT_TEST(typesTest);
 CPPUNIT_TEST(usingTest);
-CPPUNIT_TEST_EXCEPTION(usingExcTest,std::runtime_error);
+CPPUNIT_TEST_EXCEPTION(usingExcTest,edm::Exception);
 CPPUNIT_TEST(psetRefTest);
-CPPUNIT_TEST_EXCEPTION(psetRefExcTest,std::runtime_error);
+CPPUNIT_TEST_EXCEPTION(psetRefExcTest,edm::Exception);
 CPPUNIT_TEST_SUITE_END();
 public:
   void setUp(){}

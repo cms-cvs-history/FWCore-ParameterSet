@@ -6,7 +6,7 @@
  *  Changed by Viji Sundararajan on 8-Jul-05.
  *  Copyright 2005 __MyCompanyName__. All rights reserved.
  * 
- * $Id: makeprocess_t.cppunit.cc,v 1.1 2005/07/08 16:30:41 viji Exp $
+ * $Id: makeprocess_t.cppunit.cc,v 1.2 2005/07/19 12:11:02 viji Exp $
  */
 
 
@@ -15,6 +15,7 @@
 #include "FWCore/ParameterSet/interface/Makers.h"
 #include "FWCore/ParameterSet/interface/parse.h"
 #include "FWCore/ParameterSet/interface/MakeProcessPSet.h"
+#include "FWCore/Utilities/interface/EDMException.h"
 
 #include <iostream>
 #include <vector>
@@ -29,7 +30,7 @@ CPPUNIT_TEST(usingTest);
 CPPUNIT_TEST(pathTest);
 CPPUNIT_TEST(moduleTest);
 CPPUNIT_TEST(emptyModuleTest);
-CPPUNIT_TEST_EXCEPTION(emptyPsetTest,std::runtime_error);
+CPPUNIT_TEST_EXCEPTION(emptyPsetTest,edm::Exception);
 CPPUNIT_TEST_SUITE_END();
 public:
   void setUp(){}
