@@ -1,6 +1,6 @@
-<environment>
-  <use name=boost>
-  <use name=FWCore/ParameterSet>	
+
+<use name=boost>
+<use name=FWCore/ParameterSet>	
 
 # This test hangs because no argument is passed in.
 #<bin file=parser_t.cpp> 
@@ -39,8 +39,7 @@
 
 
 # This test hangs
-#<bin name=testParameterSet file=testRunner.cpp,processbuilder_t.cppunit.cc,makeprocess_t.cppunit.cc,makepset_t.cppunit.cc,parser_t.cppunit.cc>
-#<use name=cppunit>	
-#</bin>
+<bin name=testParameterSet file=testRunner.cpp,processbuilder_t.cppunit.cc,makeprocess_t.cppunit.cc,makepset_t.cppunit.cc,parser_t.cppunit.cc>
+<use name=cppunit>	
+</bin>
 
-</environment>
