@@ -1,0 +1,23 @@
+process PROD = {
+
+  source = PoolInputService {
+    string fileName = "main.root"
+    int32 maxEvents = 2
+  }
+
+  module out = PoolOutputModule {
+    string fileName = "CumHits.root"
+  }
+
+  module mix = MixingModule {
+    secsource input = PoolInputService  {
+      string fileName = "pileup.root"
+    }
+    string type = "fixed"
+    double average_number = 14.3
+    int32 min_bunch = -5
+    int32 max_bunch = 3
+  }
+
+  path p = { mix, out }
+}

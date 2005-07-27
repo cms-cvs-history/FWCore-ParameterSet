@@ -17,12 +17,12 @@
 # does not clean them up. The files are not large, and there are not
 # too many of them.
 #
-# $Id: parser_t.sh,v 1.2 2005/07/20 02:54:13 jbk Exp $
+# $Id: parser_t.sh,v 1.3 2005/07/25 23:18:58 wmtan Exp $
 #-----------------------------------------------------------
 #set -o verbose -o xtrace
 
 SCRIPTFILE=$1
-DIR=../../../../test/`scramv1 arch`
+#DIR=../../../../test/`scramv1 arch`
 
 if [ -z $1 ]; then
   echo Required argument was not supplied
@@ -49,7 +49,7 @@ rm -f ${OUTPUT_FILE_1} ${OUTPUT_FILE_2}
 
 # First pass: read from SCRIPTFILE, write to OUTPUT_FILE_1
 # OUTPUT_FILE_1 will contain a script in 'canonical form'
-if ! ${DIR}/parser_t < ${SCRIPTFILE} > ${OUTPUT_FILE_1}
+if ! parser_t < ${SCRIPTFILE} > ${OUTPUT_FILE_1}
 then
   echo Failure reading ${SCRIPTFILE}
   exit 1
@@ -57,7 +57,7 @@ fi
 
 # Second pass: read from OUTPUT_FILE_1, write to OUTPUT_FILE_2
 # OUTPUT_FILE_2 should contain the same 'canonical form' as OUTPUT_FILE_1
-if ! ${DIR}/parser_t < ${OUTPUT_FILE_1} > ${OUTPUT_FILE_2}
+if ! parser_t < ${OUTPUT_FILE_1} > ${OUTPUT_FILE_2}
 then
   echo Failure reading ${OUTPUT_FILE_1}
   exit 2
