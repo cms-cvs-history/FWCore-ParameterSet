@@ -6,7 +6,7 @@
  *  Changed by Viji Sundararajan on 8-Jul-05.
  *  Copyright 2005 __MyCompanyName__. All rights reserved.
  * 
- * $Id: makeprocess_t.cppunit.cc,v 1.2 2005/07/19 12:11:02 viji Exp $
+ * $Id: makeprocess_t.cppunit.cc,v 1.3 2005/07/26 08:21:01 argiro Exp $
  */
 
 
@@ -91,8 +91,11 @@ void testmakeprocess::pathTest()
    CPPUNIT_ASSERT(test->pathFragments_.size() == 3);
 
    const edm::ParameterSet& myparams = test->pset_;
-   std::cout << "ParameterSet looks like:\n";
-   std::cout << myparams.toString() << std::endl;
+//    std::cout << "ParameterSet looks like:\n";
+//    std::cout << myparams.toString() << std::endl;
+   std::string rep = myparams.toString();
+   edm::ParameterSet copy(rep);
+   CPPUNIT_ASSERT(copy == myparams);
 }
 
 
@@ -121,8 +124,9 @@ void testmakeprocess::moduleTest()
 
    static const edm::ParameterSet kEmpty;
    const edm::ParameterSet kCone(modulePSet("cones", "Module"));
-   std::cout << kCone.toString() << std::endl;
-   std::cout << test->pset_.getParameter<edm::ParameterSet>("cones").toString() << std::endl;
+   std::ostringstream out;
+   out << kCone.toString() << std::endl;
+   out << test->pset_.getParameter<edm::ParameterSet>("cones").toString() << std::endl;
    
    const edm::ParameterSet kMainInput(modulePSet("main_input","InputService"));
    const edm::ParameterSet kOther(modulePSet("other","OtherInputService"));
@@ -168,8 +172,11 @@ void testmakeprocess::emptyModuleTest()
    CPPUNIT_ASSERT(test->pset_.getParameter<std::string>("process_name") == "test");
 
    const edm::ParameterSet& myparams = test->pset_;
-   std::cout << "ParameterSet looks like:\n";
-   std::cout << myparams.toString() << std::endl;
+//    std::cout << "ParameterSet looks like:\n";
+//    std::cout << myparams.toString() << std::endl;
+   std::string rep = myparams.toString();
+   edm::ParameterSet copy(rep);
+   CPPUNIT_ASSERT(copy == myparams);
 }
 
 void testmakeprocess::emptyPsetTest()

@@ -24,7 +24,7 @@
 
 
 # This test hangs
-<bin name=testParameterSet file=testRunner.cpp,processbuilder_t.cppunit.cc,makeprocess_t.cppunit.cc,makepset_t.cppunit.cc,parser_t.cppunit.cc>
+<bin name=testParameterSet file=testRunner.cpp,processbuilder_t.cppunit.cc,makeprocess_t.cppunit.cc,makepset_t.cppunit.cc,parser_t.cppunit.cc,ps_t.cppunit.cc>
 <use name=cppunit>	
 </bin>
 
