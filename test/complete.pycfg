@@ -1,0 +1,104 @@
+#------------------------------------------------------------
+#
+# $Id:$
+#
+#------------------------------------------------------------
+
+# This is the intended Python translation of the configuration found
+# in the file 'complete.cfg'.
+
+# Each block is represented by a dictionary. The named contents of a
+# block for the name/value pairs of that dictionary.
+
+# The top-level dictionary corresponds to the entirety of the process
+# block. The named entries for this dictionary are:
+#   'procname': a string, the name of the process
+#   'main_input': a string, the name of the 'unnamed' source
+#   'modules': a dictionary, containing all modules
+#   'output_modules': a list, containing the names of all output 
+#         modules; these names can be used to find the module descriptions
+#         in the 'modules' dictionary.
+#   'sequences': a dictionary, containing a mapping of sequence names 
+#         to 'sequence' specifications; a sequence specification is a 
+#         string.         
+#   'paths': a dictionary, containing a mapping of path names to
+#         'path' specifications; a path specification is a string.
+#   'endpath': a string (the endpath specification)
+
+# W expect that 'sequences', 'paths', and 'endpath' do not need
+# manipulation, because the definitions are very context-sensitive. If
+# they do need to be manipulated (and not just carried forward to the
+# output), we probably need a more powerful abstraction.
+
+
+# We use the string representation for every type to make sure we have
+# no troubles with ranges, roundoff, etc.
+
+# For parameters that are vectors, we create a list of strings, with
+# one entry in the list for each entry in the vector. This allows the
+# items to be independently manipulated, if that is needed (as it
+# might be for a vector of strings specifying filenames). We use a
+# list rather than a tuple in case the length of the sequence must be
+# changed (again, as when dealing with a sequence of filenames).
+
+{
+  'procname': 'PROCESSNAME'
+ , 'main_input': 
+   {
+     'classname':     ('string', 'tracked',   'PoolInputService')
+   , 'fileName':      ('string', 'untracked', 'myfile.root')
+   , 'maxEvents':     ('int32',  'untracked', '-1')
+   , 'debugFlag':     ('bool',   'untracked', 'false')
+   , 'debugVebosity': ('uint32', 'untracked', '10')
+   }
+ , 'modules': 
+   {
+     'a': 
+     {
+       'classname': ('string',  'tracked', 'AProducer')
+     , 'a':         ('int32',   'tracked', '32')
+     , 'b':         ('vdouble', 'tracked', [ '1.1', '2.2' ] )
+     , 'c':         ('vstring', 'tracked', [ ])
+     }
+   , 'b': 
+     {
+       'classname': ('string',  'tracked', 'BProducer')
+     , 'a':         ('int32',   'untracked', '14')
+     , 'b':         ('string',  'tracked', 'sillyness ensues')
+     , 'c':         ('PSet',    'tracked', 
+                      {
+                        'a': ('string', 'tracked', 'nested')
+                      }
+                    )
+     }
+   , 'y':
+     {
+       'classname': ('string', 'tracked',   'PoolOutputModule')
+     , 'fileName':  ('string', 'untracked', 'myfile_y.root')
+     , 'maxEvents': ('int32',  'untracked', '91624')
+     }
+
+   , 'z':
+     {
+       'classname': ('string', 'tracked',   'PoolOutputModule')
+     , 'fileName':  ('string', 'untracked', 'myfile_z.root')
+     , 'maxEvents': ('int32',  'untracked', '2112')
+     }
+   }
+ , 'output_modules': [ 'y', 'z' ]
+ , 'sequences':
+   {
+     's1': 'a&b'
+   , 's2': 'b'
+   , 's3': 'a'
+   , 's4': 'a'    
+   } 
+ , 'paths':
+   {
+     'p1': '(a&b),c'
+   , 'p2': 's1,(s3&s2)'
+   }
+ , 'endpath': 'y,z'
+}
+
+
