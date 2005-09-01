@@ -4,7 +4,7 @@
 
 @brief test suit for process building and schedule validation
 
-@version: $Id: processbuilder_t.cppunit.cc,v 1.1 2005/06/23 11:57:28 argiro Exp $
+@version: $Id: processbuilder_t.cppunit.cc,v 1.2 2005/07/26 08:21:00 argiro Exp $
 @author : Stefano Argiro
 @date : 2005 06 17
 
@@ -72,9 +72,9 @@ void testProcessPSetBuilder::trivialPathTest(){
 
   typedef std::vector<std::string> Strs;
 
-  Strs s = (*test).getParameter<std::vector<std::string> >( "p");
-  CPPUNIT_ASSERT( s[0]=="a" );
-  CPPUNIT_ASSERT( b.getDependencies("a")=="");
+  Strs s = (*test).getParameter<std::vector<std::string> >("p");
+  CPPUNIT_ASSERT(s[0]=="a");
+  CPPUNIT_ASSERT(b.getDependencies("a")=="");
 }
 
 void testProcessPSetBuilder::simplePathTest(){
@@ -91,14 +91,14 @@ void testProcessPSetBuilder::simplePathTest(){
 
   typedef std::vector<std::string> Strs;
 
-  Strs s = (*test).getParameter<std::vector<std::string> >( "p");
-  CPPUNIT_ASSERT( s[0]=="a" );
-  CPPUNIT_ASSERT( s[1]=="b" );
-  CPPUNIT_ASSERT( s[2]=="c" );
+  Strs s = (*test).getParameter<std::vector<std::string> >("p");
+  CPPUNIT_ASSERT(s[0]=="a");
+  CPPUNIT_ASSERT(s[1]=="b");
+  CPPUNIT_ASSERT(s[2]=="c");
   
-  CPPUNIT_ASSERT ( b.getDependencies("a")=="");
-  CPPUNIT_ASSERT ( b.getDependencies("b")=="a,");
-  CPPUNIT_ASSERT ( b.getDependencies("c")=="a,b,");
+  CPPUNIT_ASSERT (b.getDependencies("a")=="");
+  CPPUNIT_ASSERT (b.getDependencies("b")=="a,");
+  CPPUNIT_ASSERT (b.getDependencies("c")=="a,b,");
 
 }
 
@@ -123,19 +123,19 @@ void testProcessPSetBuilder:: sequenceSubstitutionTest (){
   typedef std::vector<std::string> Strs;
   
   Strs s = (*test).getParameter<std::vector<std::string> >("path1");
-  CPPUNIT_ASSERT( s[0]=="cone1" );
-  CPPUNIT_ASSERT( s[1]=="cone2" );
-  CPPUNIT_ASSERT( s[2]=="somejet1" );
-  CPPUNIT_ASSERT( s[3]=="somejet2" );
-  CPPUNIT_ASSERT( s[4]=="jtanalyzer" );
+  CPPUNIT_ASSERT(s[0]=="cone1");
+  CPPUNIT_ASSERT(s[1]=="cone2");
+  CPPUNIT_ASSERT(s[2]=="somejet1");
+  CPPUNIT_ASSERT(s[3]=="somejet2");
+  CPPUNIT_ASSERT(s[4]=="jtanalyzer");
  
 
 
-  CPPUNIT_ASSERT ( b.getDependencies("cone1")=="");
-  CPPUNIT_ASSERT ( b.getDependencies("cone2")=="cone1,");
-  CPPUNIT_ASSERT ( b.getDependencies("somejet1")=="cone1,cone2,");
-  CPPUNIT_ASSERT ( b.getDependencies("somejet2")=="cone1,cone2,somejet1,");
-  CPPUNIT_ASSERT ( b.getDependencies("jtanalyzer")=="cone1,cone2,somejet1,somejet2,");
+  CPPUNIT_ASSERT (b.getDependencies("cone1")=="");
+  CPPUNIT_ASSERT (b.getDependencies("cone2")=="cone1,");
+  CPPUNIT_ASSERT (b.getDependencies("somejet1")=="cone1,cone2,");
+  CPPUNIT_ASSERT (b.getDependencies("somejet2")=="cone1,cone2,somejet1,");
+  CPPUNIT_ASSERT (b.getDependencies("jtanalyzer")=="cone1,cone2,somejet1,somejet2,");
 
 }
 
@@ -158,17 +158,17 @@ void testProcessPSetBuilder::nestedSequenceSubstitutionTest(){
   typedef std::vector<std::string> Strs;
   
   Strs s = (*test).getParameter<std::vector<std::string> >("path1");
-  CPPUNIT_ASSERT( s[0]=="a" );
-  CPPUNIT_ASSERT( s[1]=="b" );
-  CPPUNIT_ASSERT( s[2]=="c" );
-  CPPUNIT_ASSERT( s[3]=="d" );
+  CPPUNIT_ASSERT(s[0]=="a");
+  CPPUNIT_ASSERT(s[1]=="b");
+  CPPUNIT_ASSERT(s[2]=="c");
+  CPPUNIT_ASSERT(s[3]=="d");
  
 
 
-  CPPUNIT_ASSERT ( b.getDependencies("a")=="");
-  CPPUNIT_ASSERT ( b.getDependencies("b")=="a,");
-  CPPUNIT_ASSERT ( b.getDependencies("c")=="a,b,");
-  CPPUNIT_ASSERT ( b.getDependencies("d")=="a,b,c,");
+  CPPUNIT_ASSERT (b.getDependencies("a")=="");
+  CPPUNIT_ASSERT (b.getDependencies("b")=="a,");
+  CPPUNIT_ASSERT (b.getDependencies("c")=="a,b,");
+  CPPUNIT_ASSERT (b.getDependencies("d")=="a,b,c,");
 
 
 }
@@ -195,20 +195,20 @@ void testProcessPSetBuilder::sequenceSubstitutionTest2(){
   typedef std::vector<std::string> Strs;
   
   Strs s = (*test).getParameter<std::vector<std::string> >("path1");
-  CPPUNIT_ASSERT( s[0]=="cone1" );
-  CPPUNIT_ASSERT( s[1]=="cone2" );
-  CPPUNIT_ASSERT( s[2]=="cone3" );
-  CPPUNIT_ASSERT( s[3]=="somejet1" );
-  CPPUNIT_ASSERT( s[4]=="somejet2" );
-  CPPUNIT_ASSERT( s[5]=="jtanalyzer" );
+  CPPUNIT_ASSERT(s[0]=="cone1");
+  CPPUNIT_ASSERT(s[1]=="cone2");
+  CPPUNIT_ASSERT(s[2]=="cone3");
+  CPPUNIT_ASSERT(s[3]=="somejet1");
+  CPPUNIT_ASSERT(s[4]=="somejet2");
+  CPPUNIT_ASSERT(s[5]=="jtanalyzer");
  
 
-  CPPUNIT_ASSERT ( b.getDependencies("cone1")=="");
-  CPPUNIT_ASSERT ( b.getDependencies("cone2")=="cone1,");
-  CPPUNIT_ASSERT ( b.getDependencies("cone3")=="cone1,cone2,");
-  CPPUNIT_ASSERT ( b.getDependencies("somejet1")=="cone1,cone2,cone3,");
-  CPPUNIT_ASSERT ( b.getDependencies("somejet2")=="cone1,cone2,cone3,somejet1,");
-  CPPUNIT_ASSERT ( b.getDependencies("jtanalyzer")=="cone1,cone2,cone3,somejet1,somejet2,"); 
+  CPPUNIT_ASSERT (b.getDependencies("cone1")=="");
+  CPPUNIT_ASSERT (b.getDependencies("cone2")=="cone1,");
+  CPPUNIT_ASSERT (b.getDependencies("cone3")=="cone1,cone2,");
+  CPPUNIT_ASSERT (b.getDependencies("somejet1")=="cone1,cone2,cone3,");
+  CPPUNIT_ASSERT (b.getDependencies("somejet2")=="cone1,cone2,cone3,somejet1,");
+  CPPUNIT_ASSERT (b.getDependencies("jtanalyzer")=="cone1,cone2,cone3,somejet1,somejet2,"); 
 }
 
 void testProcessPSetBuilder::sequenceSubstitutionTest3(){
@@ -240,35 +240,35 @@ void testProcessPSetBuilder::sequenceSubstitutionTest3(){
   typedef std::vector<std::string> Strs;
   
   Strs s = (*test).getParameter<std::vector<std::string> >("path1");
-  CPPUNIT_ASSERT( s[0]=="a" );
-  CPPUNIT_ASSERT( s[1]=="b" );
-  CPPUNIT_ASSERT( s[2]=="c" );
-  CPPUNIT_ASSERT( s[3]=="aaa" );
-  CPPUNIT_ASSERT( s[4]=="bbb" );
-  CPPUNIT_ASSERT( s[5]=="ccc" );
-  CPPUNIT_ASSERT( s[6]=="ddd" );
-  CPPUNIT_ASSERT( s[7]=="eee" );
-  CPPUNIT_ASSERT( s[8]=="aa" );
-  CPPUNIT_ASSERT( s[9]=="bb" );
-  CPPUNIT_ASSERT( s[10]=="cc" );
-  CPPUNIT_ASSERT( s[11]=="dd" );
-  CPPUNIT_ASSERT( s[12]=="last" );
+  CPPUNIT_ASSERT(s[0]=="a");
+  CPPUNIT_ASSERT(s[1]=="b");
+  CPPUNIT_ASSERT(s[2]=="c");
+  CPPUNIT_ASSERT(s[3]=="aaa");
+  CPPUNIT_ASSERT(s[4]=="bbb");
+  CPPUNIT_ASSERT(s[5]=="ccc");
+  CPPUNIT_ASSERT(s[6]=="ddd");
+  CPPUNIT_ASSERT(s[7]=="eee");
+  CPPUNIT_ASSERT(s[8]=="aa");
+  CPPUNIT_ASSERT(s[9]=="bb");
+  CPPUNIT_ASSERT(s[10]=="cc");
+  CPPUNIT_ASSERT(s[11]=="dd");
+  CPPUNIT_ASSERT(s[12]=="last");
 
   
 
-  CPPUNIT_ASSERT ( b.getDependencies("a")=="");
-  CPPUNIT_ASSERT ( b.getDependencies("b")=="a,");
-  CPPUNIT_ASSERT ( b.getDependencies("c")=="a,b,");
-  CPPUNIT_ASSERT ( b.getDependencies("aaa")=="a,b,c,");
-  CPPUNIT_ASSERT ( b.getDependencies("bbb")=="a,aaa,b,c,");
-  CPPUNIT_ASSERT ( b.getDependencies("ccc")=="a,aaa,b,bbb,c,");
-  CPPUNIT_ASSERT ( b.getDependencies("ddd")=="a,aaa,b,bbb,c,ccc,");
-  CPPUNIT_ASSERT ( b.getDependencies("eee")=="a,aaa,b,bbb,c,ccc,ddd,");
-  CPPUNIT_ASSERT ( b.getDependencies("aa")=="a,aaa,b,bbb,c,ccc,ddd,eee,");
-  CPPUNIT_ASSERT ( b.getDependencies("bb")=="a,aa,aaa,b,bbb,c,ccc,ddd,eee,");
-  CPPUNIT_ASSERT ( b.getDependencies("cc")=="a,aa,aaa,b,bb,bbb,c,ccc,ddd,eee,");
-  CPPUNIT_ASSERT ( b.getDependencies("dd")=="a,aa,aaa,b,bb,bbb,c,cc,ccc,ddd,eee,");
-  CPPUNIT_ASSERT ( b.getDependencies("last")=="a,aa,aaa,b,bb,bbb,c,cc,ccc,dd,ddd,eee,");
+  CPPUNIT_ASSERT (b.getDependencies("a")=="");
+  CPPUNIT_ASSERT (b.getDependencies("b")=="a,");
+  CPPUNIT_ASSERT (b.getDependencies("c")=="a,b,");
+  CPPUNIT_ASSERT (b.getDependencies("aaa")=="a,b,c,");
+  CPPUNIT_ASSERT (b.getDependencies("bbb")=="a,aaa,b,c,");
+  CPPUNIT_ASSERT (b.getDependencies("ccc")=="a,aaa,b,bbb,c,");
+  CPPUNIT_ASSERT (b.getDependencies("ddd")=="a,aaa,b,bbb,c,ccc,");
+  CPPUNIT_ASSERT (b.getDependencies("eee")=="a,aaa,b,bbb,c,ccc,ddd,");
+  CPPUNIT_ASSERT (b.getDependencies("aa")=="a,aaa,b,bbb,c,ccc,ddd,eee,");
+  CPPUNIT_ASSERT (b.getDependencies("bb")=="a,aa,aaa,b,bbb,c,ccc,ddd,eee,");
+  CPPUNIT_ASSERT (b.getDependencies("cc")=="a,aa,aaa,b,bb,bbb,c,ccc,ddd,eee,");
+  CPPUNIT_ASSERT (b.getDependencies("dd")=="a,aa,aaa,b,bb,bbb,c,cc,ccc,ddd,eee,");
+  CPPUNIT_ASSERT (b.getDependencies("last")=="a,aa,aaa,b,bb,bbb,c,cc,ccc,dd,ddd,eee,");
 
 }
 
@@ -296,25 +296,25 @@ void testProcessPSetBuilder::multiplePathsTest(){
   typedef std::vector<std::string> Strs;
   
   Strs s = (*test).getParameter<std::vector<std::string> >("path1");
-  CPPUNIT_ASSERT( s[0]=="cone1" );
-  CPPUNIT_ASSERT( s[1]=="cone2" );
-  CPPUNIT_ASSERT( s[2]=="cone3" );
-  CPPUNIT_ASSERT( s[3]=="jtanalyzer" );
+  CPPUNIT_ASSERT(s[0]=="cone1");
+  CPPUNIT_ASSERT(s[1]=="cone2");
+  CPPUNIT_ASSERT(s[2]=="cone3");
+  CPPUNIT_ASSERT(s[3]=="jtanalyzer");
 
 
-  CPPUNIT_ASSERT ( b.getDependencies("cone1")=="");
-  CPPUNIT_ASSERT ( b.getDependencies("cone2")=="cone1,");
-  CPPUNIT_ASSERT ( b.getDependencies("cone3")=="cone1,cone2,");
-  CPPUNIT_ASSERT ( b.getDependencies("jtanalyzer")=="cone1,cone2,cone3,");
+  CPPUNIT_ASSERT (b.getDependencies("cone1")=="");
+  CPPUNIT_ASSERT (b.getDependencies("cone2")=="cone1,");
+  CPPUNIT_ASSERT (b.getDependencies("cone3")=="cone1,cone2,");
+  CPPUNIT_ASSERT (b.getDependencies("jtanalyzer")=="cone1,cone2,cone3,");
   
   s = (*test).getParameter<std::vector<std::string> >("path2");
-  CPPUNIT_ASSERT( s[0]=="somejet1" );
-  CPPUNIT_ASSERT( s[1]=="somejet2" );
-  CPPUNIT_ASSERT( s[2]=="anotherjtanalyzer" );
+  CPPUNIT_ASSERT(s[0]=="somejet1");
+  CPPUNIT_ASSERT(s[1]=="somejet2");
+  CPPUNIT_ASSERT(s[2]=="anotherjtanalyzer");
  
-  CPPUNIT_ASSERT ( b.getDependencies("somejet1")=="");
-  CPPUNIT_ASSERT ( b.getDependencies("somejet2")=="somejet1,");
-  CPPUNIT_ASSERT ( b.getDependencies("anotherjtanalyzer")=="somejet1,somejet2,");
+  CPPUNIT_ASSERT (b.getDependencies("somejet1")=="");
+  CPPUNIT_ASSERT (b.getDependencies("somejet2")=="somejet1,");
+  CPPUNIT_ASSERT (b.getDependencies("anotherjtanalyzer")=="somejet1,somejet2,");
 
 }
 

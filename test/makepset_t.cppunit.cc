@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.2 2005/07/26 08:21:01 argiro Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.3 2005/07/27 22:28:57 paterno Exp $
  */
 
 #include <iostream>
@@ -51,12 +51,12 @@ CPPUNIT_TEST_SUITE_REGISTRATION(testmakepset);
 void testmakepset::secsourceTest()
 {
   try { this->secsourceAux(); }
-  catch ( cms::Exception& x ) { 
+  catch (cms::Exception& x) { 
     std::cerr << "testmakepset::secsourceTest() caught a cms::Exception\n";
     std::cerr << x.what() << '\n';
     throw;
   }
-  catch ( ... ) {
+  catch (...) {
     std::cerr << "testmakepset::secsourceTest() caught an unidentified exception\n";
     throw;
   }
@@ -89,14 +89,14 @@ void testmakepset::secsourceAux()
 
   // Create the ParameterSet object from this configuration string.
   boost::shared_ptr<edm::ParameterSet> ps = edm::makeProcessPSet(config);
-  CPPUNIT_ASSERT(0 != ps.get() );
+  CPPUNIT_ASSERT(0 != ps.get());
 
   // Make sure this ParameterSet object has the right contents
   edm::ParameterSet mixingModuleParams = ps->getParameter<edm::ParameterSet>("mix");
   edm::ParameterSet secondarySourceParams = mixingModuleParams.getParameter<edm::ParameterSet>("input");
-  CPPUNIT_ASSERT( secondarySourceParams.getParameter<std::string>("module_type") == "PoolInputService"); 
-  CPPUNIT_ASSERT( secondarySourceParams.getParameter<std::string>("module_label") == "input");
-  CPPUNIT_ASSERT( secondarySourceParams.getParameter<std::string>("fileName") == "pileup.root" );
+  CPPUNIT_ASSERT(secondarySourceParams.getParameter<std::string>("module_type") == "PoolInputService"); 
+  CPPUNIT_ASSERT(secondarySourceParams.getParameter<std::string>("module_label") == "input");
+  CPPUNIT_ASSERT(secondarySourceParams.getParameter<std::string>("fileName") == "pileup.root");
 }
                                                                                                                    
 void testmakepset::emptyTest()
