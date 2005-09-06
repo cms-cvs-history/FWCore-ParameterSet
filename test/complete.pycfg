@@ -1,6 +1,6 @@
 #------------------------------------------------------------
 #
-# $Id:$
+# $Id: complete.pycfg,v 1.1 2005/09/01 13:51:32 paterno Exp $
 #
 #------------------------------------------------------------
 
@@ -41,12 +41,26 @@
 # list rather than a tuple in case the length of the sequence must be
 # changed (again, as when dealing with a sequence of filenames).
 
+# For parameters that are strings (including the entries in a tuple
+# representing a vector of strings), we write to the Python data
+# format the same sort of quote as is carried in the parsed
+# configuration file. This is in anticipation of the possible need (in
+# the configuration language parser) for handling differently singly-
+# and doubly-quoted strings.
+
+# Note that the 'classname' for entries corresponding to the various
+# 'module'-like entities is peculiar in the following fashion. Unlike
+# all other parameters of type 'string' (or 'vstring'), a 'classname'
+# entry has no quotes around the value; this is because of the way the
+# module name appears in the configuration grammar.
+
+
 {
   'procname': 'PROCESSNAME'
  , 'main_input': 
    {
      'classname':     ('string', 'tracked',   'PoolInputService')
-   , 'fileName':      ('string', 'untracked', 'myfile.root')
+   , 'fileName':      ('string', 'untracked', '\"no_real_file_here\"')
    , 'maxEvents':     ('int32',  'untracked', '-1')
    , 'debugFlag':     ('bool',   'untracked', 'false')
    , 'debugVebosity': ('uint32', 'untracked', '10')
@@ -59,29 +73,30 @@
      , 'a':         ('int32',   'tracked', '32')
      , 'b':         ('vdouble', 'tracked', [ '1.1', '2.2' ] )
      , 'c':         ('vstring', 'tracked', [ ])
+     , 'd':         ('vstring', 'tracked', ['\'boo\'', '\"yah\"'])
      }
    , 'b': 
      {
        'classname': ('string',  'tracked', 'BProducer')
      , 'a':         ('int32',   'untracked', '14')
-     , 'b':         ('string',  'tracked', 'sillyness ensues')
+     , 'b':         ('string',  'tracked', '\"sillyness ensues\"')
      , 'c':         ('PSet',    'tracked', 
                       {
-                        'a': ('string', 'tracked', 'nested')
+                        'a': ('string', 'tracked', '\'nested\'')
                       }
                     )
      }
    , 'y':
      {
        'classname': ('string', 'tracked',   'PoolOutputModule')
-     , 'fileName':  ('string', 'untracked', 'myfile_y.root')
+     , 'fileName':  ('string', 'untracked', '\"myfile_y.root\"')
      , 'maxEvents': ('int32',  'untracked', '91624')
      }
 
    , 'z':
      {
        'classname': ('string', 'tracked',   'PoolOutputModule')
-     , 'fileName':  ('string', 'untracked', 'myfile_z.root')
+     , 'fileName':  ('string', 'untracked', '\"myfile_z.root\"')
      , 'maxEvents': ('int32',  'untracked', '2112')
      }
    }
