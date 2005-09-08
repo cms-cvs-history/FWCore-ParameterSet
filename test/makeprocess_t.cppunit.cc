@@ -6,7 +6,7 @@
  *  Changed by Viji Sundararajan on 8-Jul-05.
  *  Copyright 2005 __MyCompanyName__. All rights reserved.
  * 
- * $Id: makeprocess_t.cppunit.cc,v 1.3 2005/07/26 08:21:01 argiro Exp $
+ * $Id: makeprocess_t.cppunit.cc,v 1.4 2005/08/19 13:39:04 paterno Exp $
  */
 
 
@@ -29,6 +29,7 @@ CPPUNIT_TEST(simpleProcessTest);
 CPPUNIT_TEST(usingTest);
 CPPUNIT_TEST(pathTest);
 CPPUNIT_TEST(moduleTest);
+CPPUNIT_TEST(serviceTest);
 CPPUNIT_TEST(emptyModuleTest);
 CPPUNIT_TEST_EXCEPTION(emptyPsetTest,edm::Exception);
 CPPUNIT_TEST_SUITE_END();
@@ -39,6 +40,7 @@ public:
   void usingTest();
   void pathTest();
   void moduleTest();
+  void serviceTest();
   void emptyModuleTest();
   void emptyPsetTest();
 };
@@ -158,6 +160,21 @@ void testmakeprocess::moduleTest()
    CPPUNIT_ASSERT(kLabelRetriever == test->pset_.getParameter<edm::ParameterSet>("LabelRetriever@label"));
 }
 
+void testmakeprocess::serviceTest()
+{
+   const char* kTest ="process test = { "
+   "service = XService{ int32 s=1 }\n"
+   "service = YService{ int32 s=1 }\n"
+   "} ";
+   boost::shared_ptr<edm::pset::NodePtrList> nodeList = edm::pset::parse(kTest);
+   CPPUNIT_ASSERT(0 != nodeList.get());
+   
+   boost::shared_ptr<edm::ProcessDesc> test = edm::pset::makeProcess(nodeList);
+
+   CPPUNIT_ASSERT( test->services_.size() == 2);
+   CPPUNIT_ASSERT("XService" == test->services_[0].getParameter<std::string>("service_type"));
+   CPPUNIT_ASSERT("YService" == test->services_[1].getParameter<std::string>("service_type"));
+}
 void testmakeprocess::emptyModuleTest()
 {
    const char* kTest ="process test = {\n"
