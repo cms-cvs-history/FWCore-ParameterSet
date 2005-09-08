@@ -8,6 +8,17 @@
 #  <use name=FWCore/ParameterSet>
 #</bin>
 
+#<bin file=pset_dump.cpp> 
+#  <use name=boost>
+#  <use name=FWCore/ParameterSet>
+#</bin>
+
+
+#<bin file=makepy.cpp> 
+#  <use name=boost>
+#  <use name=FWCore/ParameterSet>
+#</bin>
+
 <bin file=string_parser_t.cpp> 
   <use name=boost>
   <use name=FWCore/ParameterSet>
