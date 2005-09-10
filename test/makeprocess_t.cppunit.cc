@@ -6,7 +6,7 @@
  *  Changed by Viji Sundararajan on 8-Jul-05.
  *  Copyright 2005 __MyCompanyName__. All rights reserved.
  * 
- * $Id: makeprocess_t.cppunit.cc,v 1.4 2005/08/19 13:39:04 paterno Exp $
+ * $Id: makeprocess_t.cppunit.cc,v 1.5 2005/09/08 07:16:21 chrjones Exp $
  */
 
 
@@ -171,7 +171,7 @@ void testmakeprocess::serviceTest()
    
    boost::shared_ptr<edm::ProcessDesc> test = edm::pset::makeProcess(nodeList);
 
-   CPPUNIT_ASSERT( test->services_.size() == 2);
+   CPPUNIT_ASSERT(test->services_.size() == 2);
    CPPUNIT_ASSERT("XService" == test->services_[0].getParameter<std::string>("service_type"));
    CPPUNIT_ASSERT("YService" == test->services_[1].getParameter<std::string>("service_type"));
 }
