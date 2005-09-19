@@ -6,7 +6,7 @@
  *  Changed by Viji Sundararajan on 8-Jul-05.
  *  Copyright 2005 __MyCompanyName__. All rights reserved.
  * 
- * $Id: makeprocess_t.cppunit.cc,v 1.5 2005/09/08 07:16:21 chrjones Exp $
+ * $Id: makeprocess_t.cppunit.cc,v 1.6 2005/09/10 02:08:47 wmtan Exp $
  */
 
 
@@ -56,7 +56,7 @@ void testmakeprocess::simpleProcessTest()
    
    boost::shared_ptr<edm::ProcessDesc> test = edm::pset::makeProcess(nodeList);
 
-   CPPUNIT_ASSERT(test->pset_.getParameter<std::string>("process_name") == "test");   
+   CPPUNIT_ASSERT(test->pset_.getParameter<std::string>("@process_name") == "test");   
 }
 
 void testmakeprocess::usingTest()
@@ -89,7 +89,7 @@ void testmakeprocess::pathTest()
    
    boost::shared_ptr<edm::ProcessDesc> test = edm::pset::makeProcess(nodeList);
    
-   CPPUNIT_ASSERT(test->pset_.getParameter<std::string>("process_name") == "test");
+   CPPUNIT_ASSERT(test->pset_.getParameter<std::string>("@process_name") == "test");
    CPPUNIT_ASSERT(test->pathFragments_.size() == 3);
 
    const edm::ParameterSet& myparams = test->pset_;
@@ -104,8 +104,8 @@ void testmakeprocess::pathTest()
 edm::ParameterSet modulePSet(const std::string& iLabel, const std::string& iType) {
    edm::ParameterSet temp;
    temp.insert(true , "s", edm::Entry(1,true));
-   temp.insert(true, "module_label", edm::Entry(iLabel, true));
-   temp.insert(true, "module_type", edm::Entry(iType, true));
+   temp.insert(true, "@module_label", edm::Entry(iLabel, true));
+   temp.insert(true, "@module_type", edm::Entry(iType, true));
    return temp;
 }
 void testmakeprocess::moduleTest()
@@ -130,7 +130,7 @@ void testmakeprocess::moduleTest()
    out << kCone.toString() << std::endl;
    out << test->pset_.getParameter<edm::ParameterSet>("cones").toString() << std::endl;
    
-   const edm::ParameterSet kMainInput(modulePSet("main_input","InputService"));
+   const edm::ParameterSet kMainInput(modulePSet("@main_input","InputService"));
    const edm::ParameterSet kOther(modulePSet("other","OtherInputService"));
    
    const edm::ParameterSet kNoLabelModule(modulePSet("", "NoLabelModule"));
@@ -141,8 +141,8 @@ void testmakeprocess::moduleTest()
    CPPUNIT_ASSERT(kEmpty != (test->pset_.getParameter<edm::ParameterSet>("cones")));
    CPPUNIT_ASSERT(kCone == test->pset_.getParameter<edm::ParameterSet>("cones"));
    
-   CPPUNIT_ASSERT(kEmpty != (test->pset_.getParameter<edm::ParameterSet>("main_input")));
-   CPPUNIT_ASSERT(kMainInput == (test->pset_.getParameter<edm::ParameterSet>("main_input")));
+   CPPUNIT_ASSERT(kEmpty != (test->pset_.getParameter<edm::ParameterSet>("@main_input")));
+   CPPUNIT_ASSERT(kMainInput == (test->pset_.getParameter<edm::ParameterSet>("@main_input")));
 
    CPPUNIT_ASSERT(kEmpty != (test->pset_.getParameter<edm::ParameterSet>("other")));
    CPPUNIT_ASSERT(kOther == (test->pset_.getParameter<edm::ParameterSet>("other")));
@@ -172,8 +172,8 @@ void testmakeprocess::serviceTest()
    boost::shared_ptr<edm::ProcessDesc> test = edm::pset::makeProcess(nodeList);
 
    CPPUNIT_ASSERT(test->services_.size() == 2);
-   CPPUNIT_ASSERT("XService" == test->services_[0].getParameter<std::string>("service_type"));
-   CPPUNIT_ASSERT("YService" == test->services_[1].getParameter<std::string>("service_type"));
+   CPPUNIT_ASSERT("XService" == test->services_[0].getParameter<std::string>("@service_type"));
+   CPPUNIT_ASSERT("YService" == test->services_[1].getParameter<std::string>("@service_type"));
 }
 void testmakeprocess::emptyModuleTest()
 {
@@ -186,7 +186,7 @@ void testmakeprocess::emptyModuleTest()
    
    boost::shared_ptr<edm::ProcessDesc> test = edm::pset::makeProcess(nodeList);
    
-   CPPUNIT_ASSERT(test->pset_.getParameter<std::string>("process_name") == "test");
+   CPPUNIT_ASSERT(test->pset_.getParameter<std::string>("@process_name") == "test");
 
    const edm::ParameterSet& myparams = test->pset_;
 //    std::cout << "ParameterSet looks like:\n";

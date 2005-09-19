@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.3 2005/07/27 22:28:57 paterno Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.4 2005/09/01 03:39:32 wmtan Exp $
  */
 
 #include <iostream>
@@ -94,8 +94,8 @@ void testmakepset::secsourceAux()
   // Make sure this ParameterSet object has the right contents
   edm::ParameterSet mixingModuleParams = ps->getParameter<edm::ParameterSet>("mix");
   edm::ParameterSet secondarySourceParams = mixingModuleParams.getParameter<edm::ParameterSet>("input");
-  CPPUNIT_ASSERT(secondarySourceParams.getParameter<std::string>("module_type") == "PoolInputService"); 
-  CPPUNIT_ASSERT(secondarySourceParams.getParameter<std::string>("module_label") == "input");
+  CPPUNIT_ASSERT(secondarySourceParams.getParameter<std::string>("@module_type") == "PoolInputService"); 
+  CPPUNIT_ASSERT(secondarySourceParams.getParameter<std::string>("@module_label") == "input");
   CPPUNIT_ASSERT(secondarySourceParams.getParameter<std::string>("fileName") == "pileup.root");
 }
                                                                                                                    
