@@ -1,6 +1,6 @@
 process PROD = {
 
-  source = PoolInputService {
+  source = PoolSource {
     string fileName = "main.root"
     int32 maxEvents = 2
   }
@@ -10,7 +10,7 @@ process PROD = {
   }
 
   module mix = MixingModule {
-    secsource input = PoolInputService  {
+    secsource input = PoolSource  {
       string fileName = "pileup.root"
     }
     string type = "fixed"

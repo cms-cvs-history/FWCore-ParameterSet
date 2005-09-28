@@ -1,6 +1,6 @@
 #------------------------------------------------------------
 #
-# $Id: complete.pycfg,v 1.1 2005/09/01 13:51:32 paterno Exp $
+# $Id: complete.pycfg,v 1.2 2005/09/06 16:51:58 paterno Exp $
 #
 #------------------------------------------------------------
 
@@ -59,7 +59,7 @@
   'procname': 'PROCESSNAME'
  , 'main_input': 
    {
-     'classname':     ('string', 'tracked',   'PoolInputService')
+     'classname':     ('string', 'tracked',   'PoolSource')
    , 'fileName':      ('string', 'untracked', '\"no_real_file_here\"')
    , 'maxEvents':     ('int32',  'untracked', '-1')
    , 'debugFlag':     ('bool',   'untracked', 'false')

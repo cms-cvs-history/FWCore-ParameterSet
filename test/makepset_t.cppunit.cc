@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.4 2005/09/01 03:39:32 wmtan Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.5 2005/09/19 08:18:13 chrjones Exp $
  */
 
 #include <iostream>
@@ -66,7 +66,7 @@ void testmakepset::secsourceAux()
 {
   const char* kTest = 
     "process PROD = {"
-    "  source = PoolInputService {"
+    "  source = PoolSource {"
     "    string fileName = \"main.root\""
     "    int32 maxEvents = 2"
     "  }"
@@ -74,7 +74,7 @@ void testmakepset::secsourceAux()
     "    string fileName = \"CumHits.root\""
     "  }"
     "  module mix = MixingModule {"
-    "    secsource input = PoolInputService  {"
+    "    secsource input = PoolSource  {"
     "      string fileName = \"pileup.root\""
     "    }"
     "    string type = \"fixed\""
@@ -94,7 +94,7 @@ void testmakepset::secsourceAux()
   // Make sure this ParameterSet object has the right contents
   edm::ParameterSet mixingModuleParams = ps->getParameter<edm::ParameterSet>("mix");
   edm::ParameterSet secondarySourceParams = mixingModuleParams.getParameter<edm::ParameterSet>("input");
-  CPPUNIT_ASSERT(secondarySourceParams.getParameter<std::string>("@module_type") == "PoolInputService"); 
+  CPPUNIT_ASSERT(secondarySourceParams.getParameter<std::string>("@module_type") == "PoolSource"); 
   CPPUNIT_ASSERT(secondarySourceParams.getParameter<std::string>("@module_label") == "input");
   CPPUNIT_ASSERT(secondarySourceParams.getParameter<std::string>("fileName") == "pileup.root");
 }
