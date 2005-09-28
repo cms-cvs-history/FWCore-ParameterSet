@@ -6,7 +6,7 @@
  *  Changed by Viji Sundararajan on 8-Jul-05.
  *  Copyright 2005 __MyCompanyName__. All rights reserved.
  * 
- * $Id: makeprocess_t.cppunit.cc,v 1.6 2005/09/10 02:08:47 wmtan Exp $
+ * $Id: makeprocess_t.cppunit.cc,v 1.7 2005/09/19 08:18:13 chrjones Exp $
  */
 
 
@@ -114,8 +114,8 @@ void testmakeprocess::moduleTest()
    "module cones = Module{ int32 s=1 }\n" //NOTE: now requires curly braces
    "es_module = NoLabelModule{ int32 s=1 }\n"
    "es_module labeled= LabelModule{ int32 s=1 }\n"
-   "source = InputService{int32 s=1}\n"
-   "source other = OtherInputService{int32 s=1}\n"
+   "source = InputSource{int32 s=1}\n"
+   "source other = OtherInputSource{int32 s=1}\n"
    "es_source = NoLabelRetriever{int32 s=1}\n"
    "es_source label = LabelRetriever{int32 s=1}\n"
    "} ";
@@ -130,8 +130,8 @@ void testmakeprocess::moduleTest()
    out << kCone.toString() << std::endl;
    out << test->pset_.getParameter<edm::ParameterSet>("cones").toString() << std::endl;
    
-   const edm::ParameterSet kMainInput(modulePSet("@main_input","InputService"));
-   const edm::ParameterSet kOther(modulePSet("other","OtherInputService"));
+   const edm::ParameterSet kMainInput(modulePSet("@main_input","InputSource"));
+   const edm::ParameterSet kOther(modulePSet("other","OtherInputSource"));
    
    const edm::ParameterSet kNoLabelModule(modulePSet("", "NoLabelModule"));
    const edm::ParameterSet kLabelModule(modulePSet("labeled", "LabelModule"));
