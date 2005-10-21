@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.5 2005/09/19 08:18:13 chrjones Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.6 2005/09/28 04:29:53 wmtan Exp $
  */
 
 #include <iostream>
@@ -29,6 +29,7 @@ CPPUNIT_TEST_EXCEPTION(usingExcTest,edm::Exception);
 CPPUNIT_TEST(psetRefTest);
 CPPUNIT_TEST_EXCEPTION(psetRefExcTest,edm::Exception);
 CPPUNIT_TEST(secsourceTest);
+CPPUNIT_TEST(usingBlockTest);
 CPPUNIT_TEST_SUITE_END();
 public:
   void setUp(){}
@@ -41,8 +42,10 @@ public:
   void psetRefTest();
   void psetRefExcTest();
   void secsourceTest();
+  void usingBlockTest();
 private:
   void secsourceAux();
+  void usingBlockAux();
 };
                                                                                                                    
 ///registration of the test so that the runner can find it
@@ -67,17 +70,17 @@ void testmakepset::secsourceAux()
   const char* kTest = 
     "process PROD = {"
     "  source = PoolSource {"
-    "    string fileName = \"main.root\""
+    "    string fileName = 'main.root'"
     "    int32 maxEvents = 2"
     "  }"
     "  module out = PoolOutputModule {"
-    "    string fileName = \"CumHits.root\""
+    "    string fileName = 'CumHits.root'"
     "  }"
     "  module mix = MixingModule {"
     "    secsource input = PoolSource  {"
-    "      string fileName = \"pileup.root\""
+    "      string fileName = 'pileup.root'"
     "    }"
-    "    string type = \"fixed\""
+    "    string type = 'fixed'"
     "    double average_number = 14.3"
     "    int32 min_bunch = -5"
     "    int32 max_bunch = 3"
@@ -97,6 +100,63 @@ void testmakepset::secsourceAux()
   CPPUNIT_ASSERT(secondarySourceParams.getParameter<std::string>("@module_type") == "PoolSource"); 
   CPPUNIT_ASSERT(secondarySourceParams.getParameter<std::string>("@module_label") == "input");
   CPPUNIT_ASSERT(secondarySourceParams.getParameter<std::string>("fileName") == "pileup.root");
+}
+
+void testmakepset::usingBlockTest()
+{
+  try { this->usingBlockAux(); }
+  catch (cms::Exception& x) { 
+    std::cerr << "testmakepset::usingBlockTest() caught a cms::Exception\n";
+    std::cerr << x.what() << '\n';
+    throw;
+  }
+  catch (...) {
+    std::cerr << "testmakepset::usingBlockTest() caught an unidentified exception\n";
+    throw;
+  }
+}
+
+void testmakepset::usingBlockAux()
+{
+  const char* kTest = 
+    "process PROD = {"
+    "  source = PoolSource {"
+    "    string fileName = 'main.root'"
+    "    int32 maxEvents = 2"
+    "  }"
+    "  block b = {"
+    "    double r = 1.5"
+    "    string s = 'original'"
+    "  }"
+    "  module m1 = Class1 {"
+    "    using b"
+    "    int32 i = 1"
+    "  }"
+    "  module m2 = Class2 {"
+    "    int32 i = 2"
+    "    int32 j = 3"
+    "    using b"
+    "  }"
+    "}";
+
+  std::string config(kTest);
+
+  // Create the ParameterSet object from this configuration string.
+  boost::shared_ptr<edm::ParameterSet> ps = edm::makeProcessPSet(config);
+  CPPUNIT_ASSERT(0 != ps.get());
+
+  // Make sure this ParameterSet object has the right contents
+  edm::ParameterSet m1Params = ps->getParameter<edm::ParameterSet>("m1");
+  edm::ParameterSet m2Params = ps->getParameter<edm::ParameterSet>("m2");
+  CPPUNIT_ASSERT(m1Params.getParameter<int>("i") == 1);
+  CPPUNIT_ASSERT(m2Params.getParameter<int>("i") == 2);
+  CPPUNIT_ASSERT(m2Params.getParameter<int>("j") == 3);
+
+  CPPUNIT_ASSERT(m1Params.getParameter<std::string>("s") == "original");
+  CPPUNIT_ASSERT(m2Params.getParameter<std::string>("s") == "original");
+
+  CPPUNIT_ASSERT(m1Params.getParameter<double>("r") == 1.5);
+  CPPUNIT_ASSERT(m2Params.getParameter<double>("r") == 1.5);
 }
                                                                                                                    
 void testmakepset::emptyTest()
