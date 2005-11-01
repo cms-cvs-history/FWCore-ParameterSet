@@ -17,7 +17,7 @@
 # does not clean them up. The files are not large, and there are not
 # too many of them.
 #
-# $Id: parser_t.sh,v 1.3 2005/07/25 23:18:58 wmtan Exp $
+# $Id: parser_t.sh,v 1.4 2005/07/27 22:28:57 paterno Exp $
 #-----------------------------------------------------------
 #set -o verbose -o xtrace
 
@@ -49,7 +49,8 @@ rm -f ${OUTPUT_FILE_1} ${OUTPUT_FILE_2}
 
 # First pass: read from SCRIPTFILE, write to OUTPUT_FILE_1
 # OUTPUT_FILE_1 will contain a script in 'canonical form'
-if ! parser_t < ${SCRIPTFILE} > ${OUTPUT_FILE_1}
+echo Starting first pass for ${SCRIPTFILE} ...
+if ! parser_t ${SCRIPTFILE} > ${OUTPUT_FILE_1}
 then
   echo Failure reading ${SCRIPTFILE}
   exit 1
@@ -57,13 +58,15 @@ fi
 
 # Second pass: read from OUTPUT_FILE_1, write to OUTPUT_FILE_2
 # OUTPUT_FILE_2 should contain the same 'canonical form' as OUTPUT_FILE_1
-if ! parser_t < ${OUTPUT_FILE_1} > ${OUTPUT_FILE_2}
+echo Starting second pass for ${SCRIPTFILE} ...
+if ! parser_t ${OUTPUT_FILE_1} > ${OUTPUT_FILE_2}
 then
   echo Failure reading ${OUTPUT_FILE_1}
   exit 2
 fi
 
 # Compare text of OUTPUT_FILE_1 and OUTPUT_FILE_2
+echo Starting comparison ${SCRIPTFILE} ...
 if ! diff ${OUTPUT_FILE_1} ${OUTPUT_FILE_2}
 then
   echo Failure ${OUTPUT_FILE_1} and ${OUTPUT_FILE_2} differ

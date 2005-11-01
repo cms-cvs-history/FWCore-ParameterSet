@@ -3,10 +3,10 @@
 <use name=FWCore/ParameterSet>	
 
 # This test hangs because no argument is passed in.
-#<bin file=parser_t.cpp> 
-#  <use name=boost>
-#  <use name=FWCore/ParameterSet>
-#</bin>
+<bin file=parser_t.cpp> 
+  <use name=boost>
+  <use name=FWCore/ParameterSet>
+</bin>
 
 #<bin file=pset_dump.cpp> 
 #  <use name=boost>

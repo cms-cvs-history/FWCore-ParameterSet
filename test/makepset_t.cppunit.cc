@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.6 2005/09/28 04:29:53 wmtan Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.7 2005/10/21 12:58:24 paterno Exp $
  */
 
 #include <iostream>
@@ -21,20 +21,21 @@
 
 class testmakepset: public CppUnit::TestFixture
 {
-CPPUNIT_TEST_SUITE(testmakepset);
-CPPUNIT_TEST_EXCEPTION(emptyTest,edm::Exception);
-CPPUNIT_TEST(typesTest);
-CPPUNIT_TEST(usingTest);
-CPPUNIT_TEST_EXCEPTION(usingExcTest,edm::Exception);
-CPPUNIT_TEST(psetRefTest);
-CPPUNIT_TEST_EXCEPTION(psetRefExcTest,edm::Exception);
-CPPUNIT_TEST(secsourceTest);
-CPPUNIT_TEST(usingBlockTest);
-CPPUNIT_TEST_SUITE_END();
-public:
+  CPPUNIT_TEST_SUITE(testmakepset);
+  CPPUNIT_TEST_EXCEPTION(emptyTest,edm::Exception);
+  CPPUNIT_TEST(typesTest);
+  CPPUNIT_TEST(usingTest);
+  CPPUNIT_TEST_EXCEPTION(usingExcTest,edm::Exception);
+  CPPUNIT_TEST(psetRefTest);
+  CPPUNIT_TEST_EXCEPTION(psetRefExcTest,edm::Exception);
+  CPPUNIT_TEST(secsourceTest);
+  CPPUNIT_TEST(usingBlockTest);
+  CPPUNIT_TEST(fileinpathTest);
+  CPPUNIT_TEST_SUITE_END();
+
+ public:
   void setUp(){}
   void tearDown(){}
-
   void emptyTest();
   void typesTest();
   void usingTest();
@@ -43,9 +44,12 @@ public:
   void psetRefExcTest();
   void secsourceTest();
   void usingBlockTest();
-private:
+  void fileinpathTest();
+
+ private:
   void secsourceAux();
   void usingBlockAux();
+  void fileinpathAux();
 };
                                                                                                                    
 ///registration of the test so that the runner can find it
@@ -157,6 +161,46 @@ void testmakepset::usingBlockAux()
 
   CPPUNIT_ASSERT(m1Params.getParameter<double>("r") == 1.5);
   CPPUNIT_ASSERT(m2Params.getParameter<double>("r") == 1.5);
+}
+
+void testmakepset::fileinpathTest()
+{
+  try { this->fileinpathAux(); }
+  catch (cms::Exception& x) { 
+    std::cerr << "testmakepset::fileinpathTest() caught a cms::Exception\n";
+    std::cerr << x.what() << '\n';
+    throw;
+  }
+  catch (...) {
+    std::cerr << "testmakepset::fileinpathTest() caught an unidentified exception\n";
+    throw;
+  }
+}
+
+void testmakepset::fileinpathAux()
+{
+  const char* kTest = 
+     "process PROD = {"
+    "  PSet main =  {"
+    "    int32 extraneous = 12"
+    "    FileInPath fip = \"silly.file\""
+    "  }"
+    "  source = DummySource { } "
+    "}";
+
+  std::string config(kTest);
+
+  // Create the ParameterSet object from this configuration string.
+  boost::shared_ptr<edm::ParameterSet> ps = edm::makeProcessPSet(config);
+  CPPUNIT_ASSERT(0 != ps.get());
+  std::cerr << "\n-----------------------------\n";
+  std::cerr << ps->toString();
+  std::cerr << "\n-----------------------------\n";
+
+  edm::ParameterSet mainps = ps->getParameter<edm::ParameterSet>("main");
+  edm::FileInPath fip = mainps.getParameter<edm::FileInPath>("fip");
+  CPPUNIT_ASSERT( fip.isLocal() == false );
+  CPPUNIT_ASSERT( fip.relativePath() == "silly.file" );
 }
                                                                                                                    
 void testmakepset::emptyTest()
