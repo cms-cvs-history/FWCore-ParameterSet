@@ -5,11 +5,13 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.8 2005/11/01 22:31:51 paterno Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.9 2005/11/07 17:41:53 paterno Exp $
  */
 
 #include <iostream>
 #include <string>
+
+#include <iostream>
 
 #include <stdlib.h> // for setenv; <cstdlib> is likely to fail
 
@@ -172,10 +174,17 @@ void testmakepset::fileinpathTest()
   // flexible enough to make tests such as this reasonable in
   // production, this code can be translated and re-activated. Until
   // then, core developers will need to tweak this code to work.
-#if 0
-  const char* c = getenv("CMSDATA");
+
+  //   const char* c = getenv("CMSDATA");
+
+  //   if ( c==0 ) setenv("CMSDATA", "/tmp", 0);
+
+
+  // THE FOLLOWING setenv IS DONE FOR TESTING ONLY---THIS SHOULD NOT
+  // BE DONE IN REAL CODE. IT SHOULD BE REMOVED WHEN THE CMS
+  // ENVIRONMENT HAS BEEN UPDATED TO DEAL WITH DEFINING
+  // CMS_SEARCH_PATH TO THE CORRECT DEFAULT.
   // setenv is in 4.3+BSD and derivatives. This is not very portable.
-  if ( c==0 ) setenv("CMSDATA", "/tmp", 0);
   setenv("CMS_SEARCH_PATH", ".:CMSDATA", 1);
   
   try { this->fileinpathAux(); }
@@ -188,7 +197,6 @@ void testmakepset::fileinpathTest()
     std::cerr << "testmakepset::fileinpathTest() caught an unidentified exception\n";
     throw;
   }
-#endif
 }
 
 void testmakepset::fileinpathAux()
@@ -197,7 +205,8 @@ void testmakepset::fileinpathAux()
      "process PROD = {"
     "  PSet main =  {"
     "    int32 extraneous = 12"
-    "    FileInPath fip = \"yum.conf.errata\""
+    "    FileInPath fip  = 'FWCore/ParameterSet/test/sample.cfg'"
+    "    FileInPath topo = 'Geometry/TrackerSimData/trackerStructureTopology.xml'"
     "  }"
     "  source = DummySource { } "
     "}";
@@ -213,8 +222,12 @@ void testmakepset::fileinpathAux()
 
   edm::ParameterSet mainps = ps->getParameter<edm::ParameterSet>("main");
   edm::FileInPath fip = mainps.getParameter<edm::FileInPath>("fip");
-  CPPUNIT_ASSERT( fip.isLocal() == false );
-  CPPUNIT_ASSERT( fip.relativePath() == "yum.conf.errata" );
+  CPPUNIT_ASSERT( fip.isLocal() == true );
+  CPPUNIT_ASSERT( fip.relativePath() == "FWCore/ParameterSet/test/sample.cfg" );
+
+  edm::FileInPath topo = mainps.getParameter<edm::FileInPath>("topo");
+  CPPUNIT_ASSERT( topo.isLocal() == false );
+  CPPUNIT_ASSERT( topo.relativePath() == "Geometry/TrackerSimData/trackerStructureTopology.xml" );
 }
                                                                                                                    
 void testmakepset::emptyTest()
