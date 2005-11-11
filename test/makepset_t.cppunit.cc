@@ -5,9 +5,10 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.9 2005/11/07 17:41:53 paterno Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.10 2005/11/10 23:44:22 paterno Exp $
  */
 
+#include <algorithm>
 #include <iostream>
 #include <string>
 
@@ -15,7 +16,8 @@
 
 #include <stdlib.h> // for setenv; <cstdlib> is likely to fail
 
-#include <cppunit/extensions/HelperMacros.h>
+#include "cppunit/extensions/HelperMacros.h"
+#include "boost/lambda/lambda.hpp"
 
 #include "FWCore/Utilities/interface/EDMException.h"
 #include "FWCore/ParameterSet/interface/Makers.h"
@@ -220,14 +222,31 @@ void testmakepset::fileinpathAux()
   std::cerr << ps->toString();
   std::cerr << "\n-----------------------------\n";
 
-  edm::ParameterSet mainps = ps->getParameter<edm::ParameterSet>("main");
-  edm::FileInPath fip = mainps.getParameter<edm::FileInPath>("fip");
+  edm::ParameterSet innerps = ps->getParameter<edm::ParameterSet>("main");
+  edm::FileInPath fip = innerps.getParameter<edm::FileInPath>("fip");
   CPPUNIT_ASSERT( fip.isLocal() == true );
   CPPUNIT_ASSERT( fip.relativePath() == "FWCore/ParameterSet/test/sample.cfg" );
 
-  edm::FileInPath topo = mainps.getParameter<edm::FileInPath>("topo");
+  edm::FileInPath topo = innerps.getParameter<edm::FileInPath>("topo");
   CPPUNIT_ASSERT( topo.isLocal() == false );
   CPPUNIT_ASSERT( topo.relativePath() == "Geometry/TrackerSimData/trackerStructureTopology.xml" );
+
+  std::vector<edm::FileInPath> v(1);
+  CPPUNIT_ASSERT ( innerps.getAllFileInPaths(v) == 2 );
+  
+  using boost::lambda::_1;
+  using boost::lambda::constant;
+  std::cerr << "\nHere comes the vector...\n";
+  std::for_each(v.begin(), v.end(), std::cerr << constant("--> ") << _1 << '\n');
+  std::cerr << "Done with vector\n";
+  CPPUNIT_ASSERT( v.size() == 3 );
+  CPPUNIT_ASSERT( std::count(v.begin(), v.end(), fip) == 1 );
+  CPPUNIT_ASSERT( std::count(v.begin(), v.end(), topo) == 1 );
+
+  edm::ParameterSet empty;
+  v.clear();
+  CPPUNIT_ASSERT(  empty.getAllFileInPaths(v) == 0 );
+  CPPUNIT_ASSERT( v.empty() );  
 }
                                                                                                                    
 void testmakepset::emptyTest()
