@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.10 2005/11/10 23:44:22 paterno Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.11 2005/11/11 19:57:58 paterno Exp $
  */
 
 #include <algorithm>
@@ -226,10 +226,17 @@ void testmakepset::fileinpathAux()
   edm::FileInPath fip = innerps.getParameter<edm::FileInPath>("fip");
   CPPUNIT_ASSERT( fip.isLocal() == true );
   CPPUNIT_ASSERT( fip.relativePath() == "FWCore/ParameterSet/test/sample.cfg" );
+  std::string fullpath = fip.fullPath();
+  std::cerr << "fullPath is: " << fip.fullPath() << std::endl;
+  std::cerr << "copy of fullPath is: " << fullpath << std::endl;
+
+  CPPUNIT_ASSERT( !fullpath.empty() );
 
   edm::FileInPath topo = innerps.getParameter<edm::FileInPath>("topo");
   CPPUNIT_ASSERT( topo.isLocal() == false );
   CPPUNIT_ASSERT( topo.relativePath() == "Geometry/TrackerSimData/trackerStructureTopology.xml" );
+  fullpath = topo.fullPath();
+  CPPUNIT_ASSERT( !fullpath.empty() );
 
   std::vector<edm::FileInPath> v(1);
   CPPUNIT_ASSERT ( innerps.getAllFileInPaths(v) == 2 );
