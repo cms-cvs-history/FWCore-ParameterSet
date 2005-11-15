@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.11 2005/11/11 19:57:58 paterno Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.12 2005/11/14 17:37:51 paterno Exp $
  */
 
 #include <algorithm>
@@ -177,17 +177,33 @@ void testmakepset::fileinpathTest()
   // production, this code can be translated and re-activated. Until
   // then, core developers will need to tweak this code to work.
 
-  //   const char* c = getenv("CMSDATA");
+  const char* c = getenv("CMSSW_DATA_PATH");
 
-  //   if ( c==0 ) setenv("CMSDATA", "/tmp", 0);
+  // We need this to transition from the original CMSDATA to the new
+  // CMSSW_DATA_PATH.
+  if (c==0) 
+    {
+      c = getenv("CMSDATA");
+      CPPUNIT_ASSERT( c!= 0 );
+      // should not need to overwrite, so last arg to setenv is 0
+      CPPUNIT_ASSERT( setenv("CMSSW_DATA_PATH", c, 0) == 0 );
+    }
 
+//   c = getenv("CMSSW_SEARCH_PATH");
+//   if ( c==0 )
+//     {
+//       c = getenv("CMS_SEARCH_PATH");
+//       CPPUNIT_ASSERT( c != 0 );
+//       // should not need to overwrite, so last arg to setenv is 0
+//       CPPUNIT_ASSERT( setenv("CMSSW_SEARCH_PATH", c, 0) == 0 );
+//     }
 
   // THE FOLLOWING setenv IS DONE FOR TESTING ONLY---THIS SHOULD NOT
   // BE DONE IN REAL CODE. IT SHOULD BE REMOVED WHEN THE CMS
   // ENVIRONMENT HAS BEEN UPDATED TO DEAL WITH DEFINING
-  // CMS_SEARCH_PATH TO THE CORRECT DEFAULT.
+  // CMSSW_SEARCH_PATH TO THE CORRECT DEFAULT.
   // setenv is in 4.3+BSD and derivatives. This is not very portable.
-  setenv("CMS_SEARCH_PATH", ".:CMSDATA", 1);
+  setenv("CMSSW_SEARCH_PATH", "LOCAL:CMSSW_DATA_PATH", 1);
   
   try { this->fileinpathAux(); }
   catch (cms::Exception& x) { 
