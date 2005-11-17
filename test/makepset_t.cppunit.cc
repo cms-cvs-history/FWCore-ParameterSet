@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.12 2005/11/14 17:37:51 paterno Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.13 2005/11/15 14:38:57 paterno Exp $
  */
 
 #include <algorithm>
@@ -66,6 +66,11 @@ void testmakepset::secsourceTest()
   try { this->secsourceAux(); }
   catch (cms::Exception& x) { 
     std::cerr << "testmakepset::secsourceTest() caught a cms::Exception\n";
+    std::cerr << x.what() << '\n';
+    throw;
+  }
+  catch (std::exception& x) {
+    std::cerr << "testmakepset::secsourceTest() caught a std::exception\n";
     std::cerr << x.what() << '\n';
     throw;
   }
