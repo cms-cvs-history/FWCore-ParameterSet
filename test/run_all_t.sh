@@ -1,32 +1,17 @@
 #!/bin/sh
 
-DIR=../../../../test/`scramv1 arch`
 
 # Pass in name and status
 function die { echo $1: status $2 ;  exit $2; }
-# This following is a trivial test, and probably should be removed
-split || die 'Failed in split' $?
 
-./run_all_parser_t.sh || die 'Failed in run_all_parser_t.sh' $?
+${LOCAL_TEST_DIR}/run_all_parser_t.sh || die 'Failed in run_all_parser_t.sh' $?
 
 # This is a historical relic, and it probably should be removed.
-string_parser_t
-
 echo --------------
-echo Running makepset_t
-${DIR}/makepset_t || die 'Failed in makepset_t' $?
-echo makepset_t succeeded
+echo Running string_parser_t...
+${LOCAL_TEST_BIN}/string_parser_t || die 'Failed in string_parser_t' $?
+echo string_parser_t succeeded
 echo --------------
-
-
-echo --------------
-echo Running makeprocess_t
-${DIR}/makeprocess_t || die 'Failed in makeprocess_t' $?
-echo makeprocess_t succeeded
-echo --------------
-
-
-
 
 
 

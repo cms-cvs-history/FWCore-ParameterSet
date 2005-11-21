@@ -10,26 +10,3 @@
 //------------------------------------------------------------
 
 int main() { return 0; }
-
-// int main(argc, char** argv)
-// {
-//   if (argc == 1)
-//     {
-//       cerr << "Must specify input to be parsed" << endl;
-//       return 1;
-//     }
-//   for (int i = 1; i < argc; ++i) {
-//     ParseResults pr = parse(argv[i]);
-
-//     if(!pr) {
-//       cerr << "Null output from parser" << endl;
-//       return -1;
-//     }
-
-//     copy(pr->begin(),
-//        pr->end(),
-//        ostream_iterator<NodePtr>(cout,"\n"));
-//   }
-
-//   return 0;
-// }

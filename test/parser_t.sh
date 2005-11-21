@@ -17,12 +17,11 @@
 # does not clean them up. The files are not large, and there are not
 # too many of them.
 #
-# $Id: parser_t.sh,v 1.4 2005/07/27 22:28:57 paterno Exp $
+# $Id: parser_t.sh,v 1.5 2005/11/01 22:31:51 paterno Exp $
 #-----------------------------------------------------------
 #set -o verbose -o xtrace
 
 SCRIPTFILE=$1
-#DIR=../../../../test/`scramv1 arch`
 
 if [ -z $1 ]; then
   echo Required argument was not supplied
@@ -34,10 +33,15 @@ if [ ! -f "${SCRIPTFILE}" ]; then
   exit -1
 fi
 
-WORKDIR=/tmp
+WORKDIR=${LOCAL_TMP_DIR}
 
-OUTPUT_FILE_1=${WORKDIR}/${USER}/${SCRIPTFILE}_1
-OUTPUT_FILE_2=${WORKDIR}/${USER}/${SCRIPTFILE}_2
+if [ ! -d "${LOCAL_TMP_DIR}" ]; then
+  echo Directory ${LOCAL_TMP_DIR} does not exist
+  exit -1
+fi
+
+OUTPUT_FILE_1=${WORKDIR}/${SCRIPTFILE}_1
+OUTPUT_FILE_2=${WORKDIR}/${SCRIPTFILE}_2
 
 if ! touch ${OUTPUT_FILE_1}; then
    echo Unable to write to directory ${WORKDIR}
@@ -50,7 +54,7 @@ rm -f ${OUTPUT_FILE_1} ${OUTPUT_FILE_2}
 # First pass: read from SCRIPTFILE, write to OUTPUT_FILE_1
 # OUTPUT_FILE_1 will contain a script in 'canonical form'
 echo Starting first pass for ${SCRIPTFILE} ...
-if ! parser_t ${SCRIPTFILE} > ${OUTPUT_FILE_1}
+if ! ${LOCAL_TEST_BIN}/parser_t ${SCRIPTFILE} > ${OUTPUT_FILE_1}
 then
   echo Failure reading ${SCRIPTFILE}
   exit 1
@@ -59,7 +63,7 @@ fi
 # Second pass: read from OUTPUT_FILE_1, write to OUTPUT_FILE_2
 # OUTPUT_FILE_2 should contain the same 'canonical form' as OUTPUT_FILE_1
 echo Starting second pass for ${SCRIPTFILE} ...
-if ! parser_t ${OUTPUT_FILE_1} > ${OUTPUT_FILE_2}
+if ! ${LOCAL_TEST_BIN}/parser_t ${OUTPUT_FILE_1} > ${OUTPUT_FILE_2}
 then
   echo Failure reading ${OUTPUT_FILE_1}
   exit 2
