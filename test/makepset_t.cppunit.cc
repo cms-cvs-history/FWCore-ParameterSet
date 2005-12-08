@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.13 2005/11/15 14:38:57 paterno Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.14 2005/11/17 17:27:29 paterno Exp $
  */
 
 #include <algorithm>
@@ -208,7 +208,9 @@ void testmakepset::fileinpathTest()
   // ENVIRONMENT HAS BEEN UPDATED TO DEAL WITH DEFINING
   // CMSSW_SEARCH_PATH TO THE CORRECT DEFAULT.
   // setenv is in 4.3+BSD and derivatives. This is not very portable.
-  setenv("CMSSW_SEARCH_PATH", "LOCAL:CMSSW_DATA_PATH", 1);
+
+  //FIXME: this overrides SCRAM runtime...
+  //setenv("CMSSW_SEARCH_PATH", "LOCAL:CMSSW_DATA_PATH", 1);
   
   try { this->fileinpathAux(); }
   catch (cms::Exception& x) { 
