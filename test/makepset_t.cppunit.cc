@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.13 2005/11/15 14:38:57 paterno Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.14.2.2 2005/12/08 11:45:44 sashby Exp $
  */
 
 #include <algorithm>
@@ -208,7 +208,9 @@ void testmakepset::fileinpathTest()
   // ENVIRONMENT HAS BEEN UPDATED TO DEAL WITH DEFINING
   // CMSSW_SEARCH_PATH TO THE CORRECT DEFAULT.
   // setenv is in 4.3+BSD and derivatives. This is not very portable.
-  setenv("CMSSW_SEARCH_PATH", "LOCAL:CMSSW_DATA_PATH", 1);
+
+  //FIXME: this overrides SCRAM runtime...
+  //setenv("CMSSW_SEARCH_PATH", "LOCAL:CMSSW_DATA_PATH", 1);
   
   try { this->fileinpathAux(); }
   catch (cms::Exception& x) { 
@@ -229,7 +231,7 @@ void testmakepset::fileinpathAux()
     "  PSet main =  {"
     "    int32 extraneous = 12"
     "    FileInPath fip  = 'FWCore/ParameterSet/test/sample.cfg'"
-    "    FileInPath topo = 'Geometry/TrackerSimData/trackerStructureTopology.xml'"
+    "    FileInPath topo = 'Geometry/TrackerSimData/data/trackerSimConfiguration.xml'"
     "  }"
     "  source = DummySource { } "
     "}";
@@ -255,7 +257,7 @@ void testmakepset::fileinpathAux()
 
   edm::FileInPath topo = innerps.getParameter<edm::FileInPath>("topo");
   CPPUNIT_ASSERT( topo.isLocal() == false );
-  CPPUNIT_ASSERT( topo.relativePath() == "Geometry/TrackerSimData/trackerStructureTopology.xml" );
+  CPPUNIT_ASSERT( topo.relativePath() == "Geometry/TrackerSimData/data/trackerSimConfiguration.xml" );
   fullpath = topo.fullPath();
   CPPUNIT_ASSERT( !fullpath.empty() );
 
