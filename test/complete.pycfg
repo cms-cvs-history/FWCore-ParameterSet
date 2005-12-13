@@ -1,6 +1,6 @@
 #------------------------------------------------------------
 #
-# $Id: complete.pycfg,v 1.3 2005/09/28 04:31:02 wmtan Exp $
+# $Id: complete.pycfg,v 1.4 2005/12/13 20:16:51 paterno Exp $
 #
 #------------------------------------------------------------
 
@@ -109,6 +109,40 @@
      , 'maxEvents': ('int32',  'untracked', '2112')
      }
    }
+ , 'named_es_modules':
+   {
+     'esm1':
+     {
+       'classname': ('string', 'tracked', 'ESMType1')
+     , 's':         ('string', 'tracked', '\"hi\"')
+     }
+   }
+ , 'anonymous_es_modules':
+    [
+      {
+        'classname': ('string', 'tracked', 'ESMType2')
+      , 'a':         ('int32',  'tracked', '3')
+      }
+    ]
+ , 'named_es_sources':
+   {
+     'ess1':
+     {
+       'classname': ('string', 'tracked', 'ESSType1')
+     , 'b':         ('int32',    'tracked', '2')
+     }
+   }
+ , 'anonymous_es_sources':
+    [
+      {
+        'classname': ('string', 'tracked', 'ESSType2')
+      , 'x':         ('double', 'tracked', '1.5')
+      }
+    , {
+        'classname': ('string', 'tracked', 'ESSType2')
+      , 'x':         ('double', 'tracked', '2.5')
+      }
+    ]
  , 'output_modules': [ 'y', 'z' ]
  , 'sequences':
    {
