@@ -1,6 +1,6 @@
 #------------------------------------------------------------
 #
-# $Id: complete.pycfg,v 1.2 2005/09/06 16:51:58 paterno Exp $
+# $Id: complete.pycfg,v 1.3 2005/09/28 04:31:02 wmtan Exp $
 #
 #------------------------------------------------------------
 
@@ -15,6 +15,10 @@
 #   'procname': a string, the name of the process
 #   'main_input': a string, the name of the 'unnamed' source
 #   'modules': a dictionary, containing all modules
+#   'named_es_modules': a dictionary, containing all named ES modules
+#   'anonymous_es_modules': a list, containing all anonymous ES modules
+#   'named_es_sources': a dictionary, containing all named ES sources
+#   'anonymous_es_sources': a list, containing all anonymous ES sources
 #   'output_modules': a list, containing the names of all output 
 #         modules; these names can be used to find the module descriptions
 #         in the 'modules' dictionary.
@@ -23,13 +27,13 @@
 #         string.         
 #   'paths': a dictionary, containing a mapping of path names to
 #         'path' specifications; a path specification is a string.
-#   'endpath': a string (the endpath specification)
+#   'endpaths': a dictionary, containing a mapping of endpath names to
+#         'endpath' specifications; an endpath specificiation is a string.
 
-# W expect that 'sequences', 'paths', and 'endpath' do not need
+# We expect that 'sequences', 'paths', and 'endpath' do not need
 # manipulation, because the definitions are very context-sensitive. If
 # they do need to be manipulated (and not just carried forward to the
 # output), we probably need a more powerful abstraction.
-
 
 # We use the string representation for every type to make sure we have
 # no troubles with ranges, roundoff, etc.
@@ -54,6 +58,11 @@
 # entry has no quotes around the value; this is because of the way the
 # module name appears in the configuration grammar.
 
+
+# TESTING: For now, one can execute 'cmsconfig.py' as a test; that
+# will read this file, and print (to standard output) the
+# configuration file format (which should be readable with the
+# C++-based configuration parser).
 
 {
   'procname': 'PROCESSNAME'
@@ -113,7 +122,12 @@
      'p1': '(a&b),c'
    , 'p2': 's1,(s3&s2)'
    }
- , 'endpath': 'y,z'
+ , 'endpaths':
+   {
+     'a': 'y,z'
+   , 'b': 'z'
+   }
+
 }
 
 
