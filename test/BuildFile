@@ -8,8 +8,15 @@
 </bin>
 
 <bin file=TestDriver.cpp>
-  <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/ParameterSet/test run_all_t.sh">
+  <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/ParameterSet/test run_all_t.sh run_pythonformwriter_t.sh">
 </bin>
+
+
+<bin file=PythonFormWriter_t.cpp>
+  <use name=FWCore/ParameterSet>
+</bin>
+
+
 
 #<bin file=pset_dump.cpp> 
 #  <use name=boost>
