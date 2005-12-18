@@ -1,6 +1,6 @@
 #------------------------------------------------------------
 #
-# $Id: complete.pycfg,v 1.5 2005/12/13 23:13:39 paterno Exp $
+# $Id: complete.pycfg.saved,v 1.1 2005/12/17 01:55:56 paterno Exp $
 #
 #------------------------------------------------------------
 
@@ -15,10 +15,9 @@
 #   'procname': a string, the name of the process
 #   'main_input': a string, the name of the 'unnamed' source
 #   'modules': a dictionary, containing all modules
-#   'named_es_modules': a dictionary, containing all named ES modules
-#   'anonymous_es_modules': a list, containing all anonymous ES modules
-#   'named_es_sources': a dictionary, containing all named ES sources
-#   'anonymous_es_sources': a list, containing all anonymous ES sources
+#   'es_modules': a dictionary, containing all ES modules
+#   'es_sources': a dictionary, containing all ES sources
+#   'services': a dictionary, containing all Services
 #   'output_modules': a list, containing the names of all output 
 #         modules; these names can be used to find the module descriptions
 #         in the 'modules' dictionary.
@@ -119,40 +118,55 @@
      , 'maxEvents': ('int32',  'untracked', '2112')
      }
    }
- , 'named_es_modules':
+ , 'es_modules':
    {
-     'esm1':
+     'ESMType1@esm1':
      {
        'classname': ('string', 'tracked', 'ESMType1')
+     , 'label':     ('string', 'tracked', 'esm1')
      , 's':         ('string', 'tracked', '\"hi\"')
      }
-   }
- , 'anonymous_es_modules':
-    [
+     'ESMType2@':
       {
         'classname': ('string', 'tracked', 'ESMType2')
+      , 'label':     ('string', 'tracked', '')
       , 'a':         ('int32',  'tracked', '3')
-      }
-    ]
- , 'named_es_sources':
+      }     
+   }
+ , 'es_sources':
    {
-     'ess1':
+     'ESSType1@ess1':
      {
        'classname': ('string', 'tracked', 'ESSType1')
+     , 'label':     ('string', 'tracked', 'ess1')
      , 'b':         ('int32',  'tracked', '2')
      }
-   }
- , 'anonymous_es_sources':
-    [
+     'ESSType1@':
+     {
+       'classname': ('string', 'tracked', 'ESSType1')
+     , 'label':     ('string', 'tracked', '')
+     , 'b':         ('int32',  'tracked', '0')
+     }
+     'ESSType2@':
       {
         'classname': ('string', 'tracked', 'ESSType2')
+      , 'label':     ('string', 'tracked', '')
       , 'x':         ('double', 'tracked', '1.5')
       }
-    , {
-        'classname': ('string', 'tracked', 'ESSType2')
-      , 'x':         ('double', 'tracked', '2.5')
+   }
+ , 'services':
+   {
+     'ServiceType1':
+     {
+       'classname': ('string', 'tracked', 'ServiceType1')
+     , 'b':         ('int32',  'tracked', '2')
+     }
+     'ServiceType2':
+      {
+        'classname': ('string', 'tracked', 'ServiceType2')
+      , 'x':         ('double', 'tracked', '1.5')
       }
-    ]
+   }
  , 'output_modules': [ 'y', 'z' ]
  , 'sequences':
    {
