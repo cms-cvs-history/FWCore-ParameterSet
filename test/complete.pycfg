@@ -1,50 +1,55 @@
 {
 'procname': 'PROCESSNAME'
 , 'main_input': {
-} # end of main_input
+'classname': ('string', 'tracked', 'PoolSource'), 'fileName': ('string', 'untracked', '\"no_real_file_here\"'), 'debugFlag': ('bool', 'untracked', 'false'), 'maxEvents': ('int32', 'untracked', '-1'), 'debugVebosity': ('uint32', 'untracked', '10')}
+ # end of main_input
 , 'modules': {
 #--------------------
 'a': {'classname': ('string', 'tracked', 'AProducer'), 'a': ('int32', 'tracked', '32'), 'b': ('vdouble', 'tracked', [ '1.1', '2.2' ]), 'c': ('vstring', 'tracked', [  ]), 'd': ('vstring', 'tracked', [ '\'boo\'', '\"yah\"' ])}
 #--------------------
-,'b': { 'classname': ('string', 'tracked', 'BProducer')
-      , 'a': ('int32', 'untracked', '14')
-      , 'b': ('string', 'tracked', '\"sillyness ensues\"')
-      , 'c': ('PSet', 'tracked', { 'a': ('string', 'tracked', '\'nested\'')
-                                 , 'b': ('string', 'tracked', '\"more\"')
-                                 }
-             )
-      , 'd': ('VPSet', 'tracked', { 'i': ('int32', 'tracked', '10101')
-                                  , 'b': ('bool', 'tracked', 'false')
-                                  }
-                                  { }
-             )
-      }
+,'b': {'classname': ('string', 'tracked', 'BProducer'), 'a': ('int32', 'untracked', '14'), 'b': ('string', 'tracked', '\"sillyness ensues\"'), 'c': ('PSet', 'tracked', {'a': ('string', 'tracked', '\'nested\''), 'b': ('string', 'tracked', '\"more\"')}), 'd': ('VPSet', 'tracked', [
+#start acceptForChildren in VPSetNode
+{'i': ('int32', 'tracked', '10101'), 'b': ('bool', 'tracked', 'false')},{}
+#end acceptForChildren in VPSetNode
+])}
 #--------------------
 ,'y': {'classname': ('string', 'tracked', 'PoolOutputModule'), 'fileName': ('string', 'untracked', '\"myfile_y.root\"'), 'maxEvents': ('int32', 'untracked', '2112')}
 #--------------------
 ,'z': {'classname': ('string', 'tracked', 'PoolOutputModule'), 'fileName': ('string', 'untracked', '\"myfile_z.root\"'), 'maxEvents': ('int32', 'untracked', '91624')}
 } #end of modules
 # es_modules
-, 'named_es_modules': {
-'esm1': {'classname': ('string', 'tracked', 'ESMType1'), 's': ('string', 'tracked', '\"hi\"')}
-} #end of named_es_modules
-# ... anonymous
-, 'anonymous_es_modules': [
-{'classname': ('string', 'tracked', 'ESMType2'), 'a': ('int32', 'tracked', '3')}
-] # end of anonymous_es_modules
+, 'es_modules': {
+'ESMType1@esm1': { 'label': ('string','tracked', 'esm1'), 'classname': ('string', 'tracked', 'ESMType1'), 's': ('string', 'tracked', '\"hi\"')}
+,'ESMType2@': { 'label': ('string','tracked', ''), 'classname': ('string', 'tracked', 'ESMType2'), 'a': ('int32', 'tracked', '3')}
+} #end of es_modules
 # es_sources
-# ... named
-, 'named_es_sources': {
-'ess1': {'classname': ('string', 'tracked', 'ESSType1'), 'b': ('int32', 'tracked', '2')}
-} #end of named_es_sources
-# ... anonymous
-, 'anonymous_es_sources': [
-{'classname': ('string', 'tracked', 'ESSType2'), 'x': ('double', 'tracked', '1.5')}
-{'classname': ('string', 'tracked', 'ESSType2'), 'x': ('double', 'tracked', '2.5')}
-] # end of anonymous_es_sources
+, 'es_sources': {
+'ESSType1@ess1': { 'label': ('string','tracked', 'ess1'), 'classname': ('string', 'tracked', 'ESSType1'), 'b': ('int32', 'tracked', '2')}
+,'ESSType1@': { 'label': ('string','tracked', ''), 'classname': ('string', 'tracked', 'ESSType1'), 'b': ('int32', 'tracked', '0')}
+,'ESSType2@': { 'label': ('string','tracked', ''), 'classname': ('string', 'tracked', 'ESSType2'), 'x': ('double', 'tracked', '1.5')}
+} #end of es_sources
 # output modules (names)
 , 'output_modules': [ 'y', 'z' ]
 # sequences
+, 'sequences': { 
+'s1' : '(a&b)'
+,'s2' : 'b'
+,'s3' : 'a'
+,'s4' : 'a'
+}
 # paths
+, 'paths': { 
+'p1' : '((a&b),c)'
+,'p2' : '(s1,(s3&s2))'
+}
 # endpaths
+, 'endpaths': { 
+'a' : '(y,z)'
+,'b' : 'z'
+}
+# services
+, 'services': {
+'ServiceType1': {'classname': ('string', 'tracked', 'ServiceType1'), 'b': ('double', 'tracked', '2')}
+,'ServiceType2': {'classname': ('string', 'tracked', 'ServiceType2'), 'x': ('double', 'tracked', '1.5')}
+} #end of es_modules
 }
