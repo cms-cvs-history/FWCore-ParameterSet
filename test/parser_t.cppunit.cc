@@ -257,6 +257,8 @@ const char* spec =
 "        es_source es1 = S2 { int32 x=2 }\n"
 "        es_module = M1 { int32 x = 3 }\n"
 "        es_module esm1 = M2 { int32 x = 4 }\n"
+"        es_prefer = S1 {}"
+"        es_prefer esm1 = M2 {}"
 "        PSet p1 = { int32 x = 2 }\n"
 "        PSet p2 = {\n"
 "              using blob\n"
