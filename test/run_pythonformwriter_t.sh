@@ -15,7 +15,7 @@ function die { echo $1: status $2 ;  exit $2; }
 #     output of the Python-processed config file is the same as the original.
 #
 
-export PROC_DEBUG=8
+export PROC_DEBUG=0 # set to higher value for lots of debugging output...
 (${LOCAL_TEST_BIN}/PythonFormWriter_t ${LOCAL_TEST_DIR}/complete.cfg > ${LOCAL_TMP_DIR}/out.pycfg) || die "Failed running PythonFormWriter_t" $?
 
 #die "This test isn't really finished" 1

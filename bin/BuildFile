@@ -1,0 +1,8 @@
+<use name=boost>
+#<use name=FWCore/MessageLogger>
+
+<bin file=EdmConfigToPython.cpp>
+ <use name=boost>
+ <use name=FWCore/Framework>
+</bin>
+
