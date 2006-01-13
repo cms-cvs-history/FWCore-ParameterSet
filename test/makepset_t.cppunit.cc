@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.14.2.2 2005/12/08 11:45:44 sashby Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.15 2005/12/09 17:18:30 paterno Exp $
  */
 
 #include <algorithm>
@@ -176,42 +176,6 @@ void testmakepset::usingBlockAux()
 
 void testmakepset::fileinpathTest()
 {
-  // The body of this test is commented out so that tests during
-  // official builds do not bomb. When the testing system is made
-  // flexible enough to make tests such as this reasonable in
-  // production, this code can be translated and re-activated. Until
-  // then, core developers will need to tweak this code to work.
-
-  const char* c = getenv("CMSSW_DATA_PATH");
-
-  // We need this to transition from the original CMSDATA to the new
-  // CMSSW_DATA_PATH.
-  if (c==0) 
-    {
-      c = getenv("CMSDATA");
-      CPPUNIT_ASSERT( c!= 0 );
-      // should not need to overwrite, so last arg to setenv is 0
-      CPPUNIT_ASSERT( setenv("CMSSW_DATA_PATH", c, 0) == 0 );
-    }
-
-//   c = getenv("CMSSW_SEARCH_PATH");
-//   if ( c==0 )
-//     {
-//       c = getenv("CMS_SEARCH_PATH");
-//       CPPUNIT_ASSERT( c != 0 );
-//       // should not need to overwrite, so last arg to setenv is 0
-//       CPPUNIT_ASSERT( setenv("CMSSW_SEARCH_PATH", c, 0) == 0 );
-//     }
-
-  // THE FOLLOWING setenv IS DONE FOR TESTING ONLY---THIS SHOULD NOT
-  // BE DONE IN REAL CODE. IT SHOULD BE REMOVED WHEN THE CMS
-  // ENVIRONMENT HAS BEEN UPDATED TO DEAL WITH DEFINING
-  // CMSSW_SEARCH_PATH TO THE CORRECT DEFAULT.
-  // setenv is in 4.3+BSD and derivatives. This is not very portable.
-
-  //FIXME: this overrides SCRAM runtime...
-  //setenv("CMSSW_SEARCH_PATH", "LOCAL:CMSSW_DATA_PATH", 1);
-  
   try { this->fileinpathAux(); }
   catch (cms::Exception& x) { 
     std::cerr << "testmakepset::fileinpathTest() caught a cms::Exception\n";
