@@ -18,5 +18,4 @@ process PROD =
 
   include "FWCore/ParameterSet/test/include_1.stub"
   include "FWCore/ParameterSet/test/include_2.stub"
-
 }
