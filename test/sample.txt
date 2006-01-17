@@ -1,0 +1,22 @@
+process PROD = 
+ {
+  source = FakeInputSource {
+    double x = 1.1
+    string s1 = "dq string"
+    string s2 = 'sq string'
+    string s3 = 'embedded \n is ok'
+    string s4 = "embedded \n is ok"
+    #string bad1 = "we do not allow
+    #string bad2 = 'we do not allow
+    #string bad3 = 'we do not allow"
+    #string bad4 = 'no
+    #               multi-line string'
+    //string bad5 = "no
+    //               multi-line string"
+    double y = 3.2
+  }
+
+  include "FWCore/ParameterSet/test/include_1.stub"
+  include "FWCore/ParameterSet/test/include_2.stub"
+
+}

@@ -1,9 +1,12 @@
-#include "FWCore/ParameterSet/interface/parse.h"
-#include <iterator>
+
 #include <algorithm>
 #include <fstream>
 #include <iostream>
+#include <iterator>
 #include <string>
+
+#include "FWCore/ParameterSet/interface/parse.h"
+#include "FWCore/Utilities/interface/EDMException.h"
 
 //------------------------------------------------------------
 // Test program for parameter set specification and configuration file
@@ -13,17 +16,17 @@
 using namespace std;
 
 void read_from_file(const char* filename,
-		     std::string& buffer)
+		     string& buffer)
 {
-  std::ifstream ifs(filename);
+  ifstream ifs(filename);
   if (ifs)
     {
-      std::string line;
-      while (std::getline(ifs, line)) { buffer += line; buffer += '\n'; }
+      string line;
+      while (getline(ifs, line)) { buffer += line; buffer += '\n'; }
     }
 }
 
-int main(int argc, char* argv[])
+int work(int argc, char* argv[])
 {
   // Because 'scramv1 build runtests' will run this test, and because
   // we don't know how to pass this executable an argument, we make it
@@ -47,4 +50,24 @@ int main(int argc, char* argv[])
        ostream_iterator<edm::pset::NodePtr>(cout,"\n"));
 
   return 0;
+}
+
+int main(int argc, char* argv[])
+{
+  int rc = 0;
+  try 
+    {
+      rc = work(argc, argv);
+    }
+  catch ( edm::Exception const& x )
+    {
+      rc = 1;
+      cerr << "Exception: " << x << '\n';
+    }
+  catch (...)
+    {
+      rc = 2;
+      cerr << "Unknown exception\n";
+    }
+  return rc;
 }

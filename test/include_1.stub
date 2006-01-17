@@ -1,0 +1,4 @@
+module X  = ClassX
+{
+  int32 i  = -4
+}

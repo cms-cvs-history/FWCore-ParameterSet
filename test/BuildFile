@@ -2,14 +2,15 @@
 <use name=boost>
 <use name=FWCore/ParameterSet>	
 
+
+<use name=boost>
+<use name=FWCore/ParameterSet>	
+
 <bin file=parser_t.cpp> 
   <use name=boost>
   <use name=FWCore/ParameterSet>
 </bin>
 
-<bin file=TestDriver.cpp>
-  <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/ParameterSet/test run_all_t.sh run_pythonformwriter_t.sh">
-</bin>
 
 <bin file=PythonFormWriter_t.cpp>
   <use name=FWCore/ParameterSet>
@@ -36,8 +37,6 @@
 #Initial target definition for cppunit-style testing
 #testRunner has the main, tests suites are registered in the other files. 
 #The executable "testParameterSet" will eventually run all the tests 
-#
-
 
 <bin name=testParameterSet file=testRunner.cpp,processbuilder_t.cppunit.cc,makeprocess_t.cppunit.cc,makepset_t.cppunit.cc,parser_t.cppunit.cc,ps_t.cppunit.cc>
   <use name=cppunit>	
@@ -47,4 +46,16 @@
   <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/ParameterSet/test EdmConfigToPython_t.sh">
 </bin>
 
+<bin file=pset_include_t.cpp></bin>
+<bin file=MakeParameterSets_t.cpp></bin>
+
+
+<bin file=TestDriver.cpp>
+  <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/ParameterSet/test run_all_t.sh run_pythonformwriter_t.sh">
+</bin>
+
+
+<bin file=TestDriver2.cpp>
+  <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/ParameterSet/test MakeParameterSets_t.sh">
+</bin>
 
