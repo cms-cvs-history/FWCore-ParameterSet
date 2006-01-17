@@ -1,12 +1,14 @@
 #include <ostream>
 #include <iostream>
 #include <string>
+#include <vector>
 
 #include "boost/shared_ptr.hpp"
 
 #include "FWCore/Utilities/interface/EDMException.h"
 #include "FWCore/ParameterSet/interface/parse.h"
 #include "FWCore/ParameterSet/src/PythonFormWriter.h"
+#include "FWCore/ParameterSet/interface/MakeParameterSets.h"
 
 using namespace edm;
 using namespace edm::pset;
@@ -16,8 +18,15 @@ writePythonForm(std::string const& config, std::ostream& out)
 {
   
   PythonFormWriter writer;
+
+  std::string preprocessedConfigString;
+  std::vector<std::string> openFileStack;
+  edm::pset::preprocessConfigString(config, 
+				    preprocessedConfigString,
+				    openFileStack);
+
   boost::shared_ptr<edm::pset::NodePtrList> parsetree = 
-    edm::pset::parse(config.c_str());
+    edm::pset::parse(preprocessedConfigString.c_str());
 
   writer.write(parsetree, out);
 }
