@@ -4,7 +4,7 @@
 
 @brief test suit for process building and schedule validation
 
-@version: $Id: processbuilder_t.cppunit.cc,v 1.2 2005/07/26 08:21:00 argiro Exp $
+@version: $Id: processbuilder_t.cppunit.cc,v 1.3 2005/09/01 03:39:32 wmtan Exp $
 @author : Stefano Argiro
 @date : 2005 06 17
 
@@ -19,6 +19,8 @@
 #include <FWCore/ParameterSet/src/ScheduleValidator.h>
 #include "FWCore/Utilities/interface/EDMException.h"
 
+#include <iostream>
+
 using namespace edm;
 
 class testProcessPSetBuilder: public CppUnit::TestFixture {
@@ -28,6 +30,7 @@ class testProcessPSetBuilder: public CppUnit::TestFixture {
   CPPUNIT_TEST(trivialPathTest);
   CPPUNIT_TEST(simplePathTest);
   CPPUNIT_TEST(sequenceSubstitutionTest);
+  CPPUNIT_TEST(attriggertest);
   CPPUNIT_TEST(nestedSequenceSubstitutionTest);
   CPPUNIT_TEST(sequenceSubstitutionTest2);
   CPPUNIT_TEST(sequenceSubstitutionTest3);
@@ -46,6 +49,7 @@ public:
   void trivialPathTest();
   void simplePathTest();
   void sequenceSubstitutionTest();
+  void attriggertest();
   void nestedSequenceSubstitutionTest();
   void sequenceSubstitutionTest2();
   void sequenceSubstitutionTest3();
@@ -103,6 +107,56 @@ void testProcessPSetBuilder::simplePathTest(){
 }
 
 
+void testProcessPSetBuilder:: attriggertest (){
+
+  const char * kTest = "process test = {\n"
+   "module cone1 = PhonyConeJet { int32 i = 5 }\n"
+   "module cone2 = PhonyConeJet { int32 i = 7 }\n"
+   "module somejet1 = PhonyJet { int32 i = 7 }\n"
+   "module somejet2 = PhonyJet { int32 i = 7 }\n"
+   "module jtanalyzer = PhonyConeJet { int32 i = 7 }\n"
+   "module output = OutputModule { }\n"
+   "sequence cones = { cone1, cone2 }\n"
+   "sequence jets = { somejet1, somejet2 }\n"
+   "path path1 = { cones,jets, jtanalyzer }\n"
+   "endpath epath = { output }\n"
+   "} ";
+
+  std::cerr << "doing stuff" << "\n";
+  try {
+  ProcessPSetBuilder b(kTest);
+  boost::shared_ptr<ParameterSet> test = b.getProcessPSet();
+
+  typedef std::vector<std::string> Strs;
+  
+  ParameterSet trig_pset =
+   (*test).getUntrackedParameter<ParameterSet>("@trigger_paths",ParameterSet());
+  Strs tnames = trig_pset.getParameter<Strs>("@paths");
+  Strs enames = trig_pset.getParameter<Strs>("@end_paths");
+
+  std::cerr << trig_pset.toString() << "\n";
+
+  CPPUNIT_ASSERT(tnames[0]=="path1");
+  CPPUNIT_ASSERT(enames[0]=="epath");
+
+  }
+  catch (cms::Exception& exc)
+  {
+  	std::cerr << "Got an cms::Exception: " << exc.what() << "\n";
+	throw;
+  }
+  catch (std::exception& exc)
+  {
+  	std::cerr << "Got an std::exception: " << exc.what() << "\n";
+	throw;
+  }
+  catch (...)
+  {
+  	std::cerr << "Got an unknown exception: " << "\n";
+	throw;
+  }
+
+}
 void testProcessPSetBuilder:: sequenceSubstitutionTest (){
 
   const char * kTest = "process test = {\n"
@@ -129,8 +183,6 @@ void testProcessPSetBuilder:: sequenceSubstitutionTest (){
   CPPUNIT_ASSERT(s[3]=="somejet2");
   CPPUNIT_ASSERT(s[4]=="jtanalyzer");
  
-
-
   CPPUNIT_ASSERT (b.getDependencies("cone1")=="");
   CPPUNIT_ASSERT (b.getDependencies("cone2")=="cone1,");
   CPPUNIT_ASSERT (b.getDependencies("somejet1")=="cone1,cone2,");
