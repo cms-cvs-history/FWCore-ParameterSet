@@ -6,3 +6,9 @@
  <use name=FWCore/ParameterSet>
 </bin>
 
+
+<bin file=EdmConfigHash.cpp>
+ <use name=boost>
+ <use name=FWCore/ParameterSet>
+</bin>
+
