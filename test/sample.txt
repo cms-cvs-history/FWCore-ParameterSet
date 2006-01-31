@@ -1,6 +1,7 @@
 process PROD = 
- {
-  source = FakeInputSource {
+{
+  source = FakeInputSource 
+  {
     double x = 1.1
     string s1 = "dq string"
     string s2 = 'sq string'
@@ -14,6 +15,34 @@ process PROD =
     //string bad5 = "no
     //               multi-line string"
     double y = 3.2
+  }
+
+  // block b1 should also work.
+
+  PSet b1 = 
+  {
+    double radius = 0.5
+    double threshold = 1.0
+  }
+
+  // CODE ERROR: the follow fails to parse
+  //  block b2 =  { }
+
+
+  // CODE ERROR: the following throws an exception 'EmptySet'
+  PSet b3 = { }
+
+  module m1 = ModType
+  {
+    using b1
+    int32 a = 1
+  }
+
+  module m2 = ModType
+  {
+    using b1
+    int32 a = 2
+    double radius = 0.75
   }
 
   include "FWCore/ParameterSet/test/include_1.stub"

@@ -33,6 +33,16 @@ int work(int argc, char* argv[])
 
   makeParameterSets(filecontents, mainps, services);
 
+  edm::ParameterSet m1(mainps->getParameter<edm::ParameterSet>("m1"));
+  edm::ParameterSet m2(mainps->getParameter<edm::ParameterSet>("m2"));
+  
+  assert( m1.getParameter<int>("a") == 1); // not from blob
+  assert( m2.getParameter<int>("a") == 2); // not from blob
+//   assert( m1.getParameter<double>("radius") == 0.5);  // from blob
+//   assert( m2.getParameter<double>("radius") == 0.75); // override blob
+  assert( m1.getParameter<double>("threshold") == 1.0); // from blob
+  assert( m2.getParameter<double>("threshold") == 1.0); // from blob
+
   return 0;
 }
 
