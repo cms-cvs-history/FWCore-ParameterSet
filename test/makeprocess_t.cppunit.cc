@@ -6,7 +6,7 @@
  *  Changed by Viji Sundararajan on 8-Jul-05.
  *  Copyright 2005 __MyCompanyName__. All rights reserved.
  * 
- * $Id: makeprocess_t.cppunit.cc,v 1.7 2005/09/19 08:18:13 chrjones Exp $
+ * $Id: makeprocess_t.cppunit.cc,v 1.8 2005/09/28 04:34:17 wmtan Exp $
  */
 
 
@@ -31,7 +31,7 @@ CPPUNIT_TEST(pathTest);
 CPPUNIT_TEST(moduleTest);
 CPPUNIT_TEST(serviceTest);
 CPPUNIT_TEST(emptyModuleTest);
-CPPUNIT_TEST_EXCEPTION(emptyPsetTest,edm::Exception);
+//CPPUNIT_TEST_EXCEPTION(emptyPsetTest,edm::Exception);
 CPPUNIT_TEST_SUITE_END();
 public:
   void setUp(){}
@@ -42,7 +42,7 @@ public:
   void moduleTest();
   void serviceTest();
   void emptyModuleTest();
-  void emptyPsetTest();
+  //  void emptyPsetTest();
 };
                                                                                                                      
 ///registration of the test so that the runner can find it
@@ -196,24 +196,24 @@ void testmakeprocess::emptyModuleTest()
    CPPUNIT_ASSERT(copy == myparams);
 }
 
-void testmakeprocess::emptyPsetTest()
-{
-   const char* kTest ="process test = {\n"
-   "PSet thing1 = {  }\n"
-   "module thing = XX {  }\n"
-   "} ";
-   boost::shared_ptr<edm::pset::NodePtrList> nodeList = edm::pset::parse(kTest);
-   CPPUNIT_ASSERT(0 != nodeList.get());
-   boost::shared_ptr<edm::ProcessDesc> test = edm::pset::makeProcess(nodeList);
+// void testmakeprocess::emptyPsetTest()
+// {
+//    const char* kTest ="process test = {\n"
+//    "PSet thing1 = {  }\n"
+//    "module thing = XX {  }\n"
+//    "} ";
+//    boost::shared_ptr<edm::pset::NodePtrList> nodeList = edm::pset::parse(kTest);
+//    CPPUNIT_ASSERT(0 != nodeList.get());
+//    boost::shared_ptr<edm::ProcessDesc> test = edm::pset::makeProcess(nodeList);
    
-   /*try {
-   boost::shared_ptr<edm::ProcessDesc> test = edm::pset::makeProcess(nodeList);
-   }
-   catch(std::exception& e)
-   {
-       std::cout << "empty pset detected" << std::endl;
-	return ;
-    }
+//    /*try {
+//    boost::shared_ptr<edm::ProcessDesc> test = edm::pset::makeProcess(nodeList);
+//    }
+//    catch(std::exception& e)
+//    {
+//        std::cout << "empty pset detected" << std::endl;
+// 	return ;
+//     }
 
-   throw  std::runtime_error("empty pset not discovered");*/
-}
+//    throw  std::runtime_error("empty pset not discovered");*/
+// }
