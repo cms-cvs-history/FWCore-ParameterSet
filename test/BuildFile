@@ -3,9 +3,6 @@
 <use name=FWCore/ParameterSet>	
 
 
-<use name=boost>
-<use name=FWCore/ParameterSet>	
-
 <bin file=parser_t.cpp> 
   <use name=boost>
   <use name=FWCore/ParameterSet>
@@ -48,6 +45,7 @@
 
 <bin file=pset_include_t.cpp></bin>
 <bin file=MakeParameterSets_t.cpp></bin>
+<bin file=UntrackedParameters_t.cpp></bin>
 
 
 <bin file=TestDriver.cpp>
@@ -58,4 +56,6 @@
 <bin file=TestDriver2.cpp>
   <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/ParameterSet/test MakeParameterSets_t.sh">
 </bin>
+
+
 
