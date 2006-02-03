@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.15 2005/12/09 17:18:30 paterno Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.16 2006/01/13 19:32:44 chrjones Exp $
  */
 
 #include <algorithm>
@@ -264,8 +264,8 @@ void testmakepset::typesTest()
      "double d=1\n"
      "vuint32 vui ={1,2}\n"
      "vint32 vi = {+1,-2}\n"
-     "bool b = true\n"
-     "PSet ps = {bool b2=true}\n"
+     "untracked bool b = true\n"
+     "PSet ps = {untracked bool b2=true}\n"
      "string s=\"this string\"\n"
      "vstring vs={\"1\",\"2\",\"a\"}\n"
      "VPSet vps ={ {bool b3=false} }\n";
@@ -295,7 +295,7 @@ void testmakepset::typesTest()
    static const  int via[] = {1,-2};
    static const std::vector< int> vi(via, via+sizeof(vuia)/sizeof(unsigned int));
    test->getParameter<std::vector<int> >("vi");
-   CPPUNIT_ASSERT(true == test->getParameter<bool>("b"));
+   CPPUNIT_ASSERT(true == test->getUntrackedParameter<bool>("b", false));
    CPPUNIT_ASSERT(test->retrieve("vi").isTracked());
    //test->getParameter<std::vector<bool> >("vb");
    edm::ParameterSet ps = test->getParameter<edm::ParameterSet>("ps");
