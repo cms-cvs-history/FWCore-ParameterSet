@@ -46,6 +46,7 @@
 <bin file=pset_include_t.cpp></bin>
 <bin file=MakeParameterSets_t.cpp></bin>
 <bin file=UntrackedParameters_t.cpp></bin>
+<bin file=ParameterSetID_t.cpp></bin>
 
 
 <bin file=TestDriver.cpp>
