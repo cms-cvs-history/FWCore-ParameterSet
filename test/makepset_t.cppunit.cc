@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.16 2006/01/13 19:32:44 chrjones Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.17 2006/02/03 21:23:01 paterno Exp $
  */
 
 #include <algorithm>
@@ -28,7 +28,7 @@
 class testmakepset: public CppUnit::TestFixture
 {
   CPPUNIT_TEST_SUITE(testmakepset);
-  CPPUNIT_TEST_EXCEPTION(emptyTest,edm::Exception);
+  //  CPPUNIT_TEST_EXCEPTION(emptyTest,edm::Exception);
   CPPUNIT_TEST(typesTest);
   CPPUNIT_TEST(usingTest);
   CPPUNIT_TEST_EXCEPTION(usingExcTest,edm::Exception);
@@ -42,7 +42,7 @@ class testmakepset: public CppUnit::TestFixture
  public:
   void setUp(){}
   void tearDown(){}
-  void emptyTest();
+  //  void emptyTest();
   void typesTest();
   void usingTest();
   void usingExcTest();
@@ -242,18 +242,20 @@ void testmakepset::fileinpathAux()
   CPPUNIT_ASSERT(  empty.getAllFileInPaths(v) == 0 );
   CPPUNIT_ASSERT( v.empty() );  
 }
+
+// This is a wrong test. Empty parameter sets are OK.
                                                                                                                    
-void testmakepset::emptyTest()
-{
-   const char* kTest ="PSet test = { } ";
-   boost::shared_ptr<edm::pset::NodePtrList> nodeList = edm::pset::parse(kTest);
-   CPPUNIT_ASSERT(0 != nodeList.get());
+// void testmakepset::emptyTest()
+// {
+//    const char* kTest ="PSet test = { } ";
+//    boost::shared_ptr<edm::pset::NodePtrList> nodeList = edm::pset::parse(kTest);
+//    CPPUNIT_ASSERT(0 != nodeList.get());
    
-   // this should not be allowed, but is for the time being
-   // only psets coming in from process sections cannot be empty
-   //BOOST_CHECK_THROW(edm::pset::makePSet(*nodeList), std::runtime_error);
-   edm::pset::makePSet(*nodeList);
-}
+//    // this should not be allowed, but is for the time being
+//    // only psets coming in from process sections cannot be empty
+//    //BOOST_CHECK_THROW(edm::pset::makePSet(*nodeList), std::runtime_error);
+//    edm::pset::makePSet(*nodeList);
+// }
 
 void testmakepset::typesTest()
 {
