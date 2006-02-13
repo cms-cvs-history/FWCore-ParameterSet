@@ -3,14 +3,14 @@
 // This program tests the calculation of ParameterSetIDs for
 // ParameterSets.
 //
-// $Id: UntrackedParameters_t.cpp,v 1.2 2006/02/03 21:23:01 paterno Exp $
+// $Id: ParameterSetID_t.cpp,v 1.1 2006/02/06 20:40:19 paterno Exp $
 //----------------------------------------------------------------------
 #include <cassert>
 #include <iostream>
 #include <string>
 
 #include "FWCore/Utilities/interface/EDMException.h"
-#include "FWCore/EDProduct/interface/ParameterSetID.h"
+#include "DataFormats/Common/interface/ParameterSetID.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/ParameterSet/interface/MakeParameterSets.h"
 
