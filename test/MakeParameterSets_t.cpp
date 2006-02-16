@@ -43,6 +43,22 @@ int work(int argc, char* argv[])
   assert( m1.getParameter<double>("threshold") == 1.0); // from blob
   assert( m2.getParameter<double>("threshold") == 1.0); // from blob
 
+  {
+    edm::ParameterSet ps = mainps->getParameter<edm::ParameterSet>("silly");
+    std::vector<std::string> empty;
+    std::vector<std::string> vs;
+
+    vs = ps.getUntrackedParameter<std::vector<std::string> >("vs1", empty);
+    assert ( vs.size() == 2 );
+
+
+    vs = ps.getUntrackedParameter<std::vector<std::string> >("vs2", empty);
+    assert ( vs.size() == 1 );
+
+    vs = ps.getUntrackedParameter<std::vector<std::string> >("not_there", empty);
+    assert ( vs.size() == 0 );
+  }
+
   return 0;
 }
 

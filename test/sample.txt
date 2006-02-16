@@ -17,6 +17,12 @@ process PROD =
     double y = 3.2
   }
 
+  PSet silly = {
+    untracked vstring vs2 = { "c"  }
+    untracked vstring vs1 = { "a", "b" }
+  }
+
+
   // block b1 should also work.
 
   PSet b1 = 
