@@ -2,17 +2,19 @@
 //
 // This program tests the behavior of untracked parameters in
 // ParameterSet objects.
-// $Id: UntrackedParameters_t.cpp,v 1.2 2006/02/03 21:23:01 paterno Exp $
+// $Id: UntrackedParameters_t.cpp,v 1.3 2006/02/07 22:20:58 paterno Exp $
 //----------------------------------------------------------------------
 #include <cassert>
 #include <iostream>
 #include <string>
 #include <vector>
 
+#include "DataFormats/Common/interface/ParameterSetID.h"
 #include "FWCore/Utilities/interface/EDMException.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/ParameterSet/interface/MakeParameterSets.h"
 
+using edm::ParameterSetID;
 using edm::ParameterSet;
 typedef std::vector<edm::ParameterSet> VPSet;
 
@@ -21,17 +23,27 @@ void testUntrackedInternal()
 {
   ParameterSet p;
   assert( p.empty() );
+  ParameterSetID empty_id = p.id();
 
   // ParameterSet should not longer be empty after adding an untracked
   // parameter.
   p.addUntrackedParameter<int>("i1", 2112);
   assert( !p.empty());
 
+  // Adding an untracked parameter should not have changed the ID.
+  assert( p.id() == empty_id );
+
   // We should find a parameter named 'i1'
   assert( p.getUntrackedParameter<int>("i1", 10) == 2112 );
 
   // We should not find one named 'nonesuch'.
   assert( p.getUntrackedParameter<int>("nonesuch", 1) == 1 );
+
+  // If we grab out only the tracked parameters, we should be back to
+  // the empty ParameterSet.
+  ParameterSet also_empty = p.trackedPart();
+  assert( also_empty.getUntrackedParameter<int>("i1", 10) == 10 );
+
 
   // We should not find a string named "i1", nor should we get back
   // our default, because we have an "i1" that is of a different type.
@@ -108,7 +120,11 @@ void testTracked()
   // If we look for an 'untracked parameter', when we have a tracked
   // one, we should get an exception throw.
   ParameterSet p;
+  ParameterSetID empty_id = p.id();
+
   p.addParameter<int>("a", 3);
+  // Adding a tracked parameter should change the ID.
+  assert( p.id() != empty_id );
   try
     {
       (void)p.getUntrackedParameter<int>("a", 10);

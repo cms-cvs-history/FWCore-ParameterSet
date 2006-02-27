@@ -2,7 +2,7 @@
 //
 // This program test the behavior of pset::Registry.
 //
-// $Id: ParameterSetID_t.cpp,v 1.2 2006/02/13 22:08:17 wmtan Exp $
+// $Id: Registry_t.cpp,v 1.1 2006/02/24 19:15:52 paterno Exp $
 //----------------------------------------------------------------------
 #include <cassert>
 #include <vector>
@@ -34,7 +34,6 @@ ThreadWorker::operator()()
 {
   pset::Registry* reg = pset::Registry::instance();
   assert (reg);
-  #if 0
 
   // Add a bunch of items
   std::vector<edm::ParameterSetID> ids_issued;  
@@ -42,6 +41,7 @@ ThreadWorker::operator()()
     {
       edm::ParameterSet ps;
       ps.addParameter<int>("i", i);
+      ps.addUntrackedParameter<double>("d", 2.5);
       ids_issued.push_back(ps.id());
       reg->insertParameterSet(ps);      
     }
@@ -54,9 +54,10 @@ ThreadWorker::operator()()
     {
       edm::ParameterSet ps;
       assert( reg->getParameterSet(*i, ps) );
-      assert ( ps.id() == *i );
+      assert( ps.id() == *i );
+      assert( ps.getParameter<int>("i") > 0 ); // fixme: check exact value
+      assert( ps.getUntrackedParameter<double>("d", 1.0) == 1.0);
     }
-  #endif
 }
 
 void work()
@@ -66,9 +67,9 @@ void work()
 
   // Launch a bunch of threads, which beat on the Registry...
   boost::thread_group threads;
-  const int NUM_THREADS = 1;
+  const int NUM_THREADS = 100;
   const int NUM_PSETS_PER_THREAD = 500;
-  const int NUM_LOOKUPS_PER_THREAD = 1000;
+  const int NUM_LOOKUPS_PER_THREAD = 100;
   for (int i = 0; i < NUM_THREADS; ++i)
     threads.create_thread(ThreadWorker(NUM_PSETS_PER_THREAD,
 				       NUM_LOOKUPS_PER_THREAD,
