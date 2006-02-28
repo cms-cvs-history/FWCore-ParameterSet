@@ -48,6 +48,7 @@
 <bin file=UntrackedParameters_t.cpp></bin>
 <bin file=ParameterSetID_t.cpp></bin>
 <bin file=Registry_t.cpp></bin>
+<bin file=ParameterSetRecursing_t.cpp></bin>
 
 
 <bin file=TestDriver.cpp>
