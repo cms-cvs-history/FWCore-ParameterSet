@@ -2,7 +2,7 @@
 //
 // This program test the behavior of pset::Registry.
 //
-// $Id: Registry_t.cpp,v 1.1 2006/02/24 19:15:52 paterno Exp $
+// $Id: Registry_t.cpp,v 1.2 2006/02/27 15:32:33 paterno Exp $
 //----------------------------------------------------------------------
 #include <cassert>
 #include <vector>
@@ -67,7 +67,9 @@ void work()
 
   // Launch a bunch of threads, which beat on the Registry...
   boost::thread_group threads;
-  const int NUM_THREADS = 100;
+  // don't make this too high, or resource exhaustion may kill
+  // the whole test...
+  const int NUM_THREADS = 10; 
   const int NUM_PSETS_PER_THREAD = 500;
   const int NUM_LOOKUPS_PER_THREAD = 100;
   for (int i = 0; i < NUM_THREADS; ++i)
@@ -95,10 +97,33 @@ int main()
 		<< '\n';
       rc = -1;
     }
+  catch ( std::bad_alloc & x)
+    {
+      std::cerr << "bad alloc: " << x.what() << '\n';
+      rc = -2;
+    }
+
+  catch ( boost::thread_resource_error & x)
+    {
+      std::cerr << "resource error: " << x.what()
+		<< "\nTry decreasing NUM_THREADS, and recompiling\n";	
+      rc = -3;
+    }
+
+
+  catch ( boost::lock_error & x)
+    {
+      std::cerr << "lock error: " << x.what() << '\n';
+      rc = -4;
+    }
+
+
+  
+  
   catch ( ... )
     {
       std::cerr << "Unknown exception caught\n";
-      rc = -2;
+      rc = 1;
     }
   return rc;
 }
