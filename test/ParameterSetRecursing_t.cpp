@@ -35,8 +35,10 @@ void work()
 		 
   vector<string> pset_names, vpset_names;
   
-  size_t n_psets = level1.getParameterSetNames(pset_names);
-  size_t n_vpsets = level1.getParameterSetVectorNames(vpset_names);
+  const bool tracked = true;
+  const bool untracked = false;
+  size_t n_psets = level1.getParameterSetNames(pset_names, tracked);
+  size_t n_vpsets = level1.getParameterSetVectorNames(vpset_names, tracked);
   assert( n_psets == 1 );
   assert( pset_names[0] == "pset2" );
   {
