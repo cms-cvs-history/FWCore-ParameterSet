@@ -2,7 +2,7 @@
 //
 // This program test the behavior of pset::Registry.
 //
-// $Id: Registry_t.cpp,v 1.2 2006/02/27 15:32:33 paterno Exp $
+// $Id: Registry_t.cpp,v 1.3 2006/02/28 23:24:29 paterno Exp $
 //----------------------------------------------------------------------
 #include <cassert>
 #include <vector>
@@ -43,7 +43,7 @@ ThreadWorker::operator()()
       ps.addParameter<int>("i", i);
       ps.addUntrackedParameter<double>("d", 2.5);
       ids_issued.push_back(ps.id());
-      reg->insertParameterSet(ps);      
+      reg->insertParameterSet(ps);
     }
   
   // Look up items we have just put in.
@@ -71,14 +71,29 @@ void work()
   // the whole test...
   const int NUM_THREADS = 10; 
   const int NUM_PSETS_PER_THREAD = 500;
-  const int NUM_LOOKUPS_PER_THREAD = 100;
+  const int NUM_LOOKUPS_PER_THREAD = 1000;
   for (int i = 0; i < NUM_THREADS; ++i)
     threads.create_thread(ThreadWorker(NUM_PSETS_PER_THREAD,
-				       NUM_LOOKUPS_PER_THREAD,
-				       NUM_PSETS_PER_THREAD));
+ 				       NUM_LOOKUPS_PER_THREAD,
+ 				       NUM_PSETS_PER_THREAD));
   threads.join_all();
+}
 
-  // Make sure all is well.
+void work2()
+{
+  // This part is not multi-threaded; it checks only the return value
+  // of the insertParameterSet member function.
+  pset::Registry* reg = pset::Registry::instance();
+  
+  // Make a new ParameterSet, not like those already in the Registry.
+  edm::ParameterSet ps;
+  std::string value("and now for something completely different...");
+  ps.addParameter<std::string>("s", value);
+
+  // First call should insert the new ParameterSet; second call should
+  // not.
+  assert( reg->insertParameterSet(ps) );
+  assert( !reg->insertParameterSet(ps) );  
 }
 
 
@@ -88,6 +103,7 @@ int main()
   try
     {
       work();
+      work2();
       rc = 0;
     }
   catch ( edm::Exception& x)
