@@ -57,7 +57,7 @@ void work()
   
   }
   vector<ParameterSet> exploded;
-  pset::explode(level1, exploded);
+  edm::pset::explode(level1, exploded);
   assert( exploded.size() == all_ids.size() );
   set<ParameterSetID> exploded_ids;
   // This could be written with a call to transform (and using bind
@@ -74,7 +74,7 @@ void work2()
   edm::ParameterSet empty;
   assert( empty.empty() );
   std::vector<edm::ParameterSet> exploded;
-  pset::explode(empty, exploded);
+  edm::pset::explode(empty, exploded);
   assert( exploded.size() == 1 );
   assert( exploded[0].empty() );
 }
