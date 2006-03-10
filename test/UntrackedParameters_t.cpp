@@ -2,7 +2,7 @@
 //
 // This program tests the behavior of untracked parameters in
 // ParameterSet objects.
-// $Id: UntrackedParameters_t.cpp,v 1.3 2006/02/07 22:20:58 paterno Exp $
+// $Id: UntrackedParameters_t.cpp,v 1.4 2006/02/27 15:32:33 paterno Exp $
 //----------------------------------------------------------------------
 #include <cassert>
 #include <iostream>
@@ -21,6 +21,24 @@ typedef std::vector<edm::ParameterSet> VPSet;
 
 void testUntrackedInternal()
 {
+  {
+    // Make sure that when we reconstitute a ParameterSet from the
+    // string made by toStringOfTracked() that we only obtain the
+    // tracked parameters.
+    ParameterSet p1;
+    p1.addUntrackedParameter<int>("i", 2);
+    p1.addUntrackedParameter<std::string>("s", "xyz");
+    p1.addParameter<int>("j", 2112);
+    assert( p1.getUntrackedParameter<int>("i",10) == 2);
+    assert( p1.getParameter<int>("j") == 2112);
+    assert( p1.getUntrackedParameter<std::string>("s", "abc") == "xyz");
+    std::string p1_rep = p1.toStringOfTracked();
+    ParameterSet p2(p1_rep);
+    assert( p2.getUntrackedParameter<int>("i",10) == 10);
+    assert( p2.getParameter<int>("j") == 2112);
+    assert( p2.getUntrackedParameter<std::string>("s", "abc") == "abc");
+    assert( p1 == p2 );
+  }
   ParameterSet p;
   assert( p.empty() );
   ParameterSetID empty_id = p.id();
