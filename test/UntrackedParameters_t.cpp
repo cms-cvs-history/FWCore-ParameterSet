@@ -2,7 +2,7 @@
 //
 // This program tests the behavior of untracked parameters in
 // ParameterSet objects.
-// $Id: UntrackedParameters_t.cpp,v 1.4 2006/02/27 15:32:33 paterno Exp $
+// $Id: UntrackedParameters_t.cpp,v 1.5 2006/03/10 00:48:40 paterno Exp $
 //----------------------------------------------------------------------
 #include <cassert>
 #include <iostream>
@@ -25,18 +25,71 @@ void testUntrackedInternal()
     // Make sure that when we reconstitute a ParameterSet from the
     // string made by toStringOfTracked() that we only obtain the
     // tracked parameters.
+    ParameterSet inner;
+    inner.addParameter<int>("innerint", 100);
+    inner.addUntrackedParameter<int>("innerint_untracked", 200);
+
+    ParameterSet inner_tracked;
+    inner_tracked.addParameter<int>("innerint", 100);
+    
+    VPSet inner_vpset;
+    inner_vpset.push_back(inner);
+    inner_vpset.push_back(inner);
+    inner_vpset.push_back(inner);
+
     ParameterSet p1;
+
+    p1.addParameter<VPSet>("vpset1", inner_vpset);
+    p1.addUntrackedParameter<VPSet>("vpset2", inner_vpset);
     p1.addUntrackedParameter<int>("i", 2);
     p1.addUntrackedParameter<std::string>("s", "xyz");
     p1.addParameter<int>("j", 2112);
+    p1.addParameter<ParameterSet>("ps", inner);
+    p1.addUntrackedParameter<ParameterSet>("ups", inner);
     assert( p1.getUntrackedParameter<int>("i",10) == 2);
     assert( p1.getParameter<int>("j") == 2112);
     assert( p1.getUntrackedParameter<std::string>("s", "abc") == "xyz");
+    assert( p1.getParameter<VPSet>("vpset1") == inner_vpset );
+    assert( p1.getUntrackedParameter<VPSet>("vpset2", VPSet())
+	    == inner_vpset);
+    std::string p1_whole = p1.toString();
     std::string p1_rep = p1.toStringOfTracked();
+    std::cerr << "Whole string\n"
+	      << p1_whole
+	      << "\ntracked part\n"
+	      << p1_rep
+	      << '\n';
     ParameterSet p2(p1_rep);
     assert( p2.getUntrackedParameter<int>("i",10) == 10);
     assert( p2.getParameter<int>("j") == 2112);
     assert( p2.getUntrackedParameter<std::string>("s", "abc") == "abc");
+    ParameterSet recovered_inner = p2.getParameter<ParameterSet>("ps");
+    assert( recovered_inner == inner_tracked );
+    assert( recovered_inner.getParameter<int>("innerint") == 100);
+
+    VPSet recovered_inner_vpset = p2.getParameter<VPSet>("vpset1");
+    assert( recovered_inner_vpset.size() == 3 );
+    {
+      VPSet::const_iterator i = recovered_inner_vpset.begin();
+      VPSet::const_iterator e = recovered_inner_vpset.end();
+      for ( ; i!=e; ++i )
+	{
+	  assert( i->getParameter<int>("innerint") == 100 );
+	  assert( i->getUntrackedParameter<int>("innerint_untracked", 1) 
+		  == 1 ); // not 100, which was the untracked original.
+	}      
+    }
+
+    // Make sure we don't recover an untracked parameter in nested
+    // ParameterSets
+    assert( recovered_inner.getUntrackedParameter<int>("innerint_untracked"
+						       ,100) 
+	    == 100);    
+    
+    assert( p2.getUntrackedParameter<ParameterSet>("ups",
+						   ParameterSet()) ==
+	    ParameterSet());
+	    
     assert( p1 == p2 );
   }
   ParameterSet p;
