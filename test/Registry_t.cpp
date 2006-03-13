@@ -2,7 +2,7 @@
 //
 // This program test the behavior of pset::Registry.
 //
-// $Id: Registry_t.cpp,v 1.4 2006/03/07 18:03:41 paterno Exp $
+// $Id: Registry_t.cpp,v 1.5 2006/03/08 22:14:53 wmtan Exp $
 //----------------------------------------------------------------------
 #include <cassert>
 #include <vector>
@@ -94,6 +94,7 @@ void work2()
   // not.
   assert(reg->insertParameterSet(ps));
   assert(!reg->insertParameterSet(ps));
+
 }
 
 
@@ -104,6 +105,11 @@ int main()
   {
       work();
       work2();
+
+      // Look at what we have saved.
+      std::cout << "Here comes the registry..." << std::endl;
+      std::cout << *edm::pset::Registry::instance() << std::endl;
+      std::cout << "...done" << std::endl;
       rc = 0;
   }
   catch (edm::Exception& x)
