@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.17 2006/02/03 21:23:01 paterno Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.18 2006/02/07 22:20:58 paterno Exp $
  */
 
 #include <algorithm>
@@ -85,15 +85,15 @@ void testmakepset::secsourceAux()
   const char* kTest = 
     "process PROD = {"
     "  source = PoolSource {"
-    "    string fileName = 'main.root'"
-    "    int32 maxEvents = 2"
+    "    untracked vstring fileNames = {'file:main.root'}"
+    "    untracked int32 maxEvents = 2"
     "  }"
     "  module out = PoolOutputModule {"
-    "    string fileName = 'CumHits.root'"
+    "    string fileName = 'file:CumHits.root'"
     "  }"
     "  module mix = MixingModule {"
-    "    secsource input = PoolSource  {"
-    "      string fileName = 'pileup.root'"
+    "    secsource input = PoolRASource  {"
+    "      untracked vstring fileNames = {'file:pileup.root'}"
     "    }"
     "    string type = 'fixed'"
     "    double average_number = 14.3"
@@ -112,9 +112,9 @@ void testmakepset::secsourceAux()
   // Make sure this ParameterSet object has the right contents
   edm::ParameterSet mixingModuleParams = ps->getParameter<edm::ParameterSet>("mix");
   edm::ParameterSet secondarySourceParams = mixingModuleParams.getParameter<edm::ParameterSet>("input");
-  CPPUNIT_ASSERT(secondarySourceParams.getParameter<std::string>("@module_type") == "PoolSource"); 
+  CPPUNIT_ASSERT(secondarySourceParams.getParameter<std::string>("@module_type") == "PoolRASource"); 
   CPPUNIT_ASSERT(secondarySourceParams.getParameter<std::string>("@module_label") == "input");
-  CPPUNIT_ASSERT(secondarySourceParams.getParameter<std::string>("fileName") == "pileup.root");
+  CPPUNIT_ASSERT(secondarySourceParams.getUntrackedParameter<std::vector<std::string> >("fileNames")[0] == "file:pileup.root");
 }
 
 void testmakepset::usingBlockTest()
@@ -136,8 +136,8 @@ void testmakepset::usingBlockAux()
   const char* kTest = 
     "process PROD = {"
     "  source = PoolSource {"
-    "    string fileName = 'main.root'"
-    "    int32 maxEvents = 2"
+    "    untracked vstring fileNames = {'file:main.root'}"
+    "    untracked int32 maxEvents = 2"
     "  }"
     "  block b = {"
     "    double r = 1.5"
