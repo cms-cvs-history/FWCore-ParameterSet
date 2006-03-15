@@ -1,7 +1,6 @@
 {
 'procname': 'PROCESSNAME'
-, 'main_input': {
-'classname': ('string', 'tracked', 'PoolSource'), 'fileName': ('string', 'untracked', '\"no_real_file_here\"'), 'debugFlag': ('bool', 'untracked', 'false'), 'maxEvents': ('int32', 'untracked', '-1'), 'debugVebosity': ('uint32', 'untracked', '10')}
+, 'main_input': { 'classname': ( 'string', 'tracked', 'PoolSource'), 'fileNames': ('vstring', 'untracked', [ '\"no_real_file_here\"' ]), 'debugFlag': ('bool', 'untracked', 'false'), 'maxEvents': ('int32', 'untracked', '-1'), 'debugVebosity': ('uint32', 'untracked', '10')}
  # end of main_input
 , 'modules': {
 #--------------------
