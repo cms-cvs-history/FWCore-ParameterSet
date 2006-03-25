@@ -4,7 +4,7 @@
 
 @brief test suit for process building and schedule validation
 
-@version: $Id: processbuilder_t.cppunit.cc,v 1.3 2005/09/01 03:39:32 wmtan Exp $
+@version: $Id: processbuilder_t.cppunit.cc,v 1.4 2006/01/24 21:17:37 jbk Exp $
 @author : Stefano Argiro
 @date : 2005 06 17
 
@@ -402,4 +402,4 @@ ProcessPSetBuilder b(kTest);
 
 }
 
-
+#include <Utilities/Testing/interface/CppUnit_testdriver.icpp>
