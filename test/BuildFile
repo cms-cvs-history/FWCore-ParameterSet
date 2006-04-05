@@ -49,6 +49,7 @@
 <bin file=Registry_t.cpp></bin>
 <bin file=ParameterSetRecursing_t.cpp></bin>
 <bin file=OverrideParameters_t.cpp></bin>
+<bin file=Replace_t.cpp></bin>
 
 <bin file=TestDriver.cpp>
   <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/ParameterSet/test run_all_t.sh run_pythonformwriter_t.sh">
