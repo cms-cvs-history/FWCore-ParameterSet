@@ -7,6 +7,7 @@
 
 #include "FWCore/ParameterSet/interface/parse.h"
 #include "FWCore/Utilities/interface/EDMException.h"
+#include "FWCore/ParameterSet/src/ParseResultsTweaker.h"
 
 //------------------------------------------------------------
 // Test program for parameter set specification and configuration file
@@ -38,6 +39,10 @@ int work(int argc, char* argv[])
   read_from_file(argv[1], buffer);
   const char* spec = buffer.c_str();
   ParseResults pr = edm::pset::parse(spec);
+
+  // process replace and using blocks
+  edm::pset::ParseResultsTweaker tweaker;
+  tweaker.process(pr);
 
   if(!pr)
     {
