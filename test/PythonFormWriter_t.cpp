@@ -8,6 +8,8 @@
 #include "FWCore/Utilities/interface/EDMException.h"
 #include "FWCore/ParameterSet/interface/parse.h"
 #include "FWCore/ParameterSet/src/PythonFormWriter.h"
+#include "FWCore/ParameterSet/interface/MakeParameterSets.h"
+#include "FWCore/ParameterSet/src/ParseResultsTweaker.h"
 
 using namespace edm;
 using namespace edm::pset;
@@ -17,7 +19,17 @@ void writePythonForm(std::string const& config, std::ostream& out)
   try
     {
       PythonFormWriter writer;
-      boost::shared_ptr<edm::pset::NodePtrList> parsetree = edm::pset::parse(config.c_str());
+      // preprocess include statements
+      std::string parseInput;
+      std::vector<std::string> openFiles;
+      edm::pset::preprocessConfigString(config, parseInput, openFiles);
+
+      boost::shared_ptr<edm::pset::NodePtrList> parsetree = edm::pset::parse(parseInput.c_str());
+
+      // postprocess using and replace 
+      ParseResultsTweaker tweaker;
+      tweaker.process(parsetree);
+
       writer.write(parsetree, out);
     }
   catch ( edm::Exception& x )
