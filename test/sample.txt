@@ -53,4 +53,6 @@ process PROD =
 
   include "FWCore/ParameterSet/test/include_1.stub"
   include "FWCore/ParameterSet/test/include_2.stub"
+  // test that multiple includes are ignored
+  include "FWCore/ParameterSet/test/include_2.stub"
 }
