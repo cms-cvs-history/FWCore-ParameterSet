@@ -7,7 +7,6 @@
 
 #include "FWCore/ParameterSet/interface/parse.h"
 #include "FWCore/Utilities/interface/EDMException.h"
-#include "FWCore/ParameterSet/src/ParseResultsTweaker.h"
 
 //------------------------------------------------------------
 // Test program for parameter set specification and configuration file
@@ -15,17 +14,6 @@
 //------------------------------------------------------------
 
 using namespace std;
-
-void read_from_file(const char* filename,
-		     string& buffer)
-{
-  ifstream ifs(filename);
-  if (ifs)
-    {
-      string line;
-      while (getline(ifs, line)) { buffer += line; buffer += '\n'; }
-    }
-}
 
 int work(int argc, char* argv[])
 {
@@ -36,13 +24,8 @@ int work(int argc, char* argv[])
 
   // If given an argument, that argument must be the name of a file to read.
   string buffer;
-  read_from_file(argv[1], buffer);
-  const char* spec = buffer.c_str();
-  ParseResults pr = edm::pset::parse(spec);
-
-  // process replace and using blocks
-  edm::pset::ParseResultsTweaker tweaker;
-  tweaker.process(pr);
+  edm::pset::read_whole_file(argv[1], buffer);
+  ParseResults pr = edm::pset::fullParse(buffer);
 
   if(!pr)
     {
