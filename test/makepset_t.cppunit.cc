@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.18 2006/02/07 22:20:58 paterno Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.19 2006/03/14 23:43:32 wmtan Exp $
  */
 
 #include <algorithm>
@@ -21,7 +21,7 @@
 
 #include "FWCore/Utilities/interface/EDMException.h"
 #include "FWCore/ParameterSet/interface/Makers.h"
-#include "FWCore/ParameterSet/interface/MakeProcessPSet.h"
+#include "FWCore/ParameterSet/interface/ProcessPSetBuilder.h"
 #include "FWCore/ParameterSet/interface/parse.h"
 
 
@@ -106,7 +106,9 @@ void testmakepset::secsourceAux()
   std::string config(kTest);
 
   // Create the ParameterSet object from this configuration string.
-  boost::shared_ptr<edm::ParameterSet> ps = edm::makeProcessPSet(config);
+  edm::ProcessPSetBuilder builder(config);
+  boost::shared_ptr<edm::ParameterSet> ps = builder.getProcessPSet();
+
   CPPUNIT_ASSERT(0 != ps.get());
 
   // Make sure this ParameterSet object has the right contents
@@ -157,7 +159,9 @@ void testmakepset::usingBlockAux()
   std::string config(kTest);
 
   // Create the ParameterSet object from this configuration string.
-  boost::shared_ptr<edm::ParameterSet> ps = edm::makeProcessPSet(config);
+  edm::ProcessPSetBuilder builder(config);
+  boost::shared_ptr<edm::ParameterSet> ps = builder.getProcessPSet();
+
   CPPUNIT_ASSERT(0 != ps.get());
 
   // Make sure this ParameterSet object has the right contents
@@ -203,7 +207,8 @@ void testmakepset::fileinpathAux()
   std::string config(kTest);
 
   // Create the ParameterSet object from this configuration string.
-  boost::shared_ptr<edm::ParameterSet> ps = edm::makeProcessPSet(config);
+  edm::ProcessPSetBuilder builder(config);
+  boost::shared_ptr<edm::ParameterSet> ps = builder.getProcessPSet();
   CPPUNIT_ASSERT(0 != ps.get());
   std::cerr << "\n-----------------------------\n";
   std::cerr << ps->toString();
