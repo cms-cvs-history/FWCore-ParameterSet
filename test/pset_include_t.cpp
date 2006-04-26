@@ -1,15 +1,7 @@
 #include <cassert>
 #include <iostream>
+#include "FWCore/ParameterSet/src/ConfigurationPreprocessor.h"
 
-#include "FWCore/ParameterSet/interface/MakeParameterSets.h"
-
-namespace edm
-{
-  namespace pset
-  {
-    bool is_include_line(std::string const& input, std::string& filename);
-  }
-}
 
 int test_include(std::string const& line,
 		  bool expected_result,
@@ -17,7 +9,7 @@ int test_include(std::string const& line,
 {
   int rc = 0;
   std::string filename;
-  bool b = edm::pset::is_include_line(line, filename);
+  bool b = edm::pset::ConfigurationPreprocessor::is_include_line(line, filename);
   if ( b != expected_result ) 
     {
       rc = 1;
