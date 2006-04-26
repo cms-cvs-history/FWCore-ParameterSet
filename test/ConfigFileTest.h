@@ -4,6 +4,7 @@
 #include <cassert>
 #include <string>
 #include "FWCore/ParameterSet/interface/MakeParameterSets.h"
+#include "FWCore/ParameterSet/interface/parse.h"
 #include "FWCore/Utilities/interface/EDMException.h"
 #include <fstream>
 #include <iostream>
