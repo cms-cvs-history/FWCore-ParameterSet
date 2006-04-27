@@ -18,6 +18,8 @@ public:
    edm::ParameterSet government= rome.getParameter<edm::ParameterSet>("government");
    assert(government.getParameter<std::string>("leader") == "Emperor");
 
+   edm::ParameterSet skygod = p.getParameter<edm::ParameterSet>("jupiter");
+   assert(skygod.getParameter<std::string>("wife") == "Juno");
    // I don't know how to test the source replacement
 
    return 0;
