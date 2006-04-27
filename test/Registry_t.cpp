@@ -2,7 +2,7 @@
 //
 // This program test the behavior of pset::Registry.
 //
-// $Id: Registry_t.cpp,v 1.5 2006/03/08 22:14:53 wmtan Exp $
+// $Id: Registry_t.cpp,v 1.6 2006/03/13 22:15:54 paterno Exp $
 //----------------------------------------------------------------------
 #include <cassert>
 #include <vector>
@@ -52,8 +52,7 @@ ThreadWorker::operator()()
 	i != ids_issued.end();
 	++i)
   {
-      edm::ParameterSet ps;
-      assert(reg->getParameterSet(*i, ps));
+      edm::ParameterSet ps = getParameterSet(*i);
       assert(ps.id() == *i);
       assert(ps.getParameter<int>("i") > 0); // fixme: check exact value
       assert(ps.getUntrackedParameter<double>("d", 1.0) == 1.0);
