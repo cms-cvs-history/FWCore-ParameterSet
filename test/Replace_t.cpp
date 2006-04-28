@@ -20,6 +20,13 @@ public:
 
    edm::ParameterSet skygod = p.getParameter<edm::ParameterSet>("jupiter");
    assert(skygod.getParameter<std::string>("wife") == "Juno");
+
+   /// see if the copy worked
+   edm::ParameterSet byzantium =
+    p.getParameter<edm::ParameterSet>("byzantium");
+   assert(byzantium.getParameter<int>("date") == 330);
+   assert(byzantium.getParameter<std::string>("motto") == "SPQR");
+
    // I don't know how to test the source replacement
 
    return 0;
