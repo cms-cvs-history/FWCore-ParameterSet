@@ -6,7 +6,7 @@
  *  Changed by Viji Sundararajan on 8-Jul-05.
  *  Copyright 2005 __MyCompanyName__. All rights reserved.
  * 
- * $Id: makeprocess_t.cppunit.cc,v 1.8 2005/09/28 04:34:17 wmtan Exp $
+ * $Id: makeprocess_t.cppunit.cc,v 1.9 2006/01/31 21:03:05 paterno Exp $
  */
 
 
@@ -18,9 +18,10 @@
 #include "FWCore/Utilities/interface/EDMException.h"
 
 #include <iostream>
-#include <vector>
+#include <sstream>
 #include <stdexcept>
 #include <string>
+#include <vector>
 
 class testmakeprocess: public CppUnit::TestFixture
 {
@@ -31,6 +32,7 @@ CPPUNIT_TEST(pathTest);
 CPPUNIT_TEST(moduleTest);
 CPPUNIT_TEST(serviceTest);
 CPPUNIT_TEST(emptyModuleTest);
+CPPUNIT_TEST(windowsLineEndingTest);
 //CPPUNIT_TEST_EXCEPTION(emptyPsetTest,edm::Exception);
 CPPUNIT_TEST_SUITE_END();
 public:
@@ -42,6 +44,7 @@ public:
   void moduleTest();
   void serviceTest();
   void emptyModuleTest();
+  void windowsLineEndingTest();
   //  void emptyPsetTest();
 };
                                                                                                                      
@@ -194,6 +197,68 @@ void testmakeprocess::emptyModuleTest()
    std::string rep = myparams.toString();
    edm::ParameterSet copy(rep);
    CPPUNIT_ASSERT(copy == myparams);
+}
+
+void testmakeprocess::windowsLineEndingTest()
+{
+#if 0
+  const char* kTest = "\r\n"
+    "process test = {\r\n"
+    "source = InputSource{\r\n"
+    "  int32 i=1\r\n"
+    "  string s1 = \"\r\"  \r\n"
+    "  string s2 = \"\\r\"  \r\n"
+    "}\r\n"
+    "//this is a comment\r\n"
+    "# this is a comment\r\n"
+    "}\r\n";
+#endif
+
+  std::ostringstream oss;
+  const char ret = '\r';
+  const char nl = '\n';
+  const char dquote = '"';
+  const char backsl = '\\';
+
+  oss << ret << nl
+      << "process test = {" << ret << nl
+      << "  source = InputSource{" << ret << nl
+      << "    int32 i=1" << ret << nl
+      << "    string s1 = " << dquote << ret << dquote << ret << nl
+      << "    string s2 = " << dquote << backsl << backsl << 'r' << dquote << ret << nl
+      << "  }" << ret << nl
+      << "}" << ret << nl;
+  const char* kTest = oss.str().c_str();
+  std::cerr << "\n------------------------------\n";
+  std::cerr << "s1 will look funky because of the embedded return\n";
+  std::cerr << "s2 shows how to get the chars backslash-r into a string\n";
+  std::cerr << kTest;
+  std::cerr << "\n------------------------------\n";
+
+   boost::shared_ptr<edm::pset::NodePtrList> nodeList = 
+     edm::pset::parse(kTest);
+   CPPUNIT_ASSERT(0 != nodeList.get());
+   
+   boost::shared_ptr<edm::ProcessDesc> test = 
+     edm::pset::makeProcess(nodeList);
+
+   edm::ParameterSet const& p = test->pset_;
+   
+   CPPUNIT_ASSERT(p.getParameter<std::string>("@process_name") == "test");
+   edm::ParameterSet src = p.getParameter<edm::ParameterSet>("@main_input");
+   CPPUNIT_ASSERT(src.getParameter<int>("i") == 1);
+   std::string s1 = src.getParameter<std::string>("s1");
+   std::string s2 = src.getParameter<std::string>("s2");
+   
+   std::cerr << "\nsize of s1 is: " << s1.size();
+   std::cerr << "\nsize of s2 is: " << s2.size() << '\n';
+
+   CPPUNIT_ASSERT(s1.size() == 1);
+   CPPUNIT_ASSERT(s1[0] == ret);
+
+   CPPUNIT_ASSERT(s2.size() == 2);
+   CPPUNIT_ASSERT(s2[0] == backsl);
+   CPPUNIT_ASSERT(s2[1] == 'r');
 }
 
 // void testmakeprocess::emptyPsetTest()
