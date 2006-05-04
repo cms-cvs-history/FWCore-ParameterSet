@@ -2,6 +2,9 @@
 #include "FWCore/ParameterSet/test/ConfigTestMain.h"
 #include <iostream>
 
+using std::string;
+using std::vector;
+
 class ReplaceTest : public ConfigFileTest {
 public:
  virtual int test(const edm::ParameterSet & p) {
@@ -9,18 +12,21 @@ public:
     p.getParameter<edm::ParameterSet>("rome");
 
    assert(rome.getParameter<int>("date") == 100);
-   assert(rome.getParameter<std::string>("motto") == "Toga! Toga!");
-   assert(rome.getParameter<std::vector<std::string> >("victorVector")[1] == "Russell Crowe");
+   assert(rome.getParameter<string>("motto") == "Toga! Toga!");
+   assert(rome.getParameter<vector<string> >("victorVector")[1] == "Russell Crowe");
 
    edm::ParameterSet legion = rome.getParameter<edm::ParameterSet>("legion");
-   assert(legion.getParameter<std::vector<int> >("cohorts").size() == 10);
+   assert(legion.getParameter<vector<int> >("cohorts").size() == 10);
 
    edm::ParameterSet government= rome.getParameter<edm::ParameterSet>("government");
-   assert(government.getParameter<std::string>("leader") == "Emperor");
+   assert(government.getParameter<string>("leader") == "Emperor");
 
    edm::ParameterSet skygod = p.getParameter<edm::ParameterSet>("jupiter");
-   assert(skygod.getParameter<std::string>("wife") == "Juno");
+   assert(skygod.getParameter<string>("wife") == "Juno");
 
+   // see if the replacement in the block got propagated
+   assert(rome.getParameter<string>("loverboy") == "Marc Antony");
+   
    /// see if the copy worked
 /*
    edm::ParameterSet byzantium =
