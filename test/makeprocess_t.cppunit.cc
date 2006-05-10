@@ -6,7 +6,7 @@
  *  Changed by Viji Sundararajan on 8-Jul-05.
  *  Copyright 2005 __MyCompanyName__. All rights reserved.
  * 
- * $Id: makeprocess_t.cppunit.cc,v 1.9 2006/01/31 21:03:05 paterno Exp $
+ * $Id: makeprocess_t.cppunit.cc,v 1.10 2006/05/03 16:33:47 paterno Exp $
  */
 
 
@@ -45,21 +45,28 @@ public:
   void serviceTest();
   void emptyModuleTest();
   void windowsLineEndingTest();
+private:
+
+  typedef boost::shared_ptr<edm::ProcessDesc> ProcDescPtr;
+  ProcDescPtr procDesc(const char * c) {
+    boost::shared_ptr<edm::pset::NodePtrList> nodeList = edm::pset::parse(c);
+    CPPUNIT_ASSERT(0 != nodeList.get());
+    ProcDescPtr result = edm::pset::makeProcess(nodeList);
+    CPPUNIT_ASSERT(result->pset_.getParameter<std::string>("@process_name") == "test");
+    return result;
+  }
   //  void emptyPsetTest();
 };
-                                                                                                                     
+
+
+
 ///registration of the test so that the runner can find it
 CPPUNIT_TEST_SUITE_REGISTRATION(testmakeprocess);
 
 void testmakeprocess::simpleProcessTest()
 {
    const char* kTest ="process test = { PSet dummy = {bool b = true} } ";
-   boost::shared_ptr<edm::pset::NodePtrList> nodeList = edm::pset::parse(kTest);
-   CPPUNIT_ASSERT(0 != nodeList.get());
-   
-   boost::shared_ptr<edm::ProcessDesc> test = edm::pset::makeProcess(nodeList);
-
-   CPPUNIT_ASSERT(test->pset_.getParameter<std::string>("@process_name") == "test");   
+   ProcDescPtr test = procDesc(kTest);
 }
 
 void testmakeprocess::usingTest()
@@ -68,11 +75,9 @@ void testmakeprocess::usingTest()
    " block dummy2 = {bool d = true} \n"
    " module include = Dummy {using dummy} \n"
    " module include2 = Dummy2 {using dummy2} } ";
-   boost::shared_ptr<edm::pset::NodePtrList> nodeList = edm::pset::parse(kTest);
-   CPPUNIT_ASSERT(0 != nodeList.get());
    
-   boost::shared_ptr<edm::ProcessDesc> test = edm::pset::makeProcess(nodeList);
-   
+   ProcDescPtr test = procDesc(kTest);
+
    //CPPUNIT_ASSERT(test->pset_.getParameter<edm::ParameterSet>("dummy").getBool("b") == true);   
    CPPUNIT_ASSERT(test->pset_.getParameter<edm::ParameterSet>("include").getParameter<bool>("b") == true);   
    CPPUNIT_ASSERT(test->pset_.getParameter<edm::ParameterSet>("include2").getParameter<bool>("d") == true);   
@@ -87,12 +92,9 @@ void testmakeprocess::pathTest()
    "path term1 = { cones & jtanalyzer }\n"
    "endpath atEnd = {all,some}\n"
    "} ";
-   boost::shared_ptr<edm::pset::NodePtrList> nodeList = edm::pset::parse(kTest);
-   CPPUNIT_ASSERT(0 != nodeList.get());
-   
-   boost::shared_ptr<edm::ProcessDesc> test = edm::pset::makeProcess(nodeList);
-   
-   CPPUNIT_ASSERT(test->pset_.getParameter<std::string>("@process_name") == "test");
+
+   ProcDescPtr test = procDesc(kTest);
+
    CPPUNIT_ASSERT(test->pathFragments_.size() == 3);
 
    const edm::ParameterSet& myparams = test->pset_;
@@ -122,10 +124,8 @@ void testmakeprocess::moduleTest()
    "es_source = NoLabelRetriever{int32 s=1}\n"
    "es_source label = LabelRetriever{int32 s=1}\n"
    "} ";
-   boost::shared_ptr<edm::pset::NodePtrList> nodeList = edm::pset::parse(kTest);
-   CPPUNIT_ASSERT(0 != nodeList.get());
-   
-   boost::shared_ptr<edm::ProcessDesc> test = edm::pset::makeProcess(nodeList);
+
+   ProcDescPtr test = procDesc(kTest);
 
    static const edm::ParameterSet kEmpty;
    const edm::ParameterSet kCone(modulePSet("cones", "Module"));
@@ -169,10 +169,8 @@ void testmakeprocess::serviceTest()
    "service = XService{ int32 s=1 }\n"
    "service = YService{ int32 s=1 }\n"
    "} ";
-   boost::shared_ptr<edm::pset::NodePtrList> nodeList = edm::pset::parse(kTest);
-   CPPUNIT_ASSERT(0 != nodeList.get());
-   
-   boost::shared_ptr<edm::ProcessDesc> test = edm::pset::makeProcess(nodeList);
+
+   ProcDescPtr test = procDesc(kTest);
 
    CPPUNIT_ASSERT(test->services_.size() == 2);
    CPPUNIT_ASSERT("XService" == test->services_[0].getParameter<std::string>("@service_type"));
@@ -184,12 +182,8 @@ void testmakeprocess::emptyModuleTest()
    "#PSet thing1 = {  }\n"
    "module thing = XX {  }\n"
    "} ";
-   boost::shared_ptr<edm::pset::NodePtrList> nodeList = edm::pset::parse(kTest);
-   CPPUNIT_ASSERT(0 != nodeList.get());
-   
-   boost::shared_ptr<edm::ProcessDesc> test = edm::pset::makeProcess(nodeList);
-   
-   CPPUNIT_ASSERT(test->pset_.getParameter<std::string>("@process_name") == "test");
+
+   ProcDescPtr test = procDesc(kTest);
 
    const edm::ParameterSet& myparams = test->pset_;
 //    std::cout << "ParameterSet looks like:\n";
@@ -235,16 +229,10 @@ void testmakeprocess::windowsLineEndingTest()
   std::cerr << kTest;
   std::cerr << "\n------------------------------\n";
 
-   boost::shared_ptr<edm::pset::NodePtrList> nodeList = 
-     edm::pset::parse(kTest);
-   CPPUNIT_ASSERT(0 != nodeList.get());
-   
-   boost::shared_ptr<edm::ProcessDesc> test = 
-     edm::pset::makeProcess(nodeList);
+   ProcDescPtr test = procDesc(kTest);
 
    edm::ParameterSet const& p = test->pset_;
    
-   CPPUNIT_ASSERT(p.getParameter<std::string>("@process_name") == "test");
    edm::ParameterSet src = p.getParameter<edm::ParameterSet>("@main_input");
    CPPUNIT_ASSERT(src.getParameter<int>("i") == 1);
    std::string s1 = src.getParameter<std::string>("s1");
