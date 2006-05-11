@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.20 2006/04/26 22:40:04 rpw Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.21 2006/05/11 11:31:45 chrjones Exp $
  */
 
 #include <algorithm>
@@ -276,6 +276,7 @@ void testmakepset::typesTest()
      "string s=\"this string\"\n"
      "string sb2=\"\"\n"
      "string sb1=''\n"
+     "string sb3='    '\n"
      "vstring vs={\"1\",\"2\",\"a\"}\n"
      "VPSet vps ={ {bool b3=false} }\n";
    boost::shared_ptr<edm::pset::NodePtrList> nodeList = edm::pset::parse(kTest);
@@ -294,6 +295,7 @@ void testmakepset::typesTest()
    std::cout <<"blank string using double quotes returns \""<<test->getParameter<std::string>("sb2")<<"\""<<std::endl;
    CPPUNIT_ASSERT("" == test->getParameter<std::string>("sb1"));
    CPPUNIT_ASSERT("" == test->getParameter<std::string>("sb2"));
+   CPPUNIT_ASSERT(4  == test->getParameter<std::string>("sb3").size());
    CPPUNIT_ASSERT(3 == test->getParameter<std::vector<std::string> >("vs").size());
    CPPUNIT_ASSERT(test->getParameter<std::vector<std::string> >("vs").size() && "1" == test->getParameter<std::vector<std::string> >("vs")[0]);
    CPPUNIT_ASSERT(test->getParameter<std::vector<std::string> >("vs").size() >1 && "2" == test->getParameter<std::vector<std::string> >("vs")[1]);
