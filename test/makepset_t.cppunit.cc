@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.21 2006/05/11 11:31:45 chrjones Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.22 2006/05/11 20:41:32 rpw Exp $
  */
 
 #include <algorithm>
@@ -92,7 +92,7 @@ void testmakepset::secsourceAux()
     "    string fileName = 'file:CumHits.root'"
     "  }"
     "  module mix = MixingModule {"
-    "    secsource input = PoolRASource  {"
+    "    secsource input = PoolSource  {"
     "      untracked vstring fileNames = {'file:pileup.root'}"
     "    }"
     "    string type = 'fixed'"
@@ -114,7 +114,7 @@ void testmakepset::secsourceAux()
   // Make sure this ParameterSet object has the right contents
   edm::ParameterSet mixingModuleParams = ps->getParameter<edm::ParameterSet>("mix");
   edm::ParameterSet secondarySourceParams = mixingModuleParams.getParameter<edm::ParameterSet>("input");
-  CPPUNIT_ASSERT(secondarySourceParams.getParameter<std::string>("@module_type") == "PoolRASource"); 
+  CPPUNIT_ASSERT(secondarySourceParams.getParameter<std::string>("@module_type") == "PoolSource"); 
   CPPUNIT_ASSERT(secondarySourceParams.getParameter<std::string>("@module_label") == "input");
   CPPUNIT_ASSERT(secondarySourceParams.getUntrackedParameter<std::vector<std::string> >("fileNames")[0] == "file:pileup.root");
 }
