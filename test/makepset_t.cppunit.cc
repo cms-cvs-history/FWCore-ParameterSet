@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.22 2006/05/11 20:41:32 rpw Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.23 2006/05/26 21:01:17 wmtan Exp $
  */
 
 #include <algorithm>
@@ -20,8 +20,7 @@
 #include "boost/lambda/lambda.hpp"
 
 #include "FWCore/Utilities/interface/EDMException.h"
-#include "FWCore/ParameterSet/interface/Makers.h"
-#include "FWCore/ParameterSet/interface/ProcessPSetBuilder.h"
+#include "FWCore/ParameterSet/interface/ProcessDesc.h"
 #include "FWCore/ParameterSet/interface/parse.h"
 
 
@@ -30,10 +29,10 @@ class testmakepset: public CppUnit::TestFixture
   CPPUNIT_TEST_SUITE(testmakepset);
   //  CPPUNIT_TEST_EXCEPTION(emptyTest,edm::Exception);
   CPPUNIT_TEST(typesTest);
-  CPPUNIT_TEST(usingTest);
-  CPPUNIT_TEST_EXCEPTION(usingExcTest,edm::Exception);
-  CPPUNIT_TEST(psetRefTest);
-  CPPUNIT_TEST_EXCEPTION(psetRefExcTest,edm::Exception);
+//  CPPUNIT_TEST(usingTest);
+//  CPPUNIT_TEST_EXCEPTION(usingExcTest,edm::Exception);
+//  CPPUNIT_TEST(psetRefTest);
+//  CPPUNIT_TEST_EXCEPTION(psetRefExcTest,edm::Exception);
   CPPUNIT_TEST(secsourceTest);
   CPPUNIT_TEST(usingBlockTest);
   CPPUNIT_TEST(fileinpathTest);
@@ -43,11 +42,12 @@ class testmakepset: public CppUnit::TestFixture
   void setUp(){}
   void tearDown(){}
   //  void emptyTest();
+  boost::shared_ptr<edm::ParameterSet> makePSet(const edm::pset::NodePtrList & parseTree) const;
   void typesTest();
-  void usingTest();
-  void usingExcTest();
-  void psetRefTest();
-  void psetRefExcTest();
+  //void usingTest();
+  //void usingExcTest();
+  //void psetRefTest();
+  //void psetRefExcTest();
   void secsourceTest();
   void usingBlockTest();
   void fileinpathTest();
@@ -60,6 +60,19 @@ class testmakepset: public CppUnit::TestFixture
                                                                                                                    
 ///registration of the test so that the runner can find it
 CPPUNIT_TEST_SUITE_REGISTRATION(testmakepset);
+
+boost::shared_ptr<edm::ParameterSet> 
+testmakepset::makePSet(const edm::pset::NodePtrList & parseTree) const 
+{
+  boost::shared_ptr<edm::ParameterSet> result(new edm::ParameterSet);
+  edm::pset::NodePtrList::const_iterator i(parseTree.begin()), e(parseTree.end());
+  for( ; i != e; ++i)
+  {
+    (**i).insertInto(*result);
+  }
+  return result;
+}
+
 
 void testmakepset::secsourceTest()
 {
@@ -106,7 +119,7 @@ void testmakepset::secsourceAux()
   std::string config(kTest);
 
   // Create the ParameterSet object from this configuration string.
-  edm::ProcessPSetBuilder builder(config);
+  edm::ProcessDesc builder(config);
   boost::shared_ptr<edm::ParameterSet> ps = builder.getProcessPSet();
 
   CPPUNIT_ASSERT(0 != ps.get());
@@ -159,7 +172,7 @@ void testmakepset::usingBlockAux()
   std::string config(kTest);
 
   // Create the ParameterSet object from this configuration string.
-  edm::ProcessPSetBuilder builder(config);
+  edm::ProcessDesc builder(config);
   boost::shared_ptr<edm::ParameterSet> ps = builder.getProcessPSet();
 
   CPPUNIT_ASSERT(0 != ps.get());
@@ -207,7 +220,7 @@ void testmakepset::fileinpathAux()
   std::string config(kTest);
 
   // Create the ParameterSet object from this configuration string.
-  edm::ProcessPSetBuilder builder(config);
+  edm::ProcessDesc builder(config);
   boost::shared_ptr<edm::ParameterSet> ps = builder.getProcessPSet();
   CPPUNIT_ASSERT(0 != ps.get());
   std::cerr << "\n-----------------------------\n";
@@ -258,8 +271,8 @@ void testmakepset::fileinpathAux()
    
 //    // this should not be allowed, but is for the time being
 //    // only psets coming in from process sections cannot be empty
-//    //BOOST_CHECK_THROW(edm::pset::makePSet(*nodeList), std::runtime_error);
-//    edm::pset::makePSet(*nodeList);
+//    //BOOST_CHECK_THROW(makePSet(*nodeList), std::runtime_error);
+//    makePSet(*nodeList);
 // }
 
 void testmakepset::typesTest()
@@ -282,7 +295,7 @@ void testmakepset::typesTest()
    boost::shared_ptr<edm::pset::NodePtrList> nodeList = edm::pset::parse(kTest);
    CPPUNIT_ASSERT(0 != nodeList.get());
    
-   boost::shared_ptr<edm::ParameterSet> test = edm::pset::makePSet(*nodeList);
+   boost::shared_ptr<edm::ParameterSet> test = makePSet(*nodeList);
    //std::cout << test->toString() << std::endl;
    
    CPPUNIT_ASSERT(1 == test->getParameter<int>("i"));
@@ -319,9 +332,10 @@ void testmakepset::typesTest()
    CPPUNIT_ASSERT(1 == vps.size());
    CPPUNIT_ASSERT(false == vps.front().getParameter<bool>("b3"));
    
-   //BOOST_CHECK_THROW(edm::pset::makePSet(*nodeList), std::runtime_error);
+   //BOOST_CHECK_THROW(makePSet(*nodeList), std::runtime_error);
 }
 
+/*
 void testmakepset::usingTest()
 {
    //vbool vb = {true, false};
@@ -329,14 +343,14 @@ void testmakepset::usingTest()
    boost::shared_ptr<edm::pset::NodePtrList> nodeList = edm::pset::parse(kTest);
    CPPUNIT_ASSERT(0 != nodeList.get());
    
-   //BOOST_CHECK_THROW(edm::pset::makePSet(*nodeList), std::runtime_error);
+   //BOOST_CHECK_THROW(makePSet(*nodeList), std::runtime_error);
 
    std::map< std::string, boost::shared_ptr<edm::ParameterSet> > blocks;
    const std::string kName("ublock");
    boost::shared_ptr<edm::ParameterSet> ublock(new edm::ParameterSet);
    ublock->insert(true, kName, edm::Entry(true, true));
    blocks.insert(make_pair(kName, ublock));
-   boost::shared_ptr<edm::ParameterSet> test = edm::pset::makePSet(*nodeList, blocks);
+   boost::shared_ptr<edm::ParameterSet> test = makePSet(*nodeList, blocks);
 
    CPPUNIT_ASSERT(true == test->getParameter<bool>(kName));
 }
@@ -348,8 +362,8 @@ void testmakepset::usingExcTest()
    boost::shared_ptr<edm::pset::NodePtrList> nodeList = edm::pset::parse(kTest);
    CPPUNIT_ASSERT(0 != nodeList.get());
    
-   //BOOST_CHECK_THROW(edm::pset::makePSet(*nodeList), std::runtime_error);
-   edm::pset::makePSet(*nodeList);
+   //BOOST_CHECK_THROW(makePSet(*nodeList), std::runtime_error);
+   makePSet(*nodeList);
 }
 
 void testmakepset::psetRefTest()
@@ -359,7 +373,7 @@ void testmakepset::psetRefTest()
    boost::shared_ptr<edm::pset::NodePtrList> nodeList = edm::pset::parse(kTest);
    CPPUNIT_ASSERT(0 != nodeList.get());
    
-   //BOOST_CHECK_THROW(edm::pset::makePSet(*nodeList), std::runtime_error);
+   //BOOST_CHECK_THROW(makePSet(*nodeList), std::runtime_error);
    
    std::map< std::string, boost::shared_ptr<edm::ParameterSet> > blocks;
    std::map< std::string, boost::shared_ptr<edm::ParameterSet> > psets;
@@ -367,7 +381,7 @@ void testmakepset::psetRefTest()
    boost::shared_ptr<edm::ParameterSet> ref(new edm::ParameterSet);
    ref->insert(true, kName, edm::Entry(true, true));
    psets.insert(make_pair(kName, ref));
-   boost::shared_ptr<edm::ParameterSet> test = edm::pset::makePSet(*nodeList, blocks,psets);
+   boost::shared_ptr<edm::ParameterSet> test = makePSet(*nodeList, blocks,psets);
    
    CPPUNIT_ASSERT(true == test->getParameter<edm::ParameterSet>("test").getParameter<bool>("ref"));
 }
@@ -379,6 +393,7 @@ void testmakepset::psetRefExcTest()
    boost::shared_ptr<edm::pset::NodePtrList> nodeList = edm::pset::parse(kTest);
    CPPUNIT_ASSERT(0 != nodeList.get());
    
-   //BOOST_CHECK_THROW(edm::pset::makePSet(*nodeList), std::runtime_error);
-   edm::pset::makePSet(*nodeList);
+   //BOOST_CHECK_THROW(makePSet(*nodeList), std::runtime_error);
+   makePSet(*nodeList);
 }
+*/
