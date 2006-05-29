@@ -1,5 +1,5 @@
 #include "FWCore/ParameterSet/interface/parse.h"
-#include "FWCore/ParameterSet/interface/ProcessPSetBuilder.h"
+#include "FWCore/ParameterSet/interface/ProcessDesc.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include <iterator>
 #include <algorithm>
@@ -38,7 +38,7 @@ int main()
        pr->end(),
        ostream_iterator<edm::pset::NodePtr>(cout,"\n"));
 
-  ProcessPSetBuilder b(spec);
+  ProcessDesc b(spec);
   boost::shared_ptr<ParameterSet> test = b.getProcessPSet();
 
   cout << test->toString() << endl;

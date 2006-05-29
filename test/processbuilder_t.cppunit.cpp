@@ -4,7 +4,7 @@
 
 @brief test suit for process building and schedule validation
 
-@version: $Id: processbuilder_t.cppunit.cc,v 1.4 2006/01/24 21:17:37 jbk Exp $
+@version: $Id: processbuilder_t.cppunit.cpp,v 1.1 2006/03/25 00:23:21 wmtan Exp $
 @author : Stefano Argiro
 @date : 2005 06 17
 
@@ -15,7 +15,7 @@
 #include <cppunit/extensions/HelperMacros.h>
 
 #include <FWCore/ParameterSet/interface/ParameterSet.h>
-#include <FWCore/ParameterSet/interface/ProcessPSetBuilder.h>
+#include <FWCore/ParameterSet/interface/ProcessDesc.h>
 #include <FWCore/ParameterSet/src/ScheduleValidator.h>
 #include "FWCore/Utilities/interface/EDMException.h"
 
@@ -23,9 +23,9 @@
 
 using namespace edm;
 
-class testProcessPSetBuilder: public CppUnit::TestFixture {
+class testProcessDesc: public CppUnit::TestFixture {
 
-  CPPUNIT_TEST_SUITE(testProcessPSetBuilder);
+  CPPUNIT_TEST_SUITE(testProcessDesc);
 
   CPPUNIT_TEST(trivialPathTest);
   CPPUNIT_TEST(simplePathTest);
@@ -61,17 +61,17 @@ public:
 }; 
 
 ///registration of the test so that the runner can find it
-CPPUNIT_TEST_SUITE_REGISTRATION(testProcessPSetBuilder);
+CPPUNIT_TEST_SUITE_REGISTRATION(testProcessDesc);
 
 
-void testProcessPSetBuilder::trivialPathTest(){
+void testProcessDesc::trivialPathTest(){
 
   std::string str = "process X = { \n"
     " module a = A { int32 p = 3 } \n"
     " path p = { a,b,c } \n"
     " }";
 
-  ProcessPSetBuilder b(str);
+  ProcessDesc b(str);
   boost::shared_ptr<ParameterSet> test = b.getProcessPSet();
 
   typedef std::vector<std::string> Strs;
@@ -81,7 +81,7 @@ void testProcessPSetBuilder::trivialPathTest(){
   CPPUNIT_ASSERT(b.getDependencies("a")=="");
 }
 
-void testProcessPSetBuilder::simplePathTest(){
+void testProcessDesc::simplePathTest(){
 
   std::string str = "process X = { \n"
     " module a = A { int32 p = 3 } \n"
@@ -90,7 +90,7 @@ void testProcessPSetBuilder::simplePathTest(){
     " path p = { a,b,c } \n"
     " }";
 
-  ProcessPSetBuilder b(str);
+  ProcessDesc b(str);
   boost::shared_ptr<ParameterSet> test = b.getProcessPSet();
 
   typedef std::vector<std::string> Strs;
@@ -107,7 +107,7 @@ void testProcessPSetBuilder::simplePathTest(){
 }
 
 
-void testProcessPSetBuilder:: attriggertest (){
+void testProcessDesc:: attriggertest (){
 
   const char * kTest = "process test = {\n"
    "module cone1 = PhonyConeJet { int32 i = 5 }\n"
@@ -124,7 +124,7 @@ void testProcessPSetBuilder:: attriggertest (){
 
   std::cerr << "doing stuff" << "\n";
   try {
-  ProcessPSetBuilder b(kTest);
+  ProcessDesc b(kTest);
   boost::shared_ptr<ParameterSet> test = b.getProcessPSet();
 
   typedef std::vector<std::string> Strs;
@@ -157,7 +157,7 @@ void testProcessPSetBuilder:: attriggertest (){
   }
 
 }
-void testProcessPSetBuilder:: sequenceSubstitutionTest (){
+void testProcessDesc:: sequenceSubstitutionTest (){
 
   const char * kTest = "process test = {\n"
    "module cone1 = PhonyConeJet { int32 i = 5 }\n"
@@ -171,7 +171,7 @@ void testProcessPSetBuilder:: sequenceSubstitutionTest (){
    "} ";
 
 
-  ProcessPSetBuilder b(kTest);
+  ProcessDesc b(kTest);
   boost::shared_ptr<ParameterSet> test = b.getProcessPSet();
 
   typedef std::vector<std::string> Strs;
@@ -191,7 +191,7 @@ void testProcessPSetBuilder:: sequenceSubstitutionTest (){
 
 }
 
-void testProcessPSetBuilder::nestedSequenceSubstitutionTest(){
+void testProcessDesc::nestedSequenceSubstitutionTest(){
 
   const char * kTest = "process test = {\n"
    "module a = PhonyConeJet { int32 i = 5 }\n"
@@ -204,7 +204,7 @@ void testProcessPSetBuilder::nestedSequenceSubstitutionTest(){
    "} ";
 
 
-  ProcessPSetBuilder b(kTest);
+  ProcessDesc b(kTest);
   boost::shared_ptr<ParameterSet> test = b.getProcessPSet();
 
   typedef std::vector<std::string> Strs;
@@ -226,7 +226,7 @@ void testProcessPSetBuilder::nestedSequenceSubstitutionTest(){
 }
 
 
-void testProcessPSetBuilder::sequenceSubstitutionTest2(){
+void testProcessDesc::sequenceSubstitutionTest2(){
 
   const char * kTest = "process test = {\n"
    "module cone1 = PhonyConeJet { int32 i = 5 }\n"
@@ -241,7 +241,7 @@ void testProcessPSetBuilder::sequenceSubstitutionTest2(){
    "} ";
 
 
-  ProcessPSetBuilder b(kTest);
+  ProcessDesc b(kTest);
   boost::shared_ptr<ParameterSet> test = b.getProcessPSet();
 
   typedef std::vector<std::string> Strs;
@@ -263,7 +263,7 @@ void testProcessPSetBuilder::sequenceSubstitutionTest2(){
   CPPUNIT_ASSERT (b.getDependencies("jtanalyzer")=="cone1,cone2,cone3,somejet1,somejet2,"); 
 }
 
-void testProcessPSetBuilder::sequenceSubstitutionTest3(){
+void testProcessDesc::sequenceSubstitutionTest3(){
 
    const char * kTest = "process test = {\n"
    "module a = PhonyConeJet { int32 i = 5 }\n"
@@ -286,7 +286,7 @@ void testProcessPSetBuilder::sequenceSubstitutionTest3(){
    "path path1 = { s1,s3,s2,last }\n"
    "} ";
 
-  ProcessPSetBuilder b(kTest);
+  ProcessDesc b(kTest);
   boost::shared_ptr<ParameterSet> test = b.getProcessPSet();
 
   typedef std::vector<std::string> Strs;
@@ -325,7 +325,7 @@ void testProcessPSetBuilder::sequenceSubstitutionTest3(){
 }
 
 
-void testProcessPSetBuilder::multiplePathsTest(){
+void testProcessDesc::multiplePathsTest(){
 
   const char * kTest = "process test = {\n"
     "module cone1 = PhonyConeJet { int32 i = 5 }\n"
@@ -342,7 +342,7 @@ void testProcessPSetBuilder::multiplePathsTest(){
     "} ";
 
 
-  ProcessPSetBuilder b(kTest);
+  ProcessDesc b(kTest);
   boost::shared_ptr<ParameterSet> test = b.getProcessPSet();
   
   typedef std::vector<std::string> Strs;
@@ -371,7 +371,7 @@ void testProcessPSetBuilder::multiplePathsTest(){
 }
 
 
-void testProcessPSetBuilder::inconsistentPathTest(){
+void testProcessDesc::inconsistentPathTest(){
 
   const char * kTest = "process test = {\n"
    "module a = PhonyConeJet { int32 i = 5 }\n"
@@ -380,11 +380,11 @@ void testProcessPSetBuilder::inconsistentPathTest(){
    "path path1 = { (a,b)& (c,b) }\n"
     "} ";
 
-  ProcessPSetBuilder b(kTest);
+  ProcessDesc b(kTest);
 }
 
 
-void testProcessPSetBuilder::inconsistentMultiplePathTest(){
+void testProcessDesc::inconsistentMultiplePathTest(){
 
    const char * kTest = "process test = {\n"
    "module cone1 = PhonyConeJet { int32 i = 5 }\n"
@@ -398,7 +398,7 @@ void testProcessPSetBuilder::inconsistentMultiplePathTest(){
    "path path2 = { jets,  jtanalyzer }\n"
    "} ";
 
-ProcessPSetBuilder b(kTest);
+ProcessDesc b(kTest);
 
 }
 
