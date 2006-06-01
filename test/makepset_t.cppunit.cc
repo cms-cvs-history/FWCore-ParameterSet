@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.23 2006/05/26 21:01:17 wmtan Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.24 2006/05/29 19:34:36 rpw Exp $
  */
 
 #include <algorithm>
@@ -21,7 +21,9 @@
 
 #include "FWCore/Utilities/interface/EDMException.h"
 #include "FWCore/ParameterSet/interface/ProcessDesc.h"
+#include "FWCore/ParameterSet/interface/Makers.h"
 #include "FWCore/ParameterSet/interface/parse.h"
+
 
 
 class testmakepset: public CppUnit::TestFixture
@@ -42,7 +44,6 @@ class testmakepset: public CppUnit::TestFixture
   void setUp(){}
   void tearDown(){}
   //  void emptyTest();
-  boost::shared_ptr<edm::ParameterSet> makePSet(const edm::pset::NodePtrList & parseTree) const;
   void typesTest();
   //void usingTest();
   //void usingExcTest();
@@ -60,18 +61,6 @@ class testmakepset: public CppUnit::TestFixture
                                                                                                                    
 ///registration of the test so that the runner can find it
 CPPUNIT_TEST_SUITE_REGISTRATION(testmakepset);
-
-boost::shared_ptr<edm::ParameterSet> 
-testmakepset::makePSet(const edm::pset::NodePtrList & parseTree) const 
-{
-  boost::shared_ptr<edm::ParameterSet> result(new edm::ParameterSet);
-  edm::pset::NodePtrList::const_iterator i(parseTree.begin()), e(parseTree.end());
-  for( ; i != e; ++i)
-  {
-    (**i).insertInto(*result);
-  }
-  return result;
-}
 
 
 void testmakepset::secsourceTest()
@@ -292,10 +281,8 @@ void testmakepset::typesTest()
      "string sb3='    '\n"
      "vstring vs={\"1\",\"2\",\"a\"}\n"
      "VPSet vps ={ {bool b3=false} }\n";
-   boost::shared_ptr<edm::pset::NodePtrList> nodeList = edm::pset::parse(kTest);
-   CPPUNIT_ASSERT(0 != nodeList.get());
    
-   boost::shared_ptr<edm::ParameterSet> test = makePSet(*nodeList);
+   boost::shared_ptr<edm::ParameterSet> test = edm::pset::makePSet(kTest);
    //std::cout << test->toString() << std::endl;
    
    CPPUNIT_ASSERT(1 == test->getParameter<int>("i"));
