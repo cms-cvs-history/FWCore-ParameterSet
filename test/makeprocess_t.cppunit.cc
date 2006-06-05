@@ -6,7 +6,7 @@
  *  Changed by Viji Sundararajan on 8-Jul-05.
  *  Copyright 2005 __MyCompanyName__. All rights reserved.
  * 
- * $Id: makeprocess_t.cppunit.cc,v 1.12 2006/05/23 20:02:10 rpw Exp $
+ * $Id: makeprocess_t.cppunit.cc,v 1.13 2006/05/29 19:35:17 rpw Exp $
  */
 
 
@@ -71,14 +71,14 @@ void testmakeprocess::usingTest()
 {
    const char* kTest ="process test = { PSet dummy = {bool b = true}\n"
    " block dummy2 = {bool d = true} \n"
-   " module include = Dummy {using dummy} \n"
-   " module include2 = Dummy2 {using dummy2} } ";
+   " module m1 = Dummy {using dummy} \n"
+   " module m2 = Dummy2 {using dummy2} } ";
    
    ProcDescPtr test = procDesc(kTest);
 
    //CPPUNIT_ASSERT(test->getProcessPSet()->getParameter<edm::ParameterSet>("dummy").getBool("b") == true);   
-   CPPUNIT_ASSERT(test->getProcessPSet()->getParameter<edm::ParameterSet>("include").getParameter<bool>("b") == true);   
-   CPPUNIT_ASSERT(test->getProcessPSet()->getParameter<edm::ParameterSet>("include2").getParameter<bool>("d") == true);   
+   CPPUNIT_ASSERT(test->getProcessPSet()->getParameter<edm::ParameterSet>("m1").getParameter<bool>("b") == true);   
+   CPPUNIT_ASSERT(test->getProcessPSet()->getParameter<edm::ParameterSet>("m2").getParameter<bool>("d") == true);   
 }
 
 void testmakeprocess::pathTest()
