@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.24 2006/05/29 19:34:36 rpw Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.25 2006/06/01 03:42:33 rpw Exp $
  */
 
 #include <algorithm>
@@ -280,7 +280,9 @@ void testmakepset::typesTest()
      "string sb1=''\n"
      "string sb3='    '\n"
      "vstring vs={\"1\",\"2\",\"a\"}\n"
-     "VPSet vps ={ {bool b3=false} }\n";
+     "VPSet vps ={ {bool b3=false} }\n"
+     "ProductTag input = Label:Instance:Alias\n"
+     "ProductTag output = Label2::Alias2\n";
    
    boost::shared_ptr<edm::ParameterSet> test = edm::pset::makePSet(kTest);
    //std::cout << test->toString() << std::endl;
@@ -319,6 +321,17 @@ void testmakepset::typesTest()
    CPPUNIT_ASSERT(1 == vps.size());
    CPPUNIT_ASSERT(false == vps.front().getParameter<bool>("b3"));
    
+   // ProductTag
+   edm::ProductTag inputProduct = test->getParameter<edm::ProductTag>("input");
+   edm::ProductTag outputProduct = test->getParameter<edm::ProductTag>("output");
+
+   CPPUNIT_ASSERT("Label"    == inputProduct.label());
+   CPPUNIT_ASSERT("Instance" == inputProduct.instance());
+   CPPUNIT_ASSERT("Alias"    == inputProduct.alias());
+
+   CPPUNIT_ASSERT("Label2" == outputProduct.label());
+   CPPUNIT_ASSERT(""       == outputProduct.instance());
+   CPPUNIT_ASSERT("Alias2" == outputProduct.alias());
    //BOOST_CHECK_THROW(makePSet(*nodeList), std::runtime_error);
 }
 
