@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.25 2006/06/01 03:42:33 rpw Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.26 2006/06/06 21:38:16 rpw Exp $
  */
 
 #include <algorithm>
@@ -201,7 +201,7 @@ void testmakepset::fileinpathAux()
     "  PSet main =  {"
     "    int32 extraneous = 12"
     "    FileInPath fip  = 'FWCore/ParameterSet/test/sample.cfg'"
-    "    FileInPath topo = 'Geometry/TrackerSimData/data/trackerSimConfiguration.xml'"
+    "    FileInPath topo = 'Geometry/TrackerSimData/data/trackersens.xml'"
     "  }"
     "  source = DummySource { } "
     "}";
@@ -228,7 +228,7 @@ void testmakepset::fileinpathAux()
 
   edm::FileInPath topo = innerps.getParameter<edm::FileInPath>("topo");
   CPPUNIT_ASSERT( topo.isLocal() == false );
-  CPPUNIT_ASSERT( topo.relativePath() == "Geometry/TrackerSimData/data/trackerSimConfiguration.xml" );
+  CPPUNIT_ASSERT( topo.relativePath() == "Geometry/TrackerSimData/data/trackersens.xml" );
   fullpath = topo.fullPath();
   CPPUNIT_ASSERT( !fullpath.empty() );
 
