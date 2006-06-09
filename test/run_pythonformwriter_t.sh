@@ -18,7 +18,7 @@ function die { echo $1: status $2 ;  exit $2; }
 export PROC_DEBUG=0 # set to higher value for lots of debugging output...
 (${LOCAL_TEST_BIN}/PythonFormWriter_t ${LOCAL_TEST_DIR}/complete.cfg > ${LOCAL_TMP_DIR}/out.pycfg) || die "Failed running PythonFormWriter_t" $?
 
-(python ${LOCAL_TMP_DIR}/out.pycfg) || die "Python failed to parse"
+(python ${LOCAL_TMP_DIR}/out.pycfg) || die "Python failed to parse" $?
 
 #die "This test isn't really finished" 1
 
