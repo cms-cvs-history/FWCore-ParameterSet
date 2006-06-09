@@ -4,9 +4,9 @@
 
 #include "FWCore/ParameterSet/src/PythonFormWriter.h"
 #include "FWCore/Utilities/interface/DebugMacros.h"
-#include <boost/tokenizer.hpp>
 #include "FWCore/Utilities/interface/EDMException.h"
 #include "FWCore/ParameterSet/interface/Nodes.h"
+#include "FWCore/ParameterSet/interface/parse.h"
 
 
 //
@@ -199,7 +199,12 @@ namespace edm
     PythonFormWriter::visitContents(const ContentsNode& n)
     { 
       MYDEBUG(5) << "Saw a ContentsNode\n";
+      writeCompositeNode(n);
+    }
 
+
+    void PythonFormWriter::writeCompositeNode(const CompositeNode &n)
+    {
       // If the module stack is not empty, we're working on a PSet
       // inside a module (maybe inside something inside of a
       // module). Otherwise, we're working on a top-level PSet (not
@@ -261,8 +266,7 @@ namespace edm
 
 	  moduleStack_.top() += out.str();
 
-	  // Now print the guts...
-	  n.acceptForChildren(*this);
+	  writeCompositeNode(n);
 
 	  // And finish up
 	  //moduleStack_.top() += ")\n";
@@ -343,9 +347,9 @@ namespace edm
           // we should be inside a module stack now, so the first word
           // of the stack should be the top-level module name
           assert( moduleStack_.size() > 0);
-          boost::char_separator<char> sep(":");
-          boost::tokenizer<boost::char_separator<char> > tok(moduleStack_.top(), sep);
-          modulesWithSecSources_.push_back(*(tok.begin()));
+          std::vector<std::string> tokens = edm::pset::tokenize(moduleStack_.top(), ":");
+          assert(!tokens.empty());
+          modulesWithSecSources_.push_back(*(tokens.begin()));
 
           header<<"'"<<n.name <<"': ('secsource', 'tracked', {";
         }
