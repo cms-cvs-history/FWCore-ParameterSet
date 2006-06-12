@@ -1,31 +1,31 @@
 {
 'procname': 'PROCESSNAME'
-, 'main_input': { 'classname': ( 'string', 'tracked', 'PoolSource'), 'fileNames': ('vstring', 'untracked', [ '\"no_real_file_here\"' ]), 'debugFlag': ('bool', 'untracked', 'false'), 'maxEvents': ('int32', 'untracked', '-1'), 'debugVebosity': ('uint32', 'untracked', '10')}
+, 'main_input': { '@classname': ( 'string', 'tracked', 'PoolSource'), 'fileNames': ('vstring', 'untracked', [ '\"file:no_real_file_here\"' ]), 'debugFlag': ('bool', 'untracked', 'false'), 'maxEvents': ('int32', 'untracked', '-1'), 'debugVebosity': ('uint32', 'untracked', '10')}
  # end of main_input
+, 'psets': {
+} #end of psets
 , 'modules': {
 #--------------------
-'a': {'classname': ('string', 'tracked', 'AProducer'), 'a': ('int32', 'tracked', '32'), 'b': ('vdouble', 'tracked', [ '1.1', '2.2' ]), 'c': ('vstring', 'tracked', [  ]), 'd': ('vstring', 'tracked', [ '\'boo\'', '\"yah\"' ])}
+'a': {'@classname': ('string', 'tracked', 'AProducer'), 'a': ('int32', 'tracked', '32'), 'b': ('vdouble', 'tracked', [ '1.1', '2.2' ]), 'c': ('vstring', 'tracked', [  ]), 'd': ('vstring', 'tracked', [ '\'boo\'', '\"yah\"' ])}
 #--------------------
-,'b': {'classname': ('string', 'tracked', 'BProducer'), 'a': ('int32', 'untracked', '14'), 'b': ('string', 'tracked', '\"sillyness ensues\"'), 'c': ('PSet', 'tracked', {'a': ('string', 'tracked', '\'nested\''), 'b': ('string', 'tracked', '\"more\"')}), 'd': ('VPSet', 'tracked', [
-#start acceptForChildren in VPSetNode
+,'b': {'@classname': ('string', 'tracked', 'BProducer'), 'a': ('int32', 'untracked', '14'), 'b': ('string', 'tracked', '\"sillyness ensues\"'), 'c': ('PSet', 'tracked', {'a': ('string', 'tracked', '\'nested\''), 'b': ('string', 'tracked', '\"more\"')}), 'd': ('VPSet', 'tracked', [
 {'i': ('int32', 'tracked', '10101'), 'b': ('bool', 'tracked', 'false')},{}
-#end acceptForChildren in VPSetNode
-])}
+]), 'e': ('VPSet', 'tracked',[])}
 #--------------------
-,'y': {'classname': ('string', 'tracked', 'PoolOutputModule'), 'fileName': ('string', 'untracked', '\"myfile_y.root\"'), 'maxEvents': ('int32', 'untracked', '2112')}
+,'y': {'@classname': ('string', 'tracked', 'PoolOutputModule'), 'fileName': ('string', 'untracked', '\"file:myfile_y.root\"'), 'maxEvents': ('int32', 'untracked', '2112')}
 #--------------------
-,'z': {'classname': ('string', 'tracked', 'PoolOutputModule'), 'fileName': ('string', 'untracked', '\"myfile_z.root\"'), 'maxEvents': ('int32', 'untracked', '91624')}
+,'z': {'@classname': ('string', 'tracked', 'PoolOutputModule'), 'fileName': ('string', 'untracked', '\"file:myfile_z.root\"'), 'maxEvents': ('int32', 'untracked', '91624')}
 } #end of modules
 # es_modules
 , 'es_modules': {
-'ESMType1@esm1': { 'label': ('string','tracked', 'esm1'), 'classname': ('string', 'tracked', 'ESMType1'), 's': ('string', 'tracked', '\"hi\"')}
-,'ESMType2@': { 'label': ('string','tracked', ''), 'classname': ('string', 'tracked', 'ESMType2'), 'a': ('int32', 'tracked', '3')}
+'ESMType1@esm1': { '@label': ('string','tracked', 'esm1'), '@classname': ('string', 'tracked', 'ESMType1'), 's': ('string', 'tracked', '\"hi\"')}
+,'ESMType2@': { '@label': ('string','tracked', ''), '@classname': ('string', 'tracked', 'ESMType2'), 'a': ('int32', 'tracked', '3')}
 } #end of es_modules
 # es_sources
 , 'es_sources': {
-'ESSType1@ess1': { 'label': ('string','tracked', 'ess1'), 'classname': ('string', 'tracked', 'ESSType1'), 'b': ('int32', 'tracked', '2')}
-,'ESSType1@': { 'label': ('string','tracked', ''), 'classname': ('string', 'tracked', 'ESSType1'), 'b': ('int32', 'tracked', '0')}
-,'ESSType2@': { 'label': ('string','tracked', ''), 'classname': ('string', 'tracked', 'ESSType2'), 'x': ('double', 'tracked', '1.5')}
+'ESSType1@ess1': { '@label': ('string','tracked', 'ess1'), '@classname': ('string', 'tracked', 'ESSType1'), 'b': ('int32', 'tracked', '2')}
+,'ESSType1@': { '@label': ('string','tracked', ''), '@classname': ('string', 'tracked', 'ESSType1'), 'b': ('int32', 'tracked', '0')}
+,'ESSType2@': { '@label': ('string','tracked', ''), '@classname': ('string', 'tracked', 'ESSType2'), 'x': ('double', 'tracked', '1.5')}
 } #end of es_sources
 # output modules (names)
 , 'output_modules': [ 'y', 'z' ]
@@ -48,7 +48,14 @@
 }
 # services
 , 'services': {
-'ServiceType1': {'classname': ('string', 'tracked', 'ServiceType1'), 'b': ('double', 'tracked', '2')}
-,'ServiceType2': {'classname': ('string', 'tracked', 'ServiceType2'), 'x': ('double', 'tracked', '1.5')}
+'ServiceType1': {'@classname': ('string', 'tracked', 'ServiceType1'), 'b': ('double', 'tracked', '2')}
+,'ServiceType2': {'@classname': ('string', 'tracked', 'ServiceType2'), 'x': ('double', 'tracked', '1.5')}
 } #end of es_modules
+
+# es_prefers
+, 'es_prefers': {
+} #end of es_prefers
+# modules with secsources (names)
+, 'modules_with_secsources': [  ]
+
 }
