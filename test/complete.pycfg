@@ -10,7 +10,7 @@
 #--------------------
 ,'b': {'@classname': ('string', 'tracked', 'BProducer'), 'a': ('int32', 'untracked', '14'), 'b': ('string', 'tracked', '\"sillyness ensues\"'), 'c': ('PSet', 'tracked', {'a': ('string', 'tracked', '\'nested\''), 'b': ('string', 'tracked', '\"more\"')}), 'd': ('VPSet', 'tracked', [
 {'i': ('int32', 'tracked', '10101'), 'b': ('bool', 'tracked', 'false')},{}
-]), 'e': ('VPSet', 'tracked',[])}
+]), 'e': ('VPSet', 'tracked',[]), 'f': ('VPSet', 'tracked', [{'inner': ('VPSet', 'tracked', [])},{}])}
 #--------------------
 ,'y': {'@classname': ('string', 'tracked', 'PoolOutputModule'), 'fileName': ('string', 'untracked', '\"file:myfile_y.root\"'), 'maxEvents': ('int32', 'untracked', '2112')}
 #--------------------
