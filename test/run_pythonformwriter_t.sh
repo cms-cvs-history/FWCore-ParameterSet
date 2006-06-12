@@ -16,10 +16,21 @@ function die { echo $1: status $2 ;  exit $2; }
 #
 
 export PROC_DEBUG=0 # set to higher value for lots of debugging output...
-(${LOCAL_TEST_BIN}/PythonFormWriter_t ${LOCAL_TEST_DIR}/complete.cfg > ${LOCAL_TMP_DIR}/out.pycfg) || die "Failed running PythonFormWriter_t" $?
+EdmConfigToPython < ${LOCAL_TEST_DIR}/complete.cfg > ${LOCAL_TMP_DIR}/out.pycfg || die "Failed running PythonFormWriter_t" $?
 
 (python ${LOCAL_TMP_DIR}/out.pycfg) || die "Python failed to parse" $?
 
+# this file should have the correct output
+${LOCAL_TEST_DIR}/comparePythonOutput.py ${LOCAL_TMP_DIR}/out.pycfg ${LOCAL_TEST_DIR}/complete.pycfg || die "PythonFormWriter did not match reference output" $?
+
+# convert our file back to a cfg file
+python ${LOCAL_TEST_DIR}/cmsconfig.py ${LOCAL_TMP_DIR}/out.pycfg > ${LOCAL_TMP_DIR}/complete2.cfg
+ 
+# now re-run everything and make sure nothing has changed
+EdmConfigToPython < ${LOCAL_TMP_DIR}/complete2.cfg > ${LOCAL_TMP_DIR}/out2.pycfg
+
+${LOCAL_TEST_DIR}/comparePythonOutput.py ${LOCAL_TMP_DIR}/out.pycfg ${LOCAL_TMP_DIR}/out2.pycfg || die "Python rebuilding of config file failed" $?
+ 
 #die "This test isn't really finished" 1
 
 
