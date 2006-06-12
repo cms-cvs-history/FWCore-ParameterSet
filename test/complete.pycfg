@@ -6,7 +6,7 @@
 } #end of psets
 , 'modules': {
 #--------------------
-'a': {'@classname': ('string', 'tracked', 'AProducer'), 'a': ('int32', 'tracked', '32'), 'b': ('vdouble', 'tracked', [ '1.1', '2.2' ]), 'c': ('vstring', 'tracked', [  ]), 'd': ('vstring', 'tracked', [ '\'boo\'', '\"yah\"' ])}
+'a': {'@classname': ('string', 'tracked', 'AProducer'), 'a': ('int32', 'tracked', '32'), 'b': ('vdouble', 'tracked', [ '1.1', '2.2' ]), 'c': ('vstring', 'tracked', [  ]), 'd': ('vstring', 'tracked', [ '\'boo\'', '\"yah\"' ]),'nothing': ('string', 'tracked', r'""'), 'moreNothing': ('string', 'tracked', r"''"), 'absolutelyNothing': ('string', 'tracked', r"'\0'"), 'justATick': ('string', 'tracked', r"'\''")}
 #--------------------
 ,'b': {'@classname': ('string', 'tracked', 'BProducer'), 'a': ('int32', 'untracked', '14'), 'b': ('string', 'tracked', '\"sillyness ensues\"'), 'c': ('PSet', 'tracked', {'a': ('string', 'tracked', '\'nested\''), 'b': ('string', 'tracked', '\"more\"')}), 'd': ('VPSet', 'tracked', [
 {'i': ('int32', 'tracked', '10101'), 'b': ('bool', 'tracked', 'false')},{}
