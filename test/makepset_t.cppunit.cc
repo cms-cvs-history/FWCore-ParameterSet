@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.29 2006/06/12 00:37:17 wmtan Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.30 2006/06/15 22:06:48 rpw Exp $
  */
 
 #include <algorithm>
@@ -281,7 +281,8 @@ void testmakepset::typesTest()
      "string sb3='    '\n"
      "vstring vs={\"1\",\"2\",\"a\"}\n"
      "VPSet vps ={ {bool b3=false} }\n"
-     "InputTag input = Label:Instance\n"
+     "InputTag input = Label\n"
+     "InputTag input2 = Label2:Instance2\n"
      "InputTag output = Instance:Alias2\n";
    
    boost::shared_ptr<edm::ParameterSet> test = edm::pset::makePSet(kTest);
@@ -322,11 +323,14 @@ void testmakepset::typesTest()
    CPPUNIT_ASSERT(false == vps.front().getParameter<bool>("b3"));
    
    // InputTag
-   edm::InputTag inputProduct = test->getParameter<edm::InputTag>("input");
+   edm::InputTag inputProduct  = test->getParameter<edm::InputTag>("input");
+   edm::InputTag inputProduct2 = test->getParameter<edm::InputTag>("input2");
    //edm::OutputTag outputProduct = test->getParameter<edm::OutputTag>("output");
 
    CPPUNIT_ASSERT("Label"    == inputProduct.label());
-   CPPUNIT_ASSERT("Instance" == inputProduct.instance());
+
+   CPPUNIT_ASSERT("Label2"    == inputProduct2.label());
+   CPPUNIT_ASSERT("Instance2" == inputProduct2.instance());
 
    //CPPUNIT_ASSERT("Label2" == outputProduct.label());
    //CPPUNIT_ASSERT(""       == outputProduct.instance());
