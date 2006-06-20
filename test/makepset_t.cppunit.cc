@@ -5,12 +5,14 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.30 2006/06/15 22:06:48 rpw Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.31 2006/06/15 23:13:21 rpw Exp $
  */
 
 #include <algorithm>
 #include <iostream>
+#include <fstream>
 #include <string>
+#include <unistd.h>
 
 #include <iostream>
 
@@ -226,6 +228,8 @@ void testmakepset::fileinpathAux()
 
   CPPUNIT_ASSERT( !fullpath.empty() );
 
+  std::string tmpout = fullpath.substr(0, fullpath.find("FWCore/ParameterSet/test/sample.cfg")) + "tmp.cfg";
+
   edm::FileInPath topo = innerps.getParameter<edm::FileInPath>("topo");
   CPPUNIT_ASSERT( topo.isLocal() == false );
   CPPUNIT_ASSERT( topo.relativePath() == "Geometry/TrackerSimData/data/trackersens.xml" );
@@ -248,6 +252,39 @@ void testmakepset::fileinpathAux()
   v.clear();
   CPPUNIT_ASSERT(  empty.getAllFileInPaths(v) == 0 );
   CPPUNIT_ASSERT( v.empty() );  
+
+  // This last test checks that a FileInPath parameter can be read
+  // successfully even if the associated file no longer exists.
+  std::ofstream out(tmpout.c_str());
+  CPPUNIT_ASSERT(!(!out));
+
+  const char* kTest2 = 
+     "process PROD = {"
+    "  PSet main =  {"
+    "    FileInPath fip2  = 'tmp.cfg'"
+    "  }"
+    "  source = DummySource { } "
+    "}";
+
+  std::string config2(kTest2);
+  // Create the ParameterSet object from this configuration string.
+  edm::ProcessDesc builder2(config2);
+  unlink(tmpout.c_str());
+  boost::shared_ptr<edm::ParameterSet> ps2 = builder2.getProcessPSet();
+
+  CPPUNIT_ASSERT(0 != ps2.get());
+  std::cerr << "\n-----------------------------\n";
+  std::cerr << ps2->toString();
+  std::cerr << "\n-----------------------------\n";
+
+  edm::ParameterSet innerps2 = ps2->getParameter<edm::ParameterSet>("main");
+  edm::FileInPath fip2 = innerps2.getParameter<edm::FileInPath>("fip2");
+  CPPUNIT_ASSERT( fip2.isLocal() == true );
+  CPPUNIT_ASSERT( fip2.relativePath() == "tmp.cfg" );
+  std::string fullpath2 = fip2.fullPath();
+  std::cerr << "fullPath is: " << fip2.fullPath() << std::endl;
+  std::cerr << "copy of fullPath is: " << fullpath2 << std::endl;
+  CPPUNIT_ASSERT( !fullpath2.empty() );
 }
 
 // This is a wrong test. Empty parameter sets are OK.
