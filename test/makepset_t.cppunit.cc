@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.33 2006/06/21 17:55:16 rpw Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.34 2006/06/23 21:28:07 rpw Exp $
  */
 
 #include <algorithm>
@@ -204,6 +204,7 @@ void testmakepset::fileinpathAux()
     "    int32 extraneous = 12"
     "    FileInPath fip  = 'FWCore/ParameterSet/test/sample.cfg'"
     "    FileInPath topo = 'Geometry/TrackerSimData/data/trackersens.xml'"
+    "    untracked FileInPath ufip  = 'FWCore/ParameterSet/test/complete.cfg'"
     "  }"
     "  source = DummySource { } "
     "}";
@@ -219,9 +220,11 @@ void testmakepset::fileinpathAux()
   std::cerr << "\n-----------------------------\n";
 
   edm::ParameterSet innerps = ps->getParameter<edm::ParameterSet>("main");
-  edm::FileInPath fip = innerps.getParameter<edm::FileInPath>("fip");
+  edm::FileInPath fip  = innerps.getParameter<edm::FileInPath>("fip");
+  edm::FileInPath ufip = innerps.getUntrackedParameter<edm::FileInPath>("ufip");
   CPPUNIT_ASSERT( fip.isLocal() == true );
-  CPPUNIT_ASSERT( fip.relativePath() == "FWCore/ParameterSet/test/sample.cfg" );
+  CPPUNIT_ASSERT( fip.relativePath()  == "FWCore/ParameterSet/test/sample.cfg" );
+  CPPUNIT_ASSERT( ufip.relativePath() == "FWCore/ParameterSet/test/complete.cfg" );
   std::string fullpath = fip.fullPath();
   std::cerr << "fullPath is: " << fip.fullPath() << std::endl;
   std::cerr << "copy of fullPath is: " << fullpath << std::endl;
@@ -237,14 +240,14 @@ void testmakepset::fileinpathAux()
   CPPUNIT_ASSERT( !fullpath.empty() );
 
   std::vector<edm::FileInPath> v(1);
-  CPPUNIT_ASSERT ( innerps.getAllFileInPaths(v) == 2 );
+  CPPUNIT_ASSERT ( innerps.getAllFileInPaths(v) == 3 );
   
   using boost::lambda::_1;
   using boost::lambda::constant;
   std::cerr << "\nHere comes the vector...\n";
   std::for_each(v.begin(), v.end(), std::cerr << constant("--> ") << _1 << '\n');
   std::cerr << "Done with vector\n";
-  CPPUNIT_ASSERT( v.size() == 3 );
+  CPPUNIT_ASSERT( v.size() == 4 );
   CPPUNIT_ASSERT( std::count(v.begin(), v.end(), fip) == 1 );
   CPPUNIT_ASSERT( std::count(v.begin(), v.end(), topo) == 1 );
 
