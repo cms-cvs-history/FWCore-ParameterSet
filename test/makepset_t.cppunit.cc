@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.32 2006/06/20 20:31:22 wmtan Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.33 2006/06/21 17:55:16 rpw Exp $
  */
 
 #include <algorithm>
@@ -320,6 +320,7 @@ void testmakepset::typesTest()
      "VPSet vps ={ {bool b3=false} }\n"
      "InputTag input = Label\n"
      "InputTag input2 = Label2:Instance2\n"
+     "untracked InputTag input3 = Label3:Instance3\n"
      "VInputTag vinput = { l1:i1, l2 }\n";
    
    boost::shared_ptr<edm::ParameterSet> test = edm::pset::makePSet(kTest);
@@ -362,12 +363,15 @@ void testmakepset::typesTest()
    // InputTag
    edm::InputTag inputProduct  = test->getParameter<edm::InputTag>("input");
    edm::InputTag inputProduct2 = test->getParameter<edm::InputTag>("input2");
+   edm::InputTag inputProduct3 = test->getUntrackedParameter<edm::InputTag>("input3");
    //edm::OutputTag outputProduct = test->getParameter<edm::OutputTag>("output");
 
    CPPUNIT_ASSERT("Label"    == inputProduct.label());
-
    CPPUNIT_ASSERT("Label2"    == inputProduct2.label());
    CPPUNIT_ASSERT("Instance2" == inputProduct2.instance());
+   CPPUNIT_ASSERT("Label3"    == inputProduct3.label());
+   CPPUNIT_ASSERT("Instance3" == inputProduct3.instance());
+
 
    // vector of InputTags
 
