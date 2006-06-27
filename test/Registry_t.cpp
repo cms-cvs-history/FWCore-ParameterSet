@@ -2,9 +2,10 @@
 //
 // This program test the behavior of pset::Registry.
 //
-// $Id: Registry_t.cpp,v 1.6 2006/03/13 22:15:54 paterno Exp $
+// $Id: Registry_t.cpp,v 1.7 2006/04/27 19:56:38 wmtan Exp $
 //----------------------------------------------------------------------
 #include <cassert>
+#include <iostream>
 #include <vector>
 
 #include "boost/thread.hpp"
