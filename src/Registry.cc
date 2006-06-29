@@ -1,5 +1,5 @@
 // ----------------------------------------------------------------------
-// $Id: Registry.cc,v 1.6 2006/03/13 22:15:54 paterno Exp $
+// $Id: Registry.cc,v 1.6.2.1 2006/06/29 19:00:19 paterno Exp $
 //
 // ----------------------------------------------------------------------
 
@@ -28,6 +28,13 @@ namespace edm
       for (; i != e; ++i) reg->insertMapped(*i);
     }
 
+    void fill(Registry* reg, regmap_type& fillme)
+    {
+      typedef Registry::const_iterator iter;
+      fillme.clear();
+      for (iter i=reg->begin(), e=reg->end(); i!=e; ++i)
+	fillme[i->first].pset_ = i->second.toStringOfTracked();
+    }
     
 
   } // namespace pset

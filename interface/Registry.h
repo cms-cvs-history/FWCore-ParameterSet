@@ -2,7 +2,7 @@
 #define ParameterSet_Registry_h
 
 // ----------------------------------------------------------------------
-// $Id: Registry.h,v 1.6 2006/03/13 22:15:53 paterno Exp $
+// $Id: Registry.h,v 1.6.2.1 2006/06/29 19:00:19 paterno Exp $
 //
 // Declaration for pset::Registry. This is an implementation detail of
 // the ParameterSet library.
@@ -16,8 +16,11 @@
 #include <ostream>
 
 #include "DataFormats/Common/interface/ParameterSetID.h"
+#include "DataFormats/Common/interface/ParameterSetBlob.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/Utilities/interface/ThreadSafeRegistry.h"
+
+
 
 namespace edm
 {
@@ -28,7 +31,6 @@ namespace edm
 					    edm::ParameterSet>  Registry;
 
     /// Associated free functions.
-
 
     /// Insert the *tracked parts* of the given ParameterSet into the
     /// Registry. If there was already a ParameterSet with the same
@@ -42,6 +44,11 @@ namespace edm
 
     void loadAllNestedParameterSets(Registry* reg,
 				    edm::ParameterSet const& main);
+
+    /// Fill the given map with the persistent form of each
+    /// ParameterSet in the given registry.
+    typedef std::map<edm::ParameterSetID, edm::ParameterSetBlob> regmap_type;
+    void fill(Registry* reg, regmap_type& fillme);
 
   }  // namespace pset
 
