@@ -27,6 +27,9 @@ public:
    // see if the replacement in the block got propagated
    assert(rome.getParameter<string>("loverboy") == "Marc Antony");
    
+   edm::InputTag tag = rome.getParameter<edm::InputTag>("africans");
+   assert(tag.label() == "egyptians");
+   assert(tag.instance() == "cleopatra");
    /// see if the copy worked
 /*
    edm::ParameterSet byzantium =
