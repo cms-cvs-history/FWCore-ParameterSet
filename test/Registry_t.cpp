@@ -2,9 +2,11 @@
 //
 // This program test the behavior of pset::Registry.
 //
-// $Id: Registry_t.cpp,v 1.6 2006/03/13 22:15:54 paterno Exp $
+// $Id: Registry_t.cpp,v 1.7.2.2 2006/06/29 19:00:20 paterno Exp $
 //----------------------------------------------------------------------
 #include <cassert>
+#include <cmath>
+#include <iostream>
 #include <vector>
 
 #include "boost/thread.hpp"
@@ -43,19 +45,25 @@ ThreadWorker::operator()()
       ps.addParameter<int>("i", i);
       ps.addUntrackedParameter<double>("d", 2.5);
       ids_issued.push_back(ps.id());
-      reg->insertParameterSet(ps);
+      reg->insertMapped(ps);
   }
 
   // Look up items we have just put in.
   typedef std::vector<edm::ParameterSetID>::const_iterator iter;
-  for (iter i = ids_issued.begin();
-	i != ids_issued.end();
-	++i)
+  for (iter i=ids_issued.begin(), e=ids_issued.end(); i!=e; ++i)
   {
       edm::ParameterSet ps = getParameterSet(*i);
       assert(ps.id() == *i);
-      assert(ps.getParameter<int>("i") > 0); // fixme: check exact value
-      assert(ps.getUntrackedParameter<double>("d", 1.0) == 1.0);
+      assert(ps.getParameter<int>("i") > 0);
+      double mye = ps.getUntrackedParameter<double>("e", 1.0);
+      assert ( std::abs(mye-1.0) < 1.0e-10 );
+  }
+
+  for (iter i=ids_issued.begin(), e=ids_issued.end(); i!=e; ++i)
+  {
+    edm::ParameterSet ps;
+    assert(reg->getMapped(*i, ps));
+    assert(ps.id() == *i);
   }
 }
 
@@ -91,8 +99,8 @@ void work2()
 
   // First call should insert the new ParameterSet; second call should
   // not.
-  assert(reg->insertParameterSet(ps));
-  assert(!reg->insertParameterSet(ps));
+  assert(reg->insertMapped(ps));
+  assert(!reg->insertMapped(ps));
 
 }
 
