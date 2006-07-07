@@ -91,6 +91,7 @@ const char* spec =
 "vdouble vd5={ +1,+1.1, +.1 ,+.01,+1., -0 } \n"
 "uint32 u1=5 \n"
 "vuint32 u2={  1,2, 3, 4 ,5 } \n"
+"uint32 u3=0xCFDFEFFF\n"
 "PSet p1 = { bool b1=true int32 i1=3 double q=9.00} \n"
 "PSet px = { int32 i=1 \n"
 "            uint32 ui=1 \n"

@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.34 2006/06/23 21:28:07 rpw Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.35 2006/06/23 21:45:05 rpw Exp $
  */
 
 #include <algorithm>
@@ -311,6 +311,9 @@ void testmakepset::typesTest()
      "uint32 ui=1\n"
      "int32 i = +1\n"
      "double d=1\n"
+     "int32 h1 = 0x004A\n"
+     "uint32 h2 = 0Xff\n"
+     "untracked uint32 h3 = 0xCFDFEFFF\n" 
      "vuint32 vui ={1,2}\n"
      "vint32 vi = {+1,-2}\n"
      "untracked bool b = true\n"
@@ -333,6 +336,12 @@ void testmakepset::typesTest()
    CPPUNIT_ASSERT(test->retrieve("i").isTracked());
    CPPUNIT_ASSERT(1 == test->getParameter<unsigned int>("ui"));
    CPPUNIT_ASSERT(1 == test->getParameter<double>("d"));
+
+   // test hex numbers
+   CPPUNIT_ASSERT(74 == test->getParameter<int>("h1"));
+   CPPUNIT_ASSERT(255 == test->getParameter<unsigned int>("h2"));
+   CPPUNIT_ASSERT(3487559679 == test->getUntrackedParameter<unsigned int>("h3"));
+
    //std::cout << test->getParameter<std::string>("s") << std::endl;
    CPPUNIT_ASSERT("this string" == test->getParameter<std::string>("s"));
    std::cout <<"blank string using single quotes returns \""<<test->getParameter<std::string>("sb1")<<"\""<<std::endl;
