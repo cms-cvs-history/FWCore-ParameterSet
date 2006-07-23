@@ -2,6 +2,9 @@
 'procname': 'PROCESSNAME'
 , 'main_input': { '@classname': ( 'string', 'tracked', 'PoolSource'), 'fileNames': ('vstring', 'untracked', [ '\"file:no_real_file_here\"' ]), 'debugFlag': ('bool', 'untracked', 'false'), 'maxEvents': ('int32', 'untracked', '-1'), 'debugVebosity': ('uint32', 'untracked', '10')}
  # end of main_input
+, 'looper': {
+'@classname': ('string', 'tracked', 'ALooper'), 'nLoops': ('uint32', 'tracked', '10')}
+ # end of looper
 , 'psets': {
 } #end of psets
 , 'modules': {
@@ -57,5 +60,4 @@
 } #end of es_prefers
 # modules with secsources (names)
 , 'modules_with_secsources': [  ]
-
 }

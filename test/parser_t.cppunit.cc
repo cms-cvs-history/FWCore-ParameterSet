@@ -29,6 +29,7 @@ CPPUNIT_TEST(mainparser2Test);
 CPPUNIT_TEST(mainparser3Test);
 CPPUNIT_TEST(mainparser4Test);
 CPPUNIT_TEST(mainparser5Test);
+CPPUNIT_TEST(mainparserLooperTest);
 CPPUNIT_TEST_SUITE_END();
 public:
   void setUp(){}
@@ -38,6 +39,7 @@ public:
   void mainparser3Test();
   void mainparser4Test();
   void mainparser5Test();
+  void mainparserLooperTest();
 };
                                                                                                             
 ///registration of the test so that the runner can find it
@@ -277,6 +279,38 @@ const char* spec =
       cerr << "Null output from parser" << endl;
     }
 
+  copy(pr->begin(),
+       pr->end(),
+       ostream_iterator<edm::pset::NodePtr>(cout,"\n"));
+}
+
+void testparser::mainparserLooperTest()
+{
+  const char* spec = 
+  "process LOOP =\n"
+  "{\n"
+  "source = PoolInput\n"
+  "{\n"
+  "string filename = \"here\" \n"  
+  "}\n"
+  "looper  = AlignmentLooper\n"
+  "{\n"
+  "string filename = \"not here\"\n" 
+  "}\n"
+  "module m1 = MidpointJetProducer\n"
+  "{\n"
+  "}\n"
+  "path p = { m1 }\n"
+  "}\n";
+  cout <<endl;
+  return ;
+  ParseResults pr = edm::pset::parse(spec);
+  
+  if(!pr)
+  {
+    cerr << "Null output from parser" << endl;
+  }
+  
   copy(pr->begin(),
        pr->end(),
        ostream_iterator<edm::pset::NodePtr>(cout,"\n"));

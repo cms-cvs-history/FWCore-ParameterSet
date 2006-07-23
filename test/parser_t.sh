@@ -71,7 +71,7 @@ fi
 
 # Compare text of OUTPUT_FILE_1 and OUTPUT_FILE_2
 echo Starting comparison ${SCRIPTFILE} ...
-if ! diff -B ${OUTPUT_FILE_1} ${OUTPUT_FILE_2}
+if ! diff ${OUTPUT_FILE_1} ${OUTPUT_FILE_2}
 then
   echo Failure ${OUTPUT_FILE_1} and ${OUTPUT_FILE_2} differ
   exit 3
