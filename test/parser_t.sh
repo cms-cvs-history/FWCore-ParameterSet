@@ -17,7 +17,7 @@
 # does not clean them up. The files are not large, and there are not
 # too many of them.
 #
-# $Id: parser_t.sh,v 1.6 2005/11/21 17:45:22 paterno Exp $
+# $Id: parser_t.sh,v 1.8 2006/07/23 01:24:36 valya Exp $
 #-----------------------------------------------------------
 #set -o verbose -o xtrace
 
