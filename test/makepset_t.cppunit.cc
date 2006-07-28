@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.35 2006/06/23 21:45:05 rpw Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.36 2006/07/07 21:21:41 rpw Exp $
  */
 
 #include <algorithm>
@@ -340,7 +340,7 @@ void testmakepset::typesTest()
    // test hex numbers
    CPPUNIT_ASSERT(74 == test->getParameter<int>("h1"));
    CPPUNIT_ASSERT(255 == test->getParameter<unsigned int>("h2"));
-   CPPUNIT_ASSERT(3487559679 == test->getUntrackedParameter<unsigned int>("h3"));
+   CPPUNIT_ASSERT(3487559679U == test->getUntrackedParameter<unsigned int>("h3"));
 
    //std::cout << test->getParameter<std::string>("s") << std::endl;
    CPPUNIT_ASSERT("this string" == test->getParameter<std::string>("s"));
