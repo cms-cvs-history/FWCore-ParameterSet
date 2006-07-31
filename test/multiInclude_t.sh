@@ -15,18 +15,18 @@
 # does not clean them up. The files are not large, and there are not
 # too many of them.
 #
-# $Id: parser_t.sh,v 1.9 2006/07/24 23:35:42 wmtan Exp $
+# $Id: multiInclude_t.sh,v 1.1 2006/07/28 18:03:57 chrjones Exp $
 #-----------------------------------------------------------
 #set -o verbose -o xtrace
 
 FILE1="includeOne.cfg"
 FILE2="includeTwice.cfg"
 
-if [ ! -f "${FILE1}" ]; then
+if [ ! -f "${LOCAL_TEST_DIR}/${FILE1}" ]; then
   echo File ${FILE1} does not exist
   exit -1
 fi
-if [ ! -f "${FILE2}" ]; then
+if [ ! -f "${LOCAL_TEST_DIR}/${FILE2}" ]; then
   echo File ${FILE2} does not exist
   exit -1
 fi
@@ -52,7 +52,7 @@ rm -f ${OUTPUT_FILE_1} ${OUTPUT_FILE_2}
 # First pass: read from FILE1, write to OUTPUT_FILE_1
 # OUTPUT_FILE_1 will contain a script in 'canonical form'
 echo Starting first pass for ${FILE1} ...
-if ! ${LOCAL_TEST_BIN}/parser_t ${FILE1} > ${OUTPUT_FILE_1}
+if ! ${LOCAL_TEST_BIN}/parser_t ${LOCAL_TEST_DIR}/${FILE1} > ${OUTPUT_FILE_1}
 then
   echo Failure reading ${SCRIPTFILE}
   exit 1
@@ -61,7 +61,7 @@ fi
 # Second pass: read from FILE2, write to OUTPUT_FILE_2
 # OUTPUT_FILE_2 should contain the same 'canonical form' as OUTPUT_FILE_1
 echo Starting second pass for ${FILE2} ...
-if ! ${LOCAL_TEST_BIN}/parser_t ${FILE2} > ${OUTPUT_FILE_2}
+if ! ${LOCAL_TEST_BIN}/parser_t ${LOCAL_TEST_DIR}/${FILE2} > ${OUTPUT_FILE_2}
 then
   echo Failure reading ${FILE2}
   exit 2
@@ -78,7 +78,7 @@ fi
 # First pass: read from FILE1, write to OUTPUT_FILE_1
 # OUTPUT_FILE_1 will contain a script in 'canonical form'
 echo Starting first pass for ${FILE1} ...
-if ! EdmConfigToPython < ${FILE1} > ${OUTPUT_FILE_1}
+if ! EdmConfigToPython < ${LOCAL_TEST_DIR}/${FILE1} > ${OUTPUT_FILE_1}
 then
   echo Failure reading ${SCRIPTFILE}
   exit 1
@@ -87,7 +87,7 @@ fi
 # Second pass: read from FILE2, write to OUTPUT_FILE_2
 # OUTPUT_FILE_2 should contain the same 'canonical form' as OUTPUT_FILE_1
 echo Starting second pass for ${FILE2} ...
-if ! EdmConfigToPython < ${FILE2} > ${OUTPUT_FILE_2}
+if ! EdmConfigToPython < ${LOCAL_TEST_DIR}/${FILE2} > ${OUTPUT_FILE_2}
 then
   echo Failure reading ${FILE2}
   exit 2
