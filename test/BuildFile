@@ -52,7 +52,7 @@
 <bin file=RepeatedNames_t.cpp></bin>
 
 <bin file=TestDriver.cpp>
-  <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/ParameterSet/test run_all_t.sh run_pythonformwriter_t.sh">
+  <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/ParameterSet/test run_all_t.sh run_pythonformwriter_t.sh multiInclude_t.sh">
 </bin>
 
 
