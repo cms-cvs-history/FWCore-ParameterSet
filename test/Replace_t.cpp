@@ -30,6 +30,19 @@ public:
    edm::InputTag tag = rome.getParameter<edm::InputTag>("africans");
    assert(tag.label() == "egyptians");
    assert(tag.instance() == "cleopatra");
+
+   std::vector<edm::InputTag> tags
+    = rome.getParameter<std::vector<edm::InputTag> >("europeans");
+   assert(tags[2].label() == "helvetics");
+
+   
+   tags = rome.getParameter<std::vector<edm::InputTag> >("europeans");
+   assert(tags[2].label() == "judeans");
+
+   std::vector<std::string> poets
+    = rome.getParameter<std::vector<std::string> >("poets");
+   assert(poets[2] == "Ovid");
+
    /// see if the copy worked
 /*
    edm::ParameterSet byzantium =
