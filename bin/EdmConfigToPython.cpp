@@ -4,13 +4,10 @@
 #include <vector>
 
 #include "boost/shared_ptr.hpp"
-
 #include "FWCore/Utilities/interface/EDMException.h"
 #include "FWCore/ParameterSet/interface/parse.h"
-#include "FWCore/ParameterSet/src/ParseResultsTweaker.h"
 #include "FWCore/ParameterSet/src/PythonFormWriter.h"
-#include "FWCore/ParameterSet/interface/MakeParameterSets.h"
-#include "FWCore/ParameterSet/src/ConfigurationPreprocessor.h"
+//#include "FWCore/ParameterSet/interface/MakeParameterSets.h"
 
 using namespace edm;
 using namespace edm::pset;
