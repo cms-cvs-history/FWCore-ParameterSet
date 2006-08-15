@@ -6,7 +6,7 @@
  *  Changed by Viji Sundararajan on 8-Jul-05.
  *  Copyright 2005 __MyCompanyName__. All rights reserved.
  * 
- * $Id: makeprocess_t.cppunit.cc,v 1.13 2006/05/29 19:35:17 rpw Exp $
+ * $Id: makeprocess_t.cppunit.cc,v 1.14 2006/06/05 22:37:01 rpw Exp $
  */
 
 
@@ -106,11 +106,12 @@ void testmakeprocess::pathTest()
 
 edm::ParameterSet modulePSet(const std::string& iLabel, const std::string& iType) {
    edm::ParameterSet temp;
-   temp.insert(true , "s", edm::Entry(1,true));
-   temp.insert(true, "@module_label", edm::Entry(iLabel, true));
-   temp.insert(true, "@module_type", edm::Entry(iType, true));
+   temp.addParameter("s", 1);
+   temp.addParameter("@module_label", iLabel);
+   temp.addParameter("@module_type", iType);
    return temp;
 }
+
 void testmakeprocess::moduleTest()
 {
    const char* kTest ="process test = { "
