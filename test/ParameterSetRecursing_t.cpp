@@ -36,7 +36,7 @@ void work()
   vector<string> pset_names, vpset_names;
   
   const bool tracked = true;
-  const bool untracked = false;
+  // const bool untracked = false; // Not used. Causes compiler warning.
   size_t n_psets = level1.getParameterSetNames(pset_names, tracked);
   size_t n_vpsets = level1.getParameterSetVectorNames(vpset_names, tracked);
   assert( n_psets == 1 );
