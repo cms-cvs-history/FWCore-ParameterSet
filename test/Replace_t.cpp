@@ -43,6 +43,10 @@ public:
     = rome.getParameter<std::vector<std::string> >("poets");
    assert(poets[2] == "Ovid");
 
+   edm::ParameterSet y = p.getParameter<edm::ParameterSet>("Y");
+   std::string special = y.getParameter<std::string>("special");
+   assert(special == "creep");
+
    /// see if the copy worked
 /*
    edm::ParameterSet byzantium =
