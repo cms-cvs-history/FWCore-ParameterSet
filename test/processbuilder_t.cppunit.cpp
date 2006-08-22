@@ -4,7 +4,7 @@
 
 @brief test suit for process building and schedule validation
 
-@version: $Id: processbuilder_t.cppunit.cpp,v 1.1 2006/03/25 00:23:21 wmtan Exp $
+@version: $Id: processbuilder_t.cppunit.cpp,v 1.2 2006/05/29 18:52:07 rpw Exp $
 @author : Stefano Argiro
 @date : 2005 06 17
 
@@ -138,6 +138,12 @@ void testProcessDesc:: attriggertest (){
 
   CPPUNIT_ASSERT(tnames[0]=="path1");
   CPPUNIT_ASSERT(enames[0]=="epath");
+
+  // see if the auto-schedule is correct
+  Strs schedule = (*test).getParameter<Strs>("@paths");
+  CPPUNIT_ASSERT(schedule.size() == 2);
+  CPPUNIT_ASSERT(schedule[0] == "path1");
+  CPPUNIT_ASSERT(schedule[1] == "epath");
 
   }
   catch (cms::Exception& exc)
@@ -339,6 +345,7 @@ void testProcessDesc::multiplePathsTest(){
     "sequence jets = { somejet1, somejet2 }\n"
     "path path1 = { cones, jtanalyzer }\n"
     "path path2 = { jets, anotherjtanalyzer }\n"
+    "schedule = {path2, path1}\n"
     "} ";
 
 
@@ -368,6 +375,11 @@ void testProcessDesc::multiplePathsTest(){
   CPPUNIT_ASSERT (b.getDependencies("somejet2")=="somejet1,");
   CPPUNIT_ASSERT (b.getDependencies("anotherjtanalyzer")=="somejet1,somejet2,");
 
+  Strs schedule = (*test).getParameter<std::vector<std::string> >("@paths");
+
+  CPPUNIT_ASSERT (schedule.size() == 2);
+  CPPUNIT_ASSERT (schedule[0] == "path2");
+  CPPUNIT_ASSERT (schedule[1] == "path1");
 }
 
 
