@@ -60,4 +60,5 @@
 } #end of es_prefers
 # modules with secsources (names)
 , 'modules_with_secsources': [  ]
+, 'schedule' : 'p1,p2,a,b'
 }
