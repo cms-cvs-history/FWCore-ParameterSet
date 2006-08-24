@@ -17,7 +17,7 @@ int main(int argc, char * argv[])
 {
   if(argc != 3)
   {
-    std::cout << "Usage: EdmConfigSearch <cfgfile> <searchstring>" << std::endl;
+    std::cout << "Usage: EdmConfigSearch <searchstring> <cfgfile>" << std::endl;
     return 1;
   }
 
@@ -27,8 +27,8 @@ int main(int argc, char * argv[])
   int rc = 1;  // failure
   try  
   { 
-    string fileName = argv[1];
-    string searchString = argv[2];
+    string searchString = argv[1];
+    string fileName = argv[2];
     string configString;
     read_whole_file(fileName, configString);
     edm::pset::ParseResults parseTree = fullParse(configString);
