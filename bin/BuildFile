@@ -12,3 +12,9 @@
  <use name=FWCore/ParameterSet>
 </bin>
 
+
+<bin file=EdmConfigSearch.cpp>
+ <use name=boost>
+ <use name=FWCore/ParameterSet>
+</bin>
+
