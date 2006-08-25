@@ -47,6 +47,12 @@ public:
    std::string special = y.getParameter<std::string>("special");
    assert(special == "creep");
 
+   // test "from" syntax
+   edm::ParameterSet y2 = p.getParameter<edm::ParameterSet>("Y2");
+   std::string special2 = y2.getParameter<std::string>("special");
+   assert(special2 == "general");
+
+
    /// see if the copy worked
 /*
    edm::ParameterSet byzantium =
