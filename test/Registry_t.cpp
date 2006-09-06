@@ -2,7 +2,7 @@
 //
 // This program test the behavior of pset::Registry.
 //
-// $Id: Registry_t.cpp,v 1.8 2006/07/06 18:47:53 wmtan Exp $
+// $Id: Registry_t.cpp,v 1.9 2006/09/06 19:16:30 paterno Exp $
 //----------------------------------------------------------------------
 #include <cassert>
 #include <cmath>
@@ -54,7 +54,7 @@ ThreadWorker::operator()()
   toplevel.addParameter("guts", psets);
   edm::pset::loadAllNestedParameterSets(reg, toplevel);
 
-  edm::ParameterSetID topid = reg->extra().id();
+  edm::ParameterSetID topid = edm::pset::getProcessParameterSetID(reg);
   assert( topid.isValid() );
   assert( topid == toplevel.id() );
 
