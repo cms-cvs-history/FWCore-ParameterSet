@@ -5,7 +5,9 @@
 #include <iterator>
 #include <string>
 
+#include "FWCore/ParameterSet/interface/ParseTree.h"
 #include "FWCore/ParameterSet/interface/parse.h"
+#include "FWCore/ParameterSet/interface/PSetNode.h"
 #include "FWCore/Utilities/interface/EDMException.h"
 
 //------------------------------------------------------------
@@ -24,18 +26,8 @@ int work(int argc, char* argv[])
 
   // If given an argument, that argument must be the name of a file to read.
   string buffer;
-  edm::pset::read_whole_file(argv[1], buffer);
-  ParseResults pr = edm::pset::fullParse(buffer);
-
-  if(!pr)
-    {
-      cerr << "Null output from parser" << endl;
-      return -1;
-    }
-
-  copy(pr->begin(),
-       pr->end(),
-       ostream_iterator<edm::pset::NodePtr>(cout,"\n"));
+  edm::pset::ParseTree tree(edm::pset::read_whole_file(argv[1]));
+  tree.top()->print(cout, edm::pset::Node::COMPRESSED);
 
   return 0;
 }
