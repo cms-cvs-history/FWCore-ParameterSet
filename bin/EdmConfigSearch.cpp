@@ -6,6 +6,7 @@
 #include "boost/shared_ptr.hpp"
 #include "FWCore/Utilities/interface/EDMException.h"
 #include "FWCore/ParameterSet/interface/parse.h"
+#include "FWCore/ParameterSet/interface/ParseTree.h"
 #include "FWCore/ParameterSet/src/PythonFormWriter.h"
 //#include "FWCore/ParameterSet/interface/MakeParameterSets.h"
 
@@ -29,14 +30,11 @@ int main(int argc, char * argv[])
   { 
     string searchString = argv[1];
     string fileName = argv[2];
-    string configString;
-    read_whole_file(fileName, configString);
-    edm::pset::ParseResults parseTree = fullParse(configString);
+    edm::pset::ParseTree parseTree(read_whole_file(fileName));
 
     // top node should be process Node
     ostringstream result;
-    assert(parseTree->size() == 1);
-    parseTree->front()->locate(searchString, result);
+    parseTree.top()->locate(searchString, result);
     std::cout << result.str() << std::endl;
     rc = 0; // success
   }

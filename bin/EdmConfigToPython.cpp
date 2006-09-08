@@ -6,8 +6,8 @@
 #include "boost/shared_ptr.hpp"
 #include "FWCore/Utilities/interface/EDMException.h"
 #include "FWCore/ParameterSet/interface/parse.h"
+#include "FWCore/ParameterSet/interface/ParseTree.h"
 #include "FWCore/ParameterSet/src/PythonFormWriter.h"
-//#include "FWCore/ParameterSet/interface/MakeParameterSets.h"
 
 using namespace edm;
 using namespace edm::pset;
@@ -15,7 +15,7 @@ using namespace edm::pset;
 void
 writePythonForm(std::string const& config, std::ostream& out)
 {
-  edm::pset::ParseResults parsetree = fullParse(config);
+  edm::pset::ParseTree parsetree(config);
   
   PythonFormWriter writer;
   writer.write(parsetree, out);
