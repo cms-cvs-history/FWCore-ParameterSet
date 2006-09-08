@@ -19,8 +19,7 @@ public:
   }
 
   int run(const std::string & filename) {
-    std::string filecontents;
-    assert ( edm::pset::read_whole_file(filename, filecontents) );
+    std::string filecontents = edm::pset::read_whole_file(filename);
 
     boost::shared_ptr<edm::ParameterSet> mainps;
     boost::shared_ptr<std::vector<edm::ParameterSet> > services;

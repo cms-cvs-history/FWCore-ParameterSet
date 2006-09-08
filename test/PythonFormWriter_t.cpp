@@ -5,6 +5,7 @@
 
 #include "FWCore/Utilities/interface/EDMException.h"
 #include "FWCore/ParameterSet/interface/parse.h"
+#include "FWCore/ParameterSet/interface/ParseTree.h"
 #include "FWCore/ParameterSet/src/PythonFormWriter.h"
 
 using namespace edm;
@@ -14,9 +15,7 @@ void writePythonForm(std::string const& filename, std::ostream& out)
 {
   try
     {
-      std::string configString;
-      edm::pset::read_whole_file(filename, configString);
-      edm::pset::ParseResults parsetree = fullParse(configString);
+      edm::pset::ParseTree parsetree(edm::pset::read_whole_file(filename));
       PythonFormWriter writer;
       writer.write(parsetree, out);
     }
