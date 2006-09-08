@@ -20,6 +20,11 @@ using namespace std;
 int work(int argc, char* argv[])
 {
 
+  // Because 'scramv1 build runtests' will run this test, and because
+  // we don't know how to pass this executable an argument, we make it
+  // pass immediately if no argument is supplied.
+  if ( argc == 1 ) return 0;
+
   // If given an argument, that argument must be the name of a file to read.
   string buffer;
   edm::pset::ParseTree tree(edm::pset::read_whole_file(argv[1]));
