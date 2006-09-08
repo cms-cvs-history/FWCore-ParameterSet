@@ -58,7 +58,7 @@
 
 
 <bin file=TestDriver2.cpp>
-  <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/ParameterSet/test MakeParameterSets_t.sh OverrideParameters_t.sh">
+  <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/ParameterSet/test MakeParameterSets_t.sh OverrideParameters_t.sh ParseTree_t.sh">
 </bin>
 
 
