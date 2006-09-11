@@ -38,6 +38,7 @@ public:
    
    tags = rome.getParameter<std::vector<edm::InputTag> >("asians");
    assert(tags[2].label() == "judeans");
+   assert(tags[3].label() == "galatians");
 
    std::vector<std::string> poets
     = rome.getParameter<std::vector<std::string> >("poets");
