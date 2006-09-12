@@ -14,5 +14,9 @@ echo  ParseTree_t Replace.cfg passed
 (${LOCAL_TEST_BIN}/Replace_t Replace.cfg) || die Replace.cfg $?
 echo  Replace_t Replace.cfg passed
 
+# not sure if this is the right way
+ln -s ../../../../lib/*/libFWCoreParameterSet.so .
+python PythonParseTree_t.py || die PythonParseTree_t.py $?
+
 popd
 
