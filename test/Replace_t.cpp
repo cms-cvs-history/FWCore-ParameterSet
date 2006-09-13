@@ -34,6 +34,7 @@ public:
    std::vector<edm::InputTag> tags
     = rome.getParameter<std::vector<edm::InputTag> >("europeans");
    assert(tags[2].label() == "helvetics");
+   assert(tags[5].label() == "jutes");
 
    
    tags = rome.getParameter<std::vector<edm::InputTag> >("asians");
