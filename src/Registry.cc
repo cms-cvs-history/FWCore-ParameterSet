@@ -1,5 +1,5 @@
 // ----------------------------------------------------------------------
-// $Id: Registry.cc,v 1.8 2006/09/06 19:16:29 paterno Exp $
+// $Id: Registry.cc,v 1.6.2.2 2006/06/29 21:55:17 paterno Exp $
 //
 // ----------------------------------------------------------------------
 
@@ -26,13 +26,6 @@ namespace edm
       std::vector<ParameterSet>::const_iterator i = all_main_psets.begin();
       std::vector<ParameterSet>::const_iterator e = all_main_psets.end();
       for (; i != e; ++i) reg->insertMapped(*i);
-      reg->extra().setID(main.id());
-    }
-
-    edm::ParameterSetID
-    getProcessParameterSetID(Registry const* reg)
-    {
-      return reg->extra().id();
     }
 
     void fill(Registry* reg, regmap_type& fillme)
