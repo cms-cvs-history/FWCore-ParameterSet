@@ -2,7 +2,7 @@
 //
 // This program test the behavior of pset::Registry.
 //
-// $Id: Registry_t.cpp,v 1.9 2006/09/06 19:16:30 paterno Exp $
+// $Id: Registry_t.cpp,v 1.7.2.2 2006/06/29 19:00:20 paterno Exp $
 //----------------------------------------------------------------------
 #include <cassert>
 #include <cmath>
@@ -39,24 +39,14 @@ ThreadWorker::operator()()
 
   // Add a bunch of items
   std::vector<edm::ParameterSetID> ids_issued;
-  std::vector<edm::ParameterSet> psets;
-
   for (int i = offset; i < number_to_add+offset; ++i)
   {
       edm::ParameterSet ps;
       ps.addParameter<int>("i", i);
       ps.addUntrackedParameter<double>("d", 2.5);
       ids_issued.push_back(ps.id());
-      psets.push_back(ps);
-      //reg->insertMapped(ps);
+      reg->insertMapped(ps);
   }
-  edm::ParameterSet toplevel;
-  toplevel.addParameter("guts", psets);
-  edm::pset::loadAllNestedParameterSets(reg, toplevel);
-
-  edm::ParameterSetID topid = edm::pset::getProcessParameterSetID(reg);
-  assert( topid.isValid() );
-  assert( topid == toplevel.id() );
 
   // Look up items we have just put in.
   typedef std::vector<edm::ParameterSetID>::const_iterator iter;
@@ -75,7 +65,6 @@ ThreadWorker::operator()()
     assert(reg->getMapped(*i, ps));
     assert(ps.id() == *i);
   }
-
 }
 
 void work()
