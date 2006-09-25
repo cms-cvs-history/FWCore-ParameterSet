@@ -47,12 +47,12 @@
 <bin file=Replace_t.cpp></bin>
 <bin file=RepeatedNames_t.cpp></bin>
 
-<bin file=TestDriver.cpp>
+<bin file=TestFWCoreParameterSetDriver.cpp>
   <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/ParameterSet/test run_all_t.sh run_pythonformwriter_t.sh multiInclude_t.sh">
 </bin>
 
 
-<bin file=TestDriver2.cpp>
+<bin file=TestFWCoreParameterSetDriver2.cpp>
   <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/ParameterSet/test MakeParameterSets_t.sh OverrideParameters_t.sh ParseTree_t.sh">
 </bin>
 
