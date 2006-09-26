@@ -20,6 +20,7 @@ class PythonParseTree_t(unittest.TestCase):
         self.assertEqual(self.tree.value("rome.date"), '100')
         self.assertEqual(self.tree.values("rome.legion.cohorts"), 
                          ['480','480','480','480','480','480','480','480','480','480'])
+        self.assertEqual(self.tree.typeOf("rome.legion.cohorts"), "vint32");
         # make sure vectors and single entries are separate
         self.assertRaises(RuntimeError, self.tree.value, "rome.legion.cohorts")
         self.assertRaises(RuntimeError, self.tree.values, "rome.date")
