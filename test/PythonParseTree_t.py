@@ -15,6 +15,7 @@ class PythonParseTree_t(unittest.TestCase):
 
     def setUp(self):
         self.tree = libFWCoreParameterSet.PythonParseTree("Replace.cfg")
+        self.pset = libFWCoreParameterSet.PythonParameterSet()
 
     def testValue(self):
         self.assertEqual(self.tree.value("rome.date"), '100')
@@ -42,6 +43,21 @@ class PythonParseTree_t(unittest.TestCase):
         # should fail
         self.assertRaises(ValueError, self.tree.modulesOfType("looper").index, "rome")
 
+    def testPSet(self):
+        self.pset.addInt32(True, "dwarves", 7)
+        self.assertEqual(self.pset.getInt32(True, "dwarves"), 7)
+        l = [1,2,3,4,5,6,7]
+        self.pset.addVInt32(True, "numbers" , l)
+        self.assertEqual(self.pset.getVInt32(True, "numbers")[6], 7)
+ 
+        self.pset.addString(False, "villain", "Skeletor")
+        self.assertEqual(self.pset.getString(False, "villain"), "Skeletor")
+        self.pset.addVString(True, "heroes", ["He-Man", "She-Ra"])
+        self.assertEqual(self.pset.getVString(True, "heroes")[1], "She-Ra")
+        #check both trackedness
+        #self.assertRaises(RuntimeError, self.pset.getVString(False, "heroes"))
+        #self.assertRaises(RuntimeError, self.pset.getString(True, "villain"))
+        
 if __name__=='__main__':
     unittest.main()
 
