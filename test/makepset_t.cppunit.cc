@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.36 2006/07/07 21:21:41 rpw Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.37 2006/07/28 18:55:00 wmtan Exp $
  */
 
 #include <algorithm>
@@ -311,6 +311,9 @@ void testmakepset::typesTest()
      "uint32 ui=1\n"
      "int32 i = +1\n"
      "double d=1\n"
+     "double big = inf\n"
+     "double justasbig = +inf\n"
+     "double indebt = -inf\n"
      "int32 h1 = 0x004A\n"
      "uint32 h2 = 0Xff\n"
      "untracked uint32 h3 = 0xCFDFEFFF\n" 
@@ -336,6 +339,9 @@ void testmakepset::typesTest()
    CPPUNIT_ASSERT(test->retrieve("i").isTracked());
    CPPUNIT_ASSERT(1 == test->getParameter<unsigned int>("ui"));
    CPPUNIT_ASSERT(1 == test->getParameter<double>("d"));
+   CPPUNIT_ASSERT(100000. < test->getParameter<double>("big"));
+   CPPUNIT_ASSERT(100000. < test->getParameter<double>("justasbig"));
+   CPPUNIT_ASSERT(-1000000. > test->getParameter<double>("indebt"));
 
    // test hex numbers
    CPPUNIT_ASSERT(74 == test->getParameter<int>("h1"));
