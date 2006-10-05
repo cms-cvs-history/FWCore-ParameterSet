@@ -16,7 +16,7 @@ using namespace std;
 
 int main(int argc, char * argv[])
 {
-  if(argc != 3)
+  if(argc < 3)
   {
     std::cout << "Usage: EdmConfigSearch <searchstring> <cfgfile>" << std::endl;
     return 1;
@@ -29,13 +29,21 @@ int main(int argc, char * argv[])
   try  
   { 
     string searchString = argv[1];
-    string fileName = argv[2];
-    edm::pset::ParseTree parseTree(read_whole_file(fileName));
+    int nfiles = argc-2;
+    for(int ifile = 0; ifile < nfiles; ++ifile)
+    {
+      string fileName = argv[ifile+2];
+      edm::pset::ParseTree parseTree(read_whole_file(fileName));
 
-    // top node should be process Node
-    ostringstream result;
-    parseTree.top()->locate(searchString, result);
-    std::cout << result.str() << std::endl;
+      ostringstream result;
+      parseTree.top()->locate(searchString, result);
+      if(!result.str().empty())
+      {
+        std::cout << "======== " << fileName << std::endl;
+        std::cout << result.str() << std::endl;
+      }
+    } // loop over files
+
     rc = 0; // success
   }
   catch ( edm::Exception const& x )
