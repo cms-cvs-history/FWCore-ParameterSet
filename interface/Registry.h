@@ -2,7 +2,7 @@
 #define ParameterSet_Registry_h
 
 // ----------------------------------------------------------------------
-// $Id: Registry.h,v 1.8 2006/09/06 19:16:29 paterno Exp $
+// $Id: Registry.h,v 1.6.2.2 2006/06/29 21:55:16 paterno Exp $
 //
 // Declaration for pset::Registry. This is an implementation detail of
 // the ParameterSet library.
@@ -27,20 +27,8 @@ namespace edm
   namespace pset
   {
 
-    class ProcessParameterSetIDCache
-    {
-    public:
-      ProcessParameterSetIDCache() : id_() { }
-      edm::ParameterSetID id() const { return id_; }
-      void setID(ParameterSetID const& id) { id_ = id; }
-    private:
-      edm::ParameterSetID id_;      
-    };
-
     typedef edm::detail::ThreadSafeRegistry<edm::ParameterSetID,
-    					    edm::ParameterSet,
-					    ProcessParameterSetIDCache>
-                                            Registry;
+					    edm::ParameterSet>  Registry;
 
     /// Associated free functions.
 
@@ -56,13 +44,6 @@ namespace edm
 
     void loadAllNestedParameterSets(Registry* reg,
 				    edm::ParameterSet const& main);
-
-
-    /// Return the ParameterSetID of the top-level ParameterSet stored
-    /// in the given Registry. Note the the returned ParameterSetID may
-    /// be invalid; this will happen if the Registry has not yet been
-    /// filled.
-    edm::ParameterSetID getProcessParameterSetID(Registry const* reg);
 
     /// Fill the given map with the persistent form of each
     /// ParameterSet in the given registry.
