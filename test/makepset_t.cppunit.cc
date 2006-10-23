@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.37 2006/07/28 18:55:00 wmtan Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.38 2006/10/04 20:10:55 rpw Exp $
  */
 
 #include <algorithm>
@@ -330,7 +330,9 @@ void testmakepset::typesTest()
      "InputTag input = Label\n"
      "InputTag input2 = Label2:Instance2\n"
      "untracked InputTag input3 = Label3:Instance3\n"
-     "VInputTag vinput = { l1:i1, l2 }\n";
+     "InputTag input4 = Label4:Instance4:Process4\n"
+     "InputTag input5 = Label5::Process5\n"
+     "VInputTag vinput = { l1:i1, l2, l3:i3:p3, l4::p4 }\n";
    
    boost::shared_ptr<edm::ParameterSet> test = edm::pset::makePSet(kTest);
    //std::cout << test->toString() << std::endl;
@@ -382,6 +384,8 @@ void testmakepset::typesTest()
    edm::InputTag inputProduct  = test->getParameter<edm::InputTag>("input");
    edm::InputTag inputProduct2 = test->getParameter<edm::InputTag>("input2");
    edm::InputTag inputProduct3 = test->getUntrackedParameter<edm::InputTag>("input3");
+   edm::InputTag inputProduct4 = test->getParameter<edm::InputTag>("input4");
+   edm::InputTag inputProduct5 = test->getParameter<edm::InputTag>("input5");
    //edm::OutputTag outputProduct = test->getParameter<edm::OutputTag>("output");
 
    CPPUNIT_ASSERT("Label"    == inputProduct.label());
@@ -389,7 +393,13 @@ void testmakepset::typesTest()
    CPPUNIT_ASSERT("Instance2" == inputProduct2.instance());
    CPPUNIT_ASSERT("Label3"    == inputProduct3.label());
    CPPUNIT_ASSERT("Instance3" == inputProduct3.instance());
-
+   CPPUNIT_ASSERT("Label4" == inputProduct4.label());
+   CPPUNIT_ASSERT("Instance4" == inputProduct4.instance());
+   CPPUNIT_ASSERT("Process4" == inputProduct4.process());
+   CPPUNIT_ASSERT("Label5" == inputProduct5.label());
+   CPPUNIT_ASSERT("" == inputProduct5.instance());
+   CPPUNIT_ASSERT("Process5" == inputProduct5.process());
+   
 
    // vector of InputTags
 
@@ -397,7 +407,13 @@ void testmakepset::typesTest()
    CPPUNIT_ASSERT("l1" == vtags[0].label());
    CPPUNIT_ASSERT("i1" == vtags[0].instance());
    CPPUNIT_ASSERT("l2" == vtags[1].label());
-
+   CPPUNIT_ASSERT("l3" == vtags[2].label());
+   CPPUNIT_ASSERT("i3" == vtags[2].instance());
+   CPPUNIT_ASSERT("p3" == vtags[2].process());
+   CPPUNIT_ASSERT("l4" == vtags[3].label());
+   CPPUNIT_ASSERT(""   == vtags[3].instance());
+   CPPUNIT_ASSERT("p4" == vtags[3].process());
+   
    //CPPUNIT_ASSERT("Label2" == outputProduct.label());
    //CPPUNIT_ASSERT(""       == outputProduct.instance());
    //CPPUNIT_ASSERT("Alias2" == outputProduct.alias());
