@@ -15,7 +15,7 @@ class PythonParseTree_t(unittest.TestCase):
 
     def setUp(self):
         self.tree = libFWCoreParameterSet.PythonParseTree("Replace.cfg")
-        self.pset = libFWCoreParameterSet.PythonParameterSet()
+        self.pset = libFWCoreParameterSet.ParameterSet()
 
     def testValue(self):
         self.assertEqual(self.tree.value("rome.date"), '100')
@@ -58,6 +58,31 @@ class PythonParseTree_t(unittest.TestCase):
         #self.assertRaises(RuntimeError, self.pset.getVString(False, "heroes"))
         #self.assertRaises(RuntimeError, self.pset.getString(True, "villain"))
         
+    def testInputTag(self):
+        t1 = libFWCoreParameterSet.InputTag("label", "instance")
+        t2 = libFWCoreParameterSet.InputTag("label2:instance2")
+        self.pset.addInputTag(True, "t1", t1)
+        self.pset.addInputTag(False, "t2", t2)
+        self.assertEqual(self.pset.getInputTag(True, "t1").label(), "label")
+        self.assertEqual(self.pset.getInputTag(False, "t2").label(), "label2")
+
+    def testFileInPath(self):
+        p = "FWCore/ParameterSet/interface/ParameterSet.h"
+        f = libFWCoreParameterSet.FileInPath(p)
+        self.pset.addFileInPath(True, "f", f)
+        f2 = self.pset.getFileInPath(True, "f")
+        self.assertEqual(f2.relativePath(), p)
+
+    def testNestedPSet(self):
+        shows = libFWCoreParameterSet.ParameterSet()
+        dukes = ["Bo", "Luke"]
+        shows.addVString(True, "dukes", dukes)
+        shows.addInt32(True, "generalLee", 1)
+        self.pset.addPSet(True, "tvshows", shows)
+        p2 = self.pset.getPSet(True, "tvshows")
+        self.assertEqual(p2.getVString(True, "dukes"), ["Bo", "Luke"])
+        #self.assertEqual(p2.getParameter(True, "generalLee"), 1)
+ 
 if __name__=='__main__':
     unittest.main()
 
