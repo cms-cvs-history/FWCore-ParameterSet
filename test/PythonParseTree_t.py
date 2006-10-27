@@ -81,7 +81,14 @@ class PythonParseTree_t(unittest.TestCase):
         self.pset.addPSet(True, "tvshows", shows)
         p2 = self.pset.getPSet(True, "tvshows")
         self.assertEqual(p2.getVString(True, "dukes"), ["Bo", "Luke"])
-        #self.assertEqual(p2.getParameter(True, "generalLee"), 1)
+        self.assertEqual(p2.getInt32(True, "generalLee"), 1)
+        #try a VPSet
+        l = [shows]
+        self.pset.addVPSet(True, "vshows", l)
+        l2 = self.pset.getVPSet(True, "vshows")
+        p3 = l2[0]
+        self.assertEqual(p3.getVString(True, "dukes"), ["Bo", "Luke"])
+
  
 if __name__=='__main__':
     unittest.main()
