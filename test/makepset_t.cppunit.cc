@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.38 2006/10/04 20:10:55 rpw Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.39 2006/10/23 23:48:20 chrjones Exp $
  */
 
 #include <algorithm>
@@ -332,7 +332,9 @@ void testmakepset::typesTest()
      "untracked InputTag input3 = Label3:Instance3\n"
      "InputTag input4 = Label4:Instance4:Process4\n"
      "InputTag input5 = Label5::Process5\n"
-     "VInputTag vinput = { l1:i1, l2, l3:i3:p3, l4::p4 }\n";
+     "InputTag input6 = source\n"
+     "InputTag input7 = source:sink\n"
+     "VInputTag vinput = { l1:i1, l2, l3:i3:p3, l4::p4, source:sink }\n";
    
    boost::shared_ptr<edm::ParameterSet> test = edm::pset::makePSet(kTest);
    //std::cout << test->toString() << std::endl;
@@ -386,6 +388,9 @@ void testmakepset::typesTest()
    edm::InputTag inputProduct3 = test->getUntrackedParameter<edm::InputTag>("input3");
    edm::InputTag inputProduct4 = test->getParameter<edm::InputTag>("input4");
    edm::InputTag inputProduct5 = test->getParameter<edm::InputTag>("input5");
+   edm::InputTag inputProduct6 = test->getParameter<edm::InputTag>("input6");
+   edm::InputTag inputProduct7 = test->getParameter<edm::InputTag>("input7");
+
    //edm::OutputTag outputProduct = test->getParameter<edm::OutputTag>("output");
 
    CPPUNIT_ASSERT("Label"    == inputProduct.label());
@@ -399,6 +404,8 @@ void testmakepset::typesTest()
    CPPUNIT_ASSERT("Label5" == inputProduct5.label());
    CPPUNIT_ASSERT("" == inputProduct5.instance());
    CPPUNIT_ASSERT("Process5" == inputProduct5.process());
+   CPPUNIT_ASSERT("source" == inputProduct6.label());
+   CPPUNIT_ASSERT("source" == inputProduct7.label());
    
 
    // vector of InputTags
@@ -413,6 +420,7 @@ void testmakepset::typesTest()
    CPPUNIT_ASSERT("l4" == vtags[3].label());
    CPPUNIT_ASSERT(""   == vtags[3].instance());
    CPPUNIT_ASSERT("p4" == vtags[3].process());
+   CPPUNIT_ASSERT("source" == vtags[4].label());
    
    //CPPUNIT_ASSERT("Label2" == outputProduct.label());
    //CPPUNIT_ASSERT(""       == outputProduct.instance());
