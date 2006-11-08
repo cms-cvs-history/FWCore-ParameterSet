@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.39 2006/10/23 23:48:20 chrjones Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.40 2006/11/07 18:40:28 rpw Exp $
  */
 
 #include <algorithm>
@@ -334,7 +334,7 @@ void testmakepset::typesTest()
      "InputTag input5 = Label5::Process5\n"
      "InputTag input6 = source\n"
      "InputTag input7 = source:sink\n"
-     "VInputTag vinput = { l1:i1, l2, l3:i3:p3, l4::p4, source:sink }\n";
+     "VInputTag vinput = { l1:i1, l2, l3:i3:p3, l4::p4, source, source:sink }\n";
    
    boost::shared_ptr<edm::ParameterSet> test = edm::pset::makePSet(kTest);
    //std::cout << test->toString() << std::endl;
@@ -421,6 +421,7 @@ void testmakepset::typesTest()
    CPPUNIT_ASSERT(""   == vtags[3].instance());
    CPPUNIT_ASSERT("p4" == vtags[3].process());
    CPPUNIT_ASSERT("source" == vtags[4].label());
+   CPPUNIT_ASSERT("source" == vtags[5].label());
    
    //CPPUNIT_ASSERT("Label2" == outputProduct.label());
    //CPPUNIT_ASSERT(""       == outputProduct.instance());
