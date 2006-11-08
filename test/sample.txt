@@ -32,7 +32,7 @@ process PROD =
   }
 
   // CODE ERROR: the follow fails to parse
-  //  block b2 =  { }
+  block b2 =  { }
 
 
   // CODE ERROR: the following throws an exception 'EmptySet'
@@ -48,7 +48,6 @@ process PROD =
   {
     using b1
     int32 a = 2
-    double radius = 0.75
   }
 
   include "FWCore/ParameterSet/test/include_1.stub"
