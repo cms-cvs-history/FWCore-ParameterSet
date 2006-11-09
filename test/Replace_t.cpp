@@ -50,7 +50,7 @@ public:
    emperors   = rome.getParameter<std::vector<edm::ParameterSet> >("emperor");
    historians = rome.getParameter<std::vector<edm::ParameterSet> >("historians");
    assert(emperors.size() == 3);
-   assert(historians.size() == 3);
+   assert(historians.size() == 4);
 
    edm::ParameterSet y = p.getParameter<edm::ParameterSet>("Y");
    std::string special = y.getParameter<std::string>("special");
