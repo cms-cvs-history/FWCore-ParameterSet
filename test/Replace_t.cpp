@@ -45,6 +45,13 @@ public:
     = rome.getParameter<std::vector<std::string> >("poets");
    assert(poets[2] == "Ovid");
 
+   // VPSets
+   std::vector<edm::ParameterSet> emperors, historians;
+   emperors   = rome.getParameter<std::vector<edm::ParameterSet> >("emperor");
+   historians = rome.getParameter<std::vector<edm::ParameterSet> >("historians");
+   assert(emperors.size() == 3);
+   assert(historians.size() == 3);
+
    edm::ParameterSet y = p.getParameter<edm::ParameterSet>("Y");
    std::string special = y.getParameter<std::string>("special");
    assert(special == "creep");
