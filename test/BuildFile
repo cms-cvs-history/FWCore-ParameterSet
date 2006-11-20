@@ -9,18 +9,6 @@
 </bin>
 
 
-
-#<bin file=pset_dump.cpp> 
-#  <use name=boost>
-#  <use name=FWCore/ParameterSet>
-#</bin>
-
-
-#<bin file=makepy.cpp> 
-#  <use name=boost>
-#  <use name=FWCore/ParameterSet>
-#</bin>
-
 <bin file=string_parser_t.cpp> 
   <use name=boost>
   <use name=FWCore/ParameterSet>
@@ -42,7 +30,6 @@
 <bin file=ParameterSetID_t.cpp></bin>
 <bin file=Registry_t.cpp></bin>
 <bin file=ParameterSetRecursing_t.cpp></bin>
-<bin file=OverrideParameters_t.cpp></bin>
 <bin file=ParseTree_t.cpp></bin>
 <bin file=Replace_t.cpp></bin>
 <bin file=RepeatedNames_t.cpp></bin>
@@ -53,7 +40,7 @@
 
 
 <bin file=TestFWCoreParameterSetDriver2.cpp>
-  <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/ParameterSet/test MakeParameterSets_t.sh OverrideParameters_t.sh ParseTree_t.sh">
+  <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/ParameterSet/test MakeParameterSets_t.sh ParseTree_t.sh">
 </bin>
 
 
