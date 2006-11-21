@@ -47,8 +47,8 @@
 }
 # endpaths
 , 'endpaths': { 
-'a' : '(y,z)'
-,'b' : 'z'
+'ep1' : '(y,z)'
+,'ep2' : 'z'
 }
 # services
 , 'services': {
