@@ -6,7 +6,7 @@
  *  Changed by Viji Sundararajan on 8-Jul-05.
  *  Copyright 2005 __MyCompanyName__. All rights reserved.
  * 
- * $Id: makeprocess_t.cppunit.cc,v 1.14 2006/06/05 22:37:01 rpw Exp $
+ * $Id: makeprocess_t.cppunit.cc,v 1.15 2006/08/15 22:38:25 rpw Exp $
  */
 
 
@@ -119,7 +119,6 @@ void testmakeprocess::moduleTest()
    "es_module = NoLabelModule{ int32 s=1 }\n"
    "es_module labeled= LabelModule{ int32 s=1 }\n"
    "source = InputSource{int32 s=1}\n"
-   "source other = OtherInputSource{int32 s=1}\n"
    "es_source = NoLabelRetriever{int32 s=1}\n"
    "es_source label = LabelRetriever{int32 s=1}\n"
    "} ";
@@ -133,7 +132,6 @@ void testmakeprocess::moduleTest()
    out << test->getProcessPSet()->getParameter<edm::ParameterSet>("cones").toString() << std::endl;
    
    const edm::ParameterSet kMainInput(modulePSet("@main_input","InputSource"));
-   const edm::ParameterSet kOther(modulePSet("other","OtherInputSource"));
    
    const edm::ParameterSet kNoLabelModule(modulePSet("", "NoLabelModule"));
    const edm::ParameterSet kLabelModule(modulePSet("labeled", "LabelModule"));
@@ -146,9 +144,6 @@ void testmakeprocess::moduleTest()
    CPPUNIT_ASSERT(kEmpty != (test->getProcessPSet()->getParameter<edm::ParameterSet>("@main_input")));
    CPPUNIT_ASSERT(kMainInput == (test->getProcessPSet()->getParameter<edm::ParameterSet>("@main_input")));
 
-   CPPUNIT_ASSERT(kEmpty != (test->getProcessPSet()->getParameter<edm::ParameterSet>("other")));
-   CPPUNIT_ASSERT(kOther == (test->getProcessPSet()->getParameter<edm::ParameterSet>("other")));
-   
    CPPUNIT_ASSERT(kEmpty != (test->getProcessPSet()->getParameter<edm::ParameterSet>("NoLabelModule@")));
    CPPUNIT_ASSERT(kNoLabelModule == test->getProcessPSet()->getParameter<edm::ParameterSet>("NoLabelModule@"));
    
