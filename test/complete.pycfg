@@ -43,7 +43,7 @@
 # paths
 , 'paths': { 
 'p1' : '((a&b),c)'
-,'p2' : '(s1,(s3&s2))'
+,'p2' : '(-s1,(s3&s2))'
 }
 # endpaths
 , 'endpaths': { 
