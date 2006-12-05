@@ -61,6 +61,9 @@ public:
    std::string special2 = y2.getParameter<std::string>("special");
    assert(special2 == "general");
 
+   edm::ParameterSet republic =
+     p.getParameter<edm::ParameterSet>("republic");
+   assert(republic.getParameter<vector<string> >("victorVector")[1] == "Kirk Douglas");
 
    /// see if the copy worked
 /*
