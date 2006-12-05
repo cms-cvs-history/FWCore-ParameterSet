@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.40 2006/11/07 18:40:28 rpw Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.41 2006/11/08 00:30:03 rpw Exp $
  */
 
 #include <algorithm>
@@ -334,7 +334,10 @@ void testmakepset::typesTest()
      "InputTag input5 = Label5::Process5\n"
      "InputTag input6 = source\n"
      "InputTag input7 = source:sink\n"
-     "VInputTag vinput = { l1:i1, l2, l3:i3:p3, l4::p4, source, source:sink }\n";
+     "VInputTag vinput = { l1:i1, l2, l3:i3:p3, l4::p4, source, source:sink }\n"
+     "EventID eventID = 1:1\n"
+     "VEventID vEventID = {1:1, 2:2, 3:3}\n"
+     ;
    
    boost::shared_ptr<edm::ParameterSet> test = edm::pset::makePSet(kTest);
    //std::cout << test->toString() << std::endl;
@@ -422,7 +425,17 @@ void testmakepset::typesTest()
    CPPUNIT_ASSERT("p4" == vtags[3].process());
    CPPUNIT_ASSERT("source" == vtags[4].label());
    CPPUNIT_ASSERT("source" == vtags[5].label());
-   
+
+   edm::EventID eventID = test->getParameter<edm::EventID>("eventID");
+   std::vector<edm::EventID> vEventID = test->getParameter<std::vector<edm::EventID> >("vEventID");
+   CPPUNIT_ASSERT(1 == eventID.run());
+   CPPUNIT_ASSERT(1 == eventID.event());
+   CPPUNIT_ASSERT(1 == vEventID[0].run());
+   CPPUNIT_ASSERT(1 == vEventID[0].event());
+   CPPUNIT_ASSERT(3 == vEventID[2].run());
+   CPPUNIT_ASSERT(3 == vEventID[2].event());
+
+ 
    //CPPUNIT_ASSERT("Label2" == outputProduct.label());
    //CPPUNIT_ASSERT(""       == outputProduct.instance());
    //CPPUNIT_ASSERT("Alias2" == outputProduct.alias());
