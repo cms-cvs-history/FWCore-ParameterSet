@@ -4,7 +4,7 @@
 
 @brief test suit for process building and schedule validation
 
-@version: $Id: processbuilder_t.cppunit.cpp,v 1.2 2006/05/29 18:52:07 rpw Exp $
+@version: $Id: processbuilder_t.cppunit.cpp,v 1.3 2006/08/22 23:37:38 rpw Exp $
 @author : Stefano Argiro
 @date : 2005 06 17
 
@@ -20,8 +20,6 @@
 #include "FWCore/Utilities/interface/EDMException.h"
 
 #include <iostream>
-
-using namespace edm;
 
 class testProcessDesc: public CppUnit::TestFixture {
 
@@ -71,8 +69,8 @@ void testProcessDesc::trivialPathTest(){
     " path p = { a,b,c } \n"
     " }";
 
-  ProcessDesc b(str);
-  boost::shared_ptr<ParameterSet> test = b.getProcessPSet();
+  edm::ProcessDesc b(str);
+  boost::shared_ptr<edm::ParameterSet> test = b.getProcessPSet();
 
   typedef std::vector<std::string> Strs;
 
@@ -90,8 +88,8 @@ void testProcessDesc::simplePathTest(){
     " path p = { a,b,c } \n"
     " }";
 
-  ProcessDesc b(str);
-  boost::shared_ptr<ParameterSet> test = b.getProcessPSet();
+  edm::ProcessDesc b(str);
+  boost::shared_ptr<edm::ParameterSet> test = b.getProcessPSet();
 
   typedef std::vector<std::string> Strs;
 
@@ -124,13 +122,13 @@ void testProcessDesc:: attriggertest (){
 
   std::cerr << "doing stuff" << "\n";
   try {
-  ProcessDesc b(kTest);
-  boost::shared_ptr<ParameterSet> test = b.getProcessPSet();
+  edm::ProcessDesc b(kTest);
+  boost::shared_ptr<edm::ParameterSet> test = b.getProcessPSet();
 
   typedef std::vector<std::string> Strs;
   
-  ParameterSet trig_pset =
-   (*test).getUntrackedParameter<ParameterSet>("@trigger_paths",ParameterSet());
+  edm::ParameterSet trig_pset =
+   (*test).getUntrackedParameter<edm::ParameterSet>("@trigger_paths",edm::ParameterSet());
   Strs tnames = trig_pset.getParameter<Strs>("@paths");
   Strs enames = trig_pset.getParameter<Strs>("@end_paths");
 
@@ -177,8 +175,8 @@ void testProcessDesc:: sequenceSubstitutionTest (){
    "} ";
 
 
-  ProcessDesc b(kTest);
-  boost::shared_ptr<ParameterSet> test = b.getProcessPSet();
+  edm::ProcessDesc b(kTest);
+  boost::shared_ptr<edm::ParameterSet> test = b.getProcessPSet();
 
   typedef std::vector<std::string> Strs;
   
@@ -210,8 +208,8 @@ void testProcessDesc::nestedSequenceSubstitutionTest(){
    "} ";
 
 
-  ProcessDesc b(kTest);
-  boost::shared_ptr<ParameterSet> test = b.getProcessPSet();
+  edm::ProcessDesc b(kTest);
+  boost::shared_ptr<edm::ParameterSet> test = b.getProcessPSet();
 
   typedef std::vector<std::string> Strs;
   
@@ -247,8 +245,8 @@ void testProcessDesc::sequenceSubstitutionTest2(){
    "} ";
 
 
-  ProcessDesc b(kTest);
-  boost::shared_ptr<ParameterSet> test = b.getProcessPSet();
+  edm::ProcessDesc b(kTest);
+  boost::shared_ptr<edm::ParameterSet> test = b.getProcessPSet();
 
   typedef std::vector<std::string> Strs;
   
@@ -292,8 +290,8 @@ void testProcessDesc::sequenceSubstitutionTest3(){
    "path path1 = { s1,s3,s2,last }\n"
    "} ";
 
-  ProcessDesc b(kTest);
-  boost::shared_ptr<ParameterSet> test = b.getProcessPSet();
+  edm::ProcessDesc b(kTest);
+  boost::shared_ptr<edm::ParameterSet> test = b.getProcessPSet();
 
   typedef std::vector<std::string> Strs;
   
@@ -349,8 +347,8 @@ void testProcessDesc::multiplePathsTest(){
     "} ";
 
 
-  ProcessDesc b(kTest);
-  boost::shared_ptr<ParameterSet> test = b.getProcessPSet();
+  edm::ProcessDesc b(kTest);
+  boost::shared_ptr<edm::ParameterSet> test = b.getProcessPSet();
   
   typedef std::vector<std::string> Strs;
   
@@ -392,7 +390,7 @@ void testProcessDesc::inconsistentPathTest(){
    "path path1 = { (a,b)& (c,b) }\n"
     "} ";
 
-  ProcessDesc b(kTest);
+  edm::ProcessDesc b(kTest);
 }
 
 
@@ -410,7 +408,7 @@ void testProcessDesc::inconsistentMultiplePathTest(){
    "path path2 = { jets,  jtanalyzer }\n"
    "} ";
 
-ProcessDesc b(kTest);
+  edm::ProcessDesc b(kTest);
 
 }
 
