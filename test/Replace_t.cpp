@@ -65,6 +65,9 @@ public:
      p.getParameter<edm::ParameterSet>("republic");
    assert(republic.getParameter<vector<string> >("victorVector")[1] == "Kirk Douglas");
 
+   edm::ParameterSet tau = p.getParameter<edm::ParameterSet>("icone5Tau1");
+   assert(tau.getParameter<edm::InputTag>("src").label() == "caloTowersTau1");
+   assert(tau.getUntrackedParameter<std::string>("jetType") == "GenJet");
    /// see if the copy worked
 /*
    edm::ParameterSet byzantium =

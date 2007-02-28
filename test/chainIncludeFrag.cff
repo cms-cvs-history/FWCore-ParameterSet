@@ -2,5 +2,6 @@ module icone5Tau1 = iterativeCone5CaloJets from "FWCore/ParameterSet/test/chainI
 
 replace icone5Tau1.inputEtMin = 0.4
 replace icone5Tau1.src = caloTowersTau1
+replace icone5Tau1.jetType = "GenJet"
 
 
