@@ -2,14 +2,14 @@
 //
 // This program tests the behavior of untracked parameters in
 // ParameterSet objects.
-// $Id: UntrackedParameters_t.cpp,v 1.5 2006/03/10 00:48:40 paterno Exp $
+// $Id: UntrackedParameters_t.cpp,v 1.6 2006/03/10 22:37:00 paterno Exp $
 //----------------------------------------------------------------------
 #include <cassert>
 #include <iostream>
 #include <string>
 #include <vector>
 
-#include "DataFormats/Common/interface/ParameterSetID.h"
+#include "DataFormats/Provenance/interface/ParameterSetID.h"
 #include "FWCore/Utilities/interface/EDMException.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/ParameterSet/interface/MakeParameterSets.h"

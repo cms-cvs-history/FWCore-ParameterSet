@@ -1,14 +1,14 @@
 //----------------------------------------------------------------------
 //
 // This program tests the behavior repeated names in configuration files.
-// $Id: RepeatedNames_t.cpp,v 1.1 2006/06/21 21:16:30 paterno Exp $
+// $Id: RepeatedNames_t.cpp,v 1.2 2006/11/08 00:40:46 rpw Exp $
 //----------------------------------------------------------------------
 #include <cassert>
 #include <iostream>
 #include <string>
 #include <vector>
 
-#include "DataFormats/Common/interface/ParameterSetID.h"
+#include "DataFormats/Provenance/interface/ParameterSetID.h"
 #include "FWCore/Utilities/interface/EDMException.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/ParameterSet/interface/MakeParameterSets.h"

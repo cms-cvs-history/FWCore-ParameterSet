@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "FWCore/Utilities/interface/EDMException.h"
-#include "DataFormats/Common/interface/ParameterSetID.h"
+#include "DataFormats/Provenance/interface/ParameterSetID.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
 using edm::ParameterSet;

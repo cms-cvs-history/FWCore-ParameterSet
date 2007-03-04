@@ -2,7 +2,7 @@
 //
 // This program test the behavior of pset::Registry.
 //
-// $Id: Registry_t.cpp,v 1.9 2006/09/06 19:16:30 paterno Exp $
+// $Id: Registry_t.cpp,v 1.10 2006/09/06 19:27:35 paterno Exp $
 //----------------------------------------------------------------------
 #include <cassert>
 #include <cmath>
@@ -11,7 +11,7 @@
 
 #include "boost/thread.hpp"
 
-#include "DataFormats/Common/interface/ParameterSetID.h"
+#include "DataFormats/Provenance/interface/ParameterSetID.h"
 #include "FWCore/Utilities/interface/EDMException.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/ParameterSet/interface/Registry.h"
