@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.41 2006/11/08 00:30:03 rpw Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.42 2006/12/05 22:03:02 rpw Exp $
  */
 
 #include <algorithm>
@@ -88,9 +88,9 @@ void testmakepset::secsourceAux()
 {
   const char* kTest = 
     "process PROD = {"
+    "  untracked PSet maxEvents = {untracked int32 input = 2}"
     "  source = PoolSource {"
     "    untracked vstring fileNames = {'file:main.root'}"
-    "    untracked int32 maxEvents = 2"
     "  }"
     "  module out = PoolOutputModule {"
     "    string fileName = 'file:CumHits.root'"
@@ -141,9 +141,9 @@ void testmakepset::usingBlockAux()
 {
   const char* kTest = 
     "process PROD = {"
+    "  untracked PSet maxEvents = {untracked int32 input = 2}"
     "  source = PoolSource {"
     "    untracked vstring fileNames = {'file:main.root'}"
-    "    untracked int32 maxEvents = 2"
     "  }"
     "  block b = {"
     "    double r = 1.5"
