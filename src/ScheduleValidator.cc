@@ -3,18 +3,18 @@
    Implementation of class ScheduleValidator
 
    \author Stefano ARGIRO
-   \version $Id: ScheduleValidator.cc,v 1.13 2006/12/06 16:41:55 wdd Exp $
+   \version $Id: ScheduleValidator.cc,v 1.16 2007/03/26 22:55:58 rpw Exp $
    \date 10 Jun 2005
 */
 
-static const char CVSId[] = "$Id: ScheduleValidator.cc,v 1.13 2006/12/06 16:41:55 wdd Exp $";
+static const char CVSId[] = "$Id: ScheduleValidator.cc,v 1.16 2007/03/26 22:55:58 rpw Exp $";
 
 #include "FWCore/ParameterSet/src/ScheduleValidator.h"
 #include "FWCore/Utilities/interface/EDMException.h"
 
 #include <sstream>
 #include <iterator>
-
+#include <iostream>
 using namespace edm;
 using namespace edm::pset;
 using namespace std;
@@ -51,17 +51,12 @@ NodePtr ScheduleValidator::findPathHead(string pathName){
     if ((*pathIt)->name() == pathName) return ((*pathIt)->wrapped());
 
   }// for
-  //cout << "did not find " << pathName << endl;
-  // This can only cause a problem and should probably throw
-  // an exception - jbk
+  throw edm::Exception(errors::Configuration) << "Cannot find a path named " << pathName;
   NodePtr ret;
   return ret;
 }
 
 void ScheduleValidator::gatherLeafNodes(NodePtr& basenode){
-
-//cout << "gatherLeafNodes " << basenode.get() << endl;
-//basenode->print(cout);
 
   if (basenode->type() == "," || basenode->type() == "&"){
     OperatorNode* onode = dynamic_cast<OperatorNode*>(basenode.get());
@@ -143,19 +138,28 @@ void ScheduleValidator::validate(){
       // then we have an inconsitency
       if (old_deplist != dep) {
 
-	ostringstream olddepstr,newdepstr;
+	ostringstream olddepstr,newdepstr, traceback;
 	copy(old_deplist.begin(), old_deplist.end(), 
 	      ostream_iterator<string>(olddepstr,","));
 	copy(dep.begin(), dep.end(), 
 	      ostream_iterator<string>(newdepstr,","));
+        std::string olddeps = olddepstr.str();
+        if(olddeps == "") olddeps = "<NOTHING>";
+        std::string newdeps = newdepstr.str();
+        if(newdeps == "") newdeps = "<NOTHING>";
+
+        (*leafIt)->printTrace(traceback);
+        std::string traceStr = traceback.str();
+        if(traceStr == "") traceStr = "<MAIN CFG>";
 
 	throw edm::Exception(errors::Configuration,"InconsistentSchedule")
 	  << "Inconsistent schedule for module "
 	  << leafName
 	  << "\n"
-	  << "Depends on " << olddepstr.str() 
-	  << " but also on " << newdepstr.str()
-	  << "\n";
+	  << "Depends on " << olddeps 
+	  << " but also on " << newdeps
+	  << "\n"
+          << "Second set of dependencies comes from: " << traceStr << "\n";
       }
     }
     else {
