@@ -4,7 +4,7 @@
 
 @brief test suit for process building and schedule validation
 
-@version: $Id: processbuilder_t.cppunit.cpp,v 1.3 2006/08/22 23:37:38 rpw Exp $
+@version: $Id: processbuilder_t.cppunit.cpp,v 1.4 2007/01/27 00:10:08 wmtan Exp $
 @author : Stefano Argiro
 @date : 2005 06 17
 
@@ -285,8 +285,8 @@ void testProcessDesc::sequenceSubstitutionTest3(){
    "module last = PhonyConeJet { int32 i = 7 }\n" 
 
    "sequence s1 = { a, b, c }\n"
-   "sequence s2 = { aa,bb,cc,dd }\n"
-   "sequence s3 = { aaa,bbb,ccc,ddd,eee }\n"
+   "sequence s2 = { aa,bb,-cc,dd }\n"
+   "sequence s3 = { aaa,bbb,!ccc,ddd,eee }\n"
    "path path1 = { s1,s3,s2,last }\n"
    "} ";
 
@@ -301,12 +301,12 @@ void testProcessDesc::sequenceSubstitutionTest3(){
   CPPUNIT_ASSERT(s[2]=="c");
   CPPUNIT_ASSERT(s[3]=="aaa");
   CPPUNIT_ASSERT(s[4]=="bbb");
-  CPPUNIT_ASSERT(s[5]=="ccc");
+  CPPUNIT_ASSERT(s[5]=="!ccc");
   CPPUNIT_ASSERT(s[6]=="ddd");
   CPPUNIT_ASSERT(s[7]=="eee");
   CPPUNIT_ASSERT(s[8]=="aa");
   CPPUNIT_ASSERT(s[9]=="bb");
-  CPPUNIT_ASSERT(s[10]=="cc");
+  CPPUNIT_ASSERT(s[10]=="-cc");
   CPPUNIT_ASSERT(s[11]=="dd");
   CPPUNIT_ASSERT(s[12]=="last");
 
