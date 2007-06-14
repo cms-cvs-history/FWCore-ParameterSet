@@ -6,7 +6,7 @@
  *  Changed by Viji Sundararajan on 8-Jul-05.
  *  Copyright 2005 __MyCompanyName__. All rights reserved.
  * 
- * $Id: makeprocess_t.cppunit.cc,v 1.15 2006/08/15 22:38:25 rpw Exp $
+ * $Id: makeprocess_t.cppunit.cc,v 1.16 2006/11/29 17:23:45 rpw Exp $
  */
 
 
@@ -15,6 +15,7 @@
 #include "FWCore/ParameterSet/interface/parse.h"
 #include "FWCore/Utilities/interface/EDMException.h"
 #include "FWCore/ParameterSet/interface/ProcessDesc.h"
+#include "FWCore/ParameterSet/interface/ParameterSet.h"
 
 #include <iostream>
 #include <sstream>
