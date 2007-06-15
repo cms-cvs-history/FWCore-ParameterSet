@@ -4,7 +4,7 @@
 
 @brief test suit for process building and schedule validation
 
-@version: $Id: processbuilder_t.cppunit.cpp,v 1.4 2007/01/27 00:10:08 wmtan Exp $
+@version: $Id: processbuilder_t.cppunit.cpp,v 1.5 2007/05/23 23:23:38 rpw Exp $
 @author : Stefano Argiro
 @date : 2005 06 17
 
@@ -129,8 +129,8 @@ void testProcessDesc:: attriggertest (){
   
   edm::ParameterSet trig_pset =
    (*test).getUntrackedParameter<edm::ParameterSet>("@trigger_paths",edm::ParameterSet());
-  Strs tnames = trig_pset.getParameter<Strs>("@paths");
-  Strs enames = trig_pset.getParameter<Strs>("@end_paths");
+  Strs tnames = trig_pset.getParameter<Strs>("@trigger_paths");
+  Strs enames = (*test).getParameter<Strs>("@end_paths");
 
   std::cerr << trig_pset.toString() << "\n";
 
