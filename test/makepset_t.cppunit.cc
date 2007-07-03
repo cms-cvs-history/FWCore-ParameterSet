@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.42 2006/12/05 22:03:02 rpw Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.43 2007/03/22 06:29:21 wmtan Exp $
  */
 
 #include <algorithm>
@@ -334,6 +334,7 @@ void testmakepset::typesTest()
      "InputTag input5 = Label5::Process5\n"
      "InputTag input6 = source\n"
      "InputTag input7 = source:sink\n"
+     "string input8 = \"deprecatedString:tag\""
      "VInputTag vinput = { l1:i1, l2, l3:i3:p3, l4::p4, source, source:sink }\n"
      "EventID eventID = 1:1\n"
      "VEventID vEventID = {1:1, 2:2, 3:3}\n"
@@ -393,6 +394,7 @@ void testmakepset::typesTest()
    edm::InputTag inputProduct5 = test->getParameter<edm::InputTag>("input5");
    edm::InputTag inputProduct6 = test->getParameter<edm::InputTag>("input6");
    edm::InputTag inputProduct7 = test->getParameter<edm::InputTag>("input7");
+   edm::InputTag inputProduct8 = test->getParameter<edm::InputTag>("input8");
 
    //edm::OutputTag outputProduct = test->getParameter<edm::OutputTag>("output");
 
@@ -409,6 +411,7 @@ void testmakepset::typesTest()
    CPPUNIT_ASSERT("Process5" == inputProduct5.process());
    CPPUNIT_ASSERT("source" == inputProduct6.label());
    CPPUNIT_ASSERT("source" == inputProduct7.label());
+   CPPUNIT_ASSERT("deprecatedString" == inputProduct8.label());
    
 
    // vector of InputTags
