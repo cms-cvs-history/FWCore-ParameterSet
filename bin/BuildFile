@@ -6,15 +6,28 @@
  <use name=FWCore/ParameterSet>
 </bin>
 
-
+<bin file=edmConfigToPython.cpp> 
+ <use name=boost> 
+ <use name=FWCore/ParameterSet> 
+</bin> 
+  
 <bin file=EdmConfigHash.cpp>
  <use name=boost>
  <use name=FWCore/ParameterSet>
 </bin>
 
-
+<bin file=edmConfigHash.cpp> 
+ <use name=boost> 
+ <use name=FWCore/ParameterSet> 
+</bin> 
+ 
 <bin file=EdmConfigSearch.cpp>
  <use name=boost>
  <use name=FWCore/ParameterSet>
 </bin>
 
+<bin file=edmConfigSearch.cpp> 
+ <use name=boost> 
+ <use name=FWCore/ParameterSet> 
+</bin> 
+ 
