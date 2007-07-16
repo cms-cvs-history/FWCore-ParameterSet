@@ -1,5 +1,5 @@
 // ----------------------------------------------------------------------
-// $Id: FileInPath.cc,v 1.17 2007/05/17 20:10:48 wmtan Exp $
+// $Id: FileInPath.cc,v 1.19 2007/06/14 04:56:00 wmtan Exp $
 //
 // ----------------------------------------------------------------------
 
@@ -9,12 +9,10 @@
 // long the search path is allowed to be, and whether our only choices
 // for the "official" directory is CMSSW_RELEASE_BASE or CMSSW_DATA_PATH.
 
-#include <algorithm>
 #include <cstdlib>
-#include <iterator>
 #include <string>
 #include <vector>
-#include <iostream> // temporary
+#include <iosfwd>
 #include "boost/filesystem/path.hpp"
 #include "boost/filesystem/operations.hpp"
 
@@ -322,11 +320,20 @@ namespace edm
 
   void 
   FileInPath::getEnvironment() {
-    if (!envstring(LOCALTOP, localTop_)) {
-      localTop_.clear();
-    }
     if (!envstring(RELEASETOP, releaseTop_)) {
       releaseTop_.clear();
+    }
+    if (releaseTop_.empty()) {
+      // RELEASETOP was not set.  This means that the environment is set
+      // for the base release itself.  So LOCALTOP actually contains the 
+      // location of the base release.
+      if (!envstring(LOCALTOP, releaseTop_)) {
+        releaseTop_.clear();
+      }
+    } else {
+      if (!envstring(LOCALTOP, localTop_)) {
+        localTop_.clear();
+      }
     }
     if (!envstring(DATATOP, dataTop_)) {
       dataTop_.clear();
