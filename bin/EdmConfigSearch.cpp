@@ -33,6 +33,7 @@ int main(int argc, char * argv[])
     for(int ifile = 0; ifile < nfiles; ++ifile)
     {
       string fileName = argv[ifile+2];
+      edm::pset::ParseTree::doReplaces(false);
       edm::pset::ParseTree parseTree(read_whole_file(fileName));
 
       ostringstream result;
