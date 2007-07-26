@@ -2,6 +2,12 @@
 <use name=boost>
 <use name=FWCore/ParameterSet>	
 
+<bin file=pythonparser_t.cpp>
+  <use name=boost>
+  <use name=FWCore/ParameterSet>
+</bin>
+
+
 
 <bin file=parser_t.cpp> 
   <use name=boost>
