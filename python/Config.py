@@ -16,7 +16,6 @@ from SequenceTypes import _ModuleSequenceType  #extend needs it
 import DictTypes
 
 from ExceptionHandling import *
-
 def findProcess(module):
     """Look inside the module and find the Processes it contains"""
     class Temp(object):
@@ -147,7 +146,11 @@ class Process(object):
         #clone the item
         newValue =value.copy()
 
-        self.__dict__[name]=newValue
+        #NOTE: for now, ESPrefer's are assigned the same label as the item to which they 'choose'
+        # however, only one of them can take the attribute name and it by rights should go to
+        # the module and not the ESPrefer
+        if not isinstance(value,ESPrefer):
+            self.__dict__[name]=newValue
         if isinstance(newValue,_Labelable):
             newValue.setLabel(name)
             self._cloneToObjectDict[id(value)] = newValue
@@ -328,6 +331,36 @@ class Process(object):
 #                                  indent)
         config += "}\n"
         return config
+    def insertOneInto(self, parameterSet, label, item):
+        vitems = [item]
+        parameterSet.addVString(True, label, vitems)
+        if not item == None:
+            item.insertInto(parameterSet, label)
+    def insertManyInto(self, parameterSet, label, itemDict):
+        parameterSet.addVString(True, label, itemDict.keys())
+        print "keys",itemDict.keys()
+        for name,value in itemDict.iteritems():
+          print "value",value,type(value)
+          value.insertInto(parameterSet, name)
+    def makePSet(self):
+        print self.dumpConfig()
+        parameterSet = libFWCoreParameterSet.ParameterSet()
+        all_modules = self.__producers
+        all_modules.update(self.filters_())
+        all_modules.update(self.analyzers_())
+        all_modules.update(self.outputModules_())
+        #self.insertInto(parameterSet, "@all_modules", all_modules)
+        self.insertManyInto(parameterSet, "@all_modules", self.producers_())
+        self.insertOneInto(parameterSet, "@all_sources", self.source_())
+        self.insertOneInto(parameterSet, "@all_loopers",   self.looper_())
+        self.insertManyInto(parameterSet, "@all_esmodules", self.es_producers_())
+        self.insertManyInto(parameterSet, "@all_essources", self.es_sources_())
+        self.insertManyInto(parameterSet, "@all_esprefers", self.es_prefers_())
+        self.insertManyInto(parameterSet, "@trigger_paths", self.paths_())
+        self.insertManyInto(parameterSet, "@end_paths", self.endpaths_())
+        self.insertOneInto(parameterSet, "@paths", self.schedule_())
+        return parameterSet
+
 
 class FileInPath(_SimpleParameterTypeBase):
     def __init__(self,value):
@@ -343,6 +376,8 @@ class FileInPath(_SimpleParameterTypeBase):
     @staticmethod
     def _valueFromString(value):
         return FileInPath(value)
+    def insertInto(self, parameterSet, myname):
+      parameterSet.addFileInPath( self.isTracked(), myname, libFWCoreParameterSet.FileInPath(self.value()) ) 
 
 
 class Looper(_ConfigureComponent,_TypedParameterizable):
@@ -467,6 +502,11 @@ if __name__=="__main__":
             p.p2 = Path(p.s)
             p.dumpConfig()
             
+        def testSecSource(self):
+            p = Process('test')
+            p.a = SecSource("MySecSource")
+            self.assertEqual(p.dumpConfig(),"process test = {\n  secsource a = MySecSource { \n  }\n}\n")
+
         def testSequence(self):
             p = Process('test')
             p.a = EDAnalyzer("MyAnalyzer")
@@ -545,7 +585,7 @@ if __name__=="__main__":
             path = Path(p.a)
             path *= p.b
             path += p.c
-            print 'denpendencies'
+            print 'dependencies'
             deps= path.moduleDependencies()
             self.assertEqual(deps['a'],set())
             self.assertEqual(deps['b'],set(['a']))
