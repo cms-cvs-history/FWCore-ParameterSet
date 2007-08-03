@@ -491,13 +491,14 @@ outputModuleGuess = _guessTypeFromClassName(r"[a-zA-Z]\w*OutputModule",cms.Outpu
 producerGuess = _guessTypeFromClassName(r"[a-zA-Z]\w*Prod(?:ucer)?",cms.EDProducer)
 analyzerGuess = _guessTypeFromClassName(r"[a-zA-Z]\w*Analyzer",cms.EDAnalyzer)
 
-def _labelOptional(alabel,type):
+def _labelOptional(alabel,type,appendToLabel=''):
     def useTypeIfNoLabel(s,loc,toks):
         if len(toks[0])==2:
             alabel = toks[0][0]
             del toks[0][0]
         else:
             alabel = toks[0][0].type_()
+        alabel +=appendToLabel
         return (alabel,toks[0][0])
     #NOTE: must use letterstart instead of label else get exception when no label
     return pp.Group(pp.Suppress(pp.Keyword(alabel))+pp.Optional(letterstart)+_equalTo
@@ -507,7 +508,9 @@ def _labelOptional(alabel,type):
 
 es_module = _labelOptional("es_module",cms.ESProducer)
 es_source = _labelOptional("es_source",cms.ESSource)
-es_prefer = _labelOptional("es_prefer",cms.ESPrefer)
+#need to distinguish the es_prefer labels from the items they are actually choosing
+_es_prefer_label_extension = '@prefer'
+es_prefer = _labelOptional("es_prefer",cms.ESPrefer,_es_prefer_label_extension)
 
 plugin = source|looper|service|outputModuleGuess|producerGuess|analyzerGuess|module|es_module|es_source|es_prefer
 plugin.ignore(pp.cppStyleComment)
@@ -953,6 +956,7 @@ def _makeProcess(s,loc,toks):
     sequences={}
     series=[] #order matters for a series
     replaces=[]
+    prefers = {}
     schedule = None
 
 
@@ -976,6 +980,9 @@ def _makeProcess(s,loc,toks):
                     del d[label]
                 else:
                     raise RuntimeError("multiple 'schedule's are present, only one is allowed")
+            elif isinstance(item,cms.ESPrefer):
+                prefers[label[0:-7]]=item
+                del d[label]
         #pset replaces must be done first since PSets can be used in a 'using'
         # statement so we want their changes to be reflected
         class DictAdapter(object):
@@ -1000,6 +1007,11 @@ def _makeProcess(s,loc,toks):
         for replace in replaces:
             if not isinstance(getattr(adapted,replace.rootLabel()),cms.PSet):
                 replace.do(adapted)
+        #NEED to call this a second time so replace statements applying to modules
+        # where the replace statements contain using statements will have the
+        # using statements replaced by their actual values
+        _findAndHandleProcessUsingBlock(values)
+
 
         # adding modules to the process involves cloning.
         # but for the usings we only know the original object
@@ -1011,6 +1023,8 @@ def _makeProcess(s,loc,toks):
         for label,obj in d.iteritems():
             setattr(p,label,obj)
             if not isinstance(obj,list): _lookuptable[obj] = label
+        for label,obj in prefers.iteritems():
+            setattr(p,label,obj)
         pa = _ProcessAdapter(sequences,p)
         for label,obj in sequences.iteritems():
             setattr(pa,label,obj.make(pa))
@@ -1912,7 +1926,8 @@ process USER =
             self.assertEqual(t[0].m2.x.value(),2)
             self.assertEqual(t[0].J.j.value(),1)
             self.assertEqual(t[0].I.j.value(),1)
-            #print t[0].dumpConfig()
+            #make sure dump succeeds
+            t[0].dumpConfig()
 
             _allUsingLabels = set()
             t=process.parseString("""
@@ -1926,6 +1941,78 @@ process USER =
             self.assertEqual(t[0].b.c.i.value(),1)
             self.assertEqual(t[0].d[0].i.value(),1)
             self.assertEqual(t[0].b.c.e[0].i.value(), 1)
+            #make sure dump succeeds
+            t[0].dumpConfig()
+
+            _allUsingLabels = set()
+            t=process.parseString("""
+process USER = 
+{
+    block a = {int32 i = 1}
+    PSet b = { PSet c = {}
+               VPSet g = {} }
+    replace b.c = {using a
+       VPSet e={{using a} } }
+    VPSet d = {{using a}, {}}
+}""")
+            self.assertEqual(t[0].b.c.i.value(),1)
+            self.assertEqual(t[0].d[0].i.value(),1)
+            self.assertEqual(t[0].b.c.e[0].i.value(), 1)
+            #make sure dump succeeds
+            t[0].dumpConfig()
+
+            _allUsingLabels = set()
+            t=process.parseString("""
+process USER = 
+{
+    block a = {int32 i = 1}
+    PSet b = { PSet c = {} }
+    replace b.c = { PSet d = { using a }
+       VPSet e={{using a} } }
+}""")
+            self.assertEqual(t[0].b.c.d.i.value(),1)
+            self.assertEqual(t[0].b.c.e[0].i.value(), 1)
+            #make sure dump succeeds
+            t[0].dumpConfig()
+
+            t=process.parseString("""
+process USER = 
+{
+    block a = {int32 i = 1}
+    module b = BWorker { PSet c = {} }
+    replace b.c = { PSet d = { using a }
+       VPSet e={{using a} } }
+}""")
+            self.assertEqual(t[0].b.c.d.i.value(),1)
+            self.assertEqual(t[0].b.c.e[0].i.value(), 1)
+            #make sure dump succeeds
+            t[0].dumpConfig()
+
+            _allUsingLabels = set()
+            t=process.parseString(
+"""
+process RECO = {
+   es_prefer label = FooESProd {
+   }
+   es_module label = FooESProd {
+   }
+}""")
+            self.assertEqual(t[0].label.type_(),"FooESProd")
+            print t[0].dumpConfig()
+
+            _allUsingLabels = set()
+            t=process.parseString(
+"""
+process RECO = {
+   es_prefer = FooESProd {
+   }
+   es_module = FooESProd {
+   }
+}""")
+            self.assertEqual(t[0].FooESProd.type_(),"FooESProd")
+            print t[0].dumpConfig()
+
+            
         def testPath(self):
             p = cms.Process('Test')
             p.out = cms.OutputModule('PoolOutputModule')
@@ -2157,6 +2244,20 @@ process USER =
             t = replace.parseString('replace a.b = foobar:')
             t[0][1].do(process)
             self.assertEqual(process.a.b.configValue('',''),'foobar::')                        
+
+            process.a = cms.EDProducer('FooProd', b=cms.VInputTag((cms.InputTag("bar"))))
+            t = replace.parseString('replace a.b = {foobar:}')
+            t[0][1].do(process)
+            #self.assertEqual(process.a.b.configValue('',''),'{\nfoobar::\n}\n')                        
+            self.assertEqual(list(process.a.b),[cms.InputTag('foobar')])                        
+
+            process.a = cms.EDProducer('FooProd', b=cms.VInputTag((cms.InputTag("bar"))))
+            t = replace.parseString('replace a.b += {foobar:}')
+            t[0][1].do(process)
+            #self.assertEqual(process.a.b.configValue('',''),'{\nfoobar::\n}\n')                        
+            self.assertEqual(list(process.a.b),[cms.InputTag("bar"),cms.InputTag('foobar')])                        
+
+
     unittest.main()
 #try:
     #onlyParameters.setDebug()
