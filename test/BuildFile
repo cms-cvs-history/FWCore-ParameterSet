@@ -4,6 +4,7 @@
 
 <bin file=pythonparser_t.cpp>
   <use name=boost>
+  <use name=boost_python>
   <use name=FWCore/ParameterSet>
 </bin>
 
