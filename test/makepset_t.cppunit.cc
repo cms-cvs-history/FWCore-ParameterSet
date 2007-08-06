@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.43 2007/03/22 06:29:21 wmtan Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.44 2007/07/03 02:10:50 rpw Exp $
  */
 
 #include <algorithm>
@@ -24,7 +24,6 @@
 #include "FWCore/Utilities/interface/EDMException.h"
 #include "FWCore/ParameterSet/interface/ProcessDesc.h"
 #include "FWCore/ParameterSet/interface/Makers.h"
-#include "FWCore/ParameterSet/interface/parse.h"
 
 
 

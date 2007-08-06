@@ -7,7 +7,6 @@
 
 #include "FWCore/ParameterSet/interface/ParseTree.h"
 #include "FWCore/ParameterSet/interface/parse.h"
-#include "FWCore/ParameterSet/interface/PSetNode.h"
 #include "FWCore/Utilities/interface/EDMException.h"
 
 //------------------------------------------------------------

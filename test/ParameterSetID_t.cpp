@@ -3,7 +3,7 @@
 // This program tests the calculation of ParameterSetIDs for
 // ParameterSets.
 //
-// $Id: ParameterSetID_t.cpp,v 1.2 2006/02/13 22:08:17 wmtan Exp $
+// $Id: ParameterSetID_t.cpp,v 1.3 2007/03/04 05:45:43 wmtan Exp $
 //----------------------------------------------------------------------
 #include <cassert>
 #include <iostream>
@@ -12,7 +12,6 @@
 #include "FWCore/Utilities/interface/EDMException.h"
 #include "DataFormats/Provenance/interface/ParameterSetID.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
-#include "FWCore/ParameterSet/interface/MakeParameterSets.h"
 
 void work()
 {

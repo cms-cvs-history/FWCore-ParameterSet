@@ -4,7 +4,7 @@
 
 @brief test suit for process building and schedule validation
 
-@version: $Id: processbuilder_t.cppunit.cpp,v 1.5 2007/05/23 23:23:38 rpw Exp $
+@version: $Id: processbuilder_t.cppunit.cpp,v 1.6 2007/06/15 18:41:50 wdd Exp $
 @author : Stefano Argiro
 @date : 2005 06 17
 
@@ -16,7 +16,6 @@
 
 #include <FWCore/ParameterSet/interface/ParameterSet.h>
 #include <FWCore/ParameterSet/interface/ProcessDesc.h>
-#include <FWCore/ParameterSet/src/ScheduleValidator.h>
 #include "FWCore/Utilities/interface/EDMException.h"
 
 #include <iostream>

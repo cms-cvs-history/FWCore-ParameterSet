@@ -6,14 +6,12 @@
  *  Changed by Viji Sundararajan on 8-Jul-05.
  *  Copyright 2005 __MyCompanyName__. All rights reserved.
  * 
- * $Id: makeprocess_t.cppunit.cc,v 1.16 2006/11/29 17:23:45 rpw Exp $
+ * $Id: makeprocess_t.cppunit.cc,v 1.17 2007/06/14 04:56:01 wmtan Exp $
  */
 
 
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "FWCore/ParameterSet/interface/parse.h"
-#include "FWCore/Utilities/interface/EDMException.h"
 #include "FWCore/ParameterSet/interface/ProcessDesc.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
