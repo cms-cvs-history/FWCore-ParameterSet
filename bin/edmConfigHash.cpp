@@ -5,6 +5,7 @@
 #include "boost/shared_ptr.hpp"
 #include "FWCore/Utilities/interface/EDMException.h"
 #include "FWCore/ParameterSet/interface/MakeParameterSets.h"
+#include "FWCore/ParameterSet/interface/ParameterSet.h" 
 
 using namespace edm;
 using namespace edm::pset;

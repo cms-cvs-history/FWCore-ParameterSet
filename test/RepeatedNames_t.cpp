@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------
 //
 // This program tests the behavior repeated names in configuration files.
-// $Id: RepeatedNames_t.cpp,v 1.2 2006/11/08 00:40:46 rpw Exp $
+// $Id: RepeatedNames_t.cpp,v 1.3 2007/03/04 05:45:43 wmtan Exp $
 //----------------------------------------------------------------------
 #include <cassert>
 #include <iostream>
@@ -10,7 +10,6 @@
 
 #include "DataFormats/Provenance/interface/ParameterSetID.h"
 #include "FWCore/Utilities/interface/EDMException.h"
-#include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/ParameterSet/interface/MakeParameterSets.h"
 
 using edm::ParameterSetID;
