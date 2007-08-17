@@ -3,6 +3,7 @@
 
 #include "FWCore/Utilities/interface/EDMException.h"
 #include "FWCore/ParameterSet/interface/PythonProcessDesc.h"
+#include "FWCore/ParameterSet/interface/parse.h"
 #include <boost/python.hpp>
 
 //------------------------------------------------------------
@@ -12,35 +13,45 @@
 
 using namespace std;
 using namespace boost::python;
+using namespace edm;
 
-int work(int argc, char* argv[])
+void checkVStrings(vector<string> & v1, const vector<string> & v2)
 {
-  // Because 'scramv1 build runtests' will run this test, and because
-  // we don't know how to pass this executable an argument, we make it
-  // pass immediately if no argument is supplied.
-  if ( argc == 1 ) return 0;
-
-  PythonProcessDesc processDesc(argv[1]);
-  std::cout << processDesc.dump() << std::endl;
-  return 0;
+  if(v1.size() != v2.size())
+  {
+    cerr << "size mismatch \n";
+    copy(v1.begin(),
+         v1.end(),
+         ostream_iterator<std::string>(cerr,","));
+    cerr << "\n";
+    copy(v2.begin(),
+         v2.end(),
+         ostream_iterator<std::string>(cerr,","));
+  }
 }
 
-int main(int argc, char* argv[])
+
+int main()
 {
-  int rc = 0;
-  try 
-    {
-      rc = work(argc, argv);
-    }
-  catch ( edm::Exception const& x )
-    {
-      rc = 1;
-      cerr << "Exception: " << x << '\n';
-    }
-  catch (...)
-    {
-      rc = 2;
-      cerr << "Unknown exception\n";
-    }
-  return rc;
+
+  FileInPath pyFile("FWCore/ParameterSet/test/complete.py");
+  FileInPath cfgFile("FWCore/ParameterSet/test/complete.cfg");
+
+  boost::shared_ptr<ProcessDesc> pythonProcessDesc
+    = PythonProcessDesc(pyFile.fullPath()).processDesc();
+
+  ProcessDesc cfgProcessDesc(edm::pset::read_whole_file(cfgFile.fullPath()));
+
+  // check services
+  assert(pythonProcessDesc->getServicesPSets()->size() == 
+         cfgProcessDesc.getServicesPSets()->size());
+
+  // get
+  boost::shared_ptr<ParameterSet> pythonPSet = pythonProcessDesc->getProcessPSet();
+  boost::shared_ptr<ParameterSet> cfgPSet =  cfgProcessDesc.getProcessPSet();
+
+  vector<string> pythonNames = pythonPSet->getParameterNames();
+  vector<string> cfgNames = cfgPSet->getParameterNames();
+  checkVStrings(pythonNames, cfgNames);
 }
+
