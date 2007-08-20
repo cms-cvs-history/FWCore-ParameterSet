@@ -1,7 +1,6 @@
 #include <iostream>
 #include <string>
 
-#include "FWCore/Utilities/interface/EDMException.h"
 #include "FWCore/ParameterSet/interface/PythonProcessDesc.h"
 #include "FWCore/ParameterSet/interface/parse.h"
 #include <boost/python.hpp>
