@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.44 2007/07/03 02:10:50 rpw Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.45 2007/08/06 20:47:30 wmtan Exp $
  */
 
 #include <algorithm>
@@ -327,6 +327,7 @@ void testmakepset::typesTest()
      "vstring vs={\"1\",\"2\",\"a\"}\n"
      "VPSet vps ={ {bool b3=false} }\n"
      "InputTag input = Label\n"
+     "InputTag input1 = \"Label1:Instance1\"\n"
      "InputTag input2 = Label2:Instance2\n"
      "untracked InputTag input3 = Label3:Instance3\n"
      "InputTag input4 = Label4:Instance4:Process4\n"
@@ -334,7 +335,7 @@ void testmakepset::typesTest()
      "InputTag input6 = source\n"
      "InputTag input7 = source:sink\n"
      "string input8 = \"deprecatedString:tag\""
-     "VInputTag vinput = { l1:i1, l2, l3:i3:p3, l4::p4, source, source:sink }\n"
+     "VInputTag vinput = { l1:i1, \"l2\", l3:i3:p3, l4::p4, source, source:sink }\n"
      "EventID eventID = 1:1\n"
      "VEventID vEventID = {1:1, 2:2, 3:3}\n"
      ;
@@ -387,6 +388,7 @@ void testmakepset::typesTest()
    
    // InputTag
    edm::InputTag inputProduct  = test->getParameter<edm::InputTag>("input");
+   edm::InputTag inputProduct1 = test->getParameter<edm::InputTag>("input1");
    edm::InputTag inputProduct2 = test->getParameter<edm::InputTag>("input2");
    edm::InputTag inputProduct3 = test->getUntrackedParameter<edm::InputTag>("input3");
    edm::InputTag inputProduct4 = test->getParameter<edm::InputTag>("input4");
@@ -398,6 +400,7 @@ void testmakepset::typesTest()
    //edm::OutputTag outputProduct = test->getParameter<edm::OutputTag>("output");
 
    CPPUNIT_ASSERT("Label"    == inputProduct.label());
+   CPPUNIT_ASSERT("Label1"    == inputProduct1.label());
    CPPUNIT_ASSERT("Label2"    == inputProduct2.label());
    CPPUNIT_ASSERT("Instance2" == inputProduct2.instance());
    CPPUNIT_ASSERT("Label3"    == inputProduct3.label());
