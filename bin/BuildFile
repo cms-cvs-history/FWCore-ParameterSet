@@ -30,4 +30,10 @@
  <use name=boost> 
  <use name=FWCore/ParameterSet> 
 </bin> 
+
+<bin file=edmParamDesc.cpp> 
+ <use name=boost> 
+ <use name=FWCore/ParameterSet> 
+ <use name=FWCore/PluginManager> 
+</bin> 
  
