@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.45 2007/08/06 20:47:30 wmtan Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.46 2007/09/11 18:22:10 rpw Exp $
  */
 
 #include <algorithm>
@@ -39,6 +39,7 @@ class testmakepset: public CppUnit::TestFixture
   CPPUNIT_TEST(secsourceTest);
   CPPUNIT_TEST(usingBlockTest);
   CPPUNIT_TEST(fileinpathTest);
+  CPPUNIT_TEST(multipleLabelTest);
   CPPUNIT_TEST_SUITE_END();
 
  public:
@@ -53,7 +54,8 @@ class testmakepset: public CppUnit::TestFixture
   void secsourceTest();
   void usingBlockTest();
   void fileinpathTest();
-
+  void multipleLabelTest();
+  
  private:
   void secsourceAux();
   void usingBlockAux();
@@ -447,6 +449,15 @@ void testmakepset::typesTest()
    //BOOST_CHECK_THROW(makePSet(*nodeList), std::runtime_error);
 }
 
+void testmakepset::multipleLabelTest()
+{
+  const char* kTest = 
+  "uint32 a = 1\n"
+  "uint32 a = 2\n";
+
+  boost::shared_ptr<edm::ParameterSet> test = edm::pset::makePSet(kTest);
+  std::cout <<"a = "<<test->getParameter<unsigned int>("a")<<std::endl;
+}
 /*
 void testmakepset::usingTest()
 {
