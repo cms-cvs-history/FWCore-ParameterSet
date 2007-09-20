@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.46 2007/09/11 18:22:10 rpw Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.47 2007/09/17 21:03:42 chrjones Exp $
  */
 
 #include <algorithm>
@@ -105,7 +105,8 @@ void testmakepset::secsourceAux()
     "    int32 min_bunch = -5"
     "    int32 max_bunch = 3"
     "  }"
-    "  path p = { mix, out }"
+    "  path p = { mix }"
+    "  endpath ep = { out }"
     "}";
 
   std::string config(kTest);
