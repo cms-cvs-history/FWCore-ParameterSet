@@ -143,8 +143,8 @@ int main(int argc, char* argv[])
 {
   test("FWCore/ParameterSet/test/complete.cfg",
        "FWCore/ParameterSet/test/complete.py");
-  test("Configuration/Examples/data/FullChainExample.cfg",
-       "FWCore/ParameterSet/test/FullChainWrapper.py");
+//  test("Configuration/Examples/data/FullChainExample.cfg",
+//       "FWCore/ParameterSet/test/FullChainWrapper.py");
   return 0;
 }
 
