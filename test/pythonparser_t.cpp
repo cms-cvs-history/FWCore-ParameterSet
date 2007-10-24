@@ -14,18 +14,24 @@ using namespace std;
 using namespace boost::python;
 using namespace edm;
 
-void compareVStrings(vector<string> & v1, const vector<string> & v2)
+void compareVStrings(vector<string> & v1, vector<string> & v2)
 {
+  sort(v1.begin(), v1.end());
+  sort(v2.begin(), v2.end());
   if(v1.size() != v2.size())
   {
-    cerr << "size mismatch \n";
+    cerr << "size mismatch " << v1.size() << " " << v2.size();
     copy(v1.begin(),
          v1.end(),
-         ostream_iterator<std::string>(cerr,","));
+         ostream_iterator<std::string>(cerr,",\n"));
     cerr << "\n";
     copy(v2.begin(),
          v2.end(),
-         ostream_iterator<std::string>(cerr,","));
+         ostream_iterator<std::string>(cerr,",\n"));
+    cerr << "DIFFERENCES " << std::endl;
+    std::set_difference(v1.begin(), v1.end(), v2.begin(), v2.end(),
+                        std::ostream_iterator<string>(cerr, " "));
+    cerr << endl;
   }
 }
 
@@ -119,7 +125,8 @@ bool test(const std::string & cfgPath, const std::string & pyPath)
   vector<string> cfgNames = cfgPSet->getParameterNames();
   //std::cout << "CFG " << *cfgPSet << std::endl;
   //std::cout << "PY " << *pythonPSet << std::endl;
-  compareVStrings(pythonNames, cfgNames);
+  // Python includes blocks, so comparison is invalid
+  //compareVStrings(pythonNames, cfgNames);
   checkModules("@all_modules", *cfgPSet, *pythonPSet);
   checkModules("@all_sources", *cfgPSet, *pythonPSet);
   checkModules("@all_loopers", *cfgPSet, *pythonPSet);
