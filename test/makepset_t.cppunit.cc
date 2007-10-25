@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.47 2007/09/17 21:03:42 chrjones Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.48 2007/09/20 19:35:24 wmtan Exp $
  */
 
 #include <algorithm>
@@ -319,7 +319,7 @@ void testmakepset::typesTest()
      "int32 h1 = 0x004A\n"
      "uint32 h2 = 0Xff\n"
      "untracked uint32 h3 = 0xCFDFEFFF\n" 
-     "vuint32 vui ={1,2}\n"
+     "vuint32 vui ={1,2, 0x1, 0XfF}\n"
      "vint32 vi = {+1,-2}\n"
      "untracked bool b = true\n"
      "PSet ps = {untracked bool b2=true}\n"
@@ -344,7 +344,6 @@ void testmakepset::typesTest()
      ;
    
    boost::shared_ptr<edm::ParameterSet> test = edm::pset::makePSet(kTest);
-   //std::cout << test->toString() << std::endl;
    
    CPPUNIT_ASSERT(1 == test->getParameter<int>("i"));
    CPPUNIT_ASSERT(test->retrieve("i").isTracked());
@@ -361,8 +360,8 @@ void testmakepset::typesTest()
 
    //std::cout << test->getParameter<std::string>("s") << std::endl;
    CPPUNIT_ASSERT("this string" == test->getParameter<std::string>("s"));
-   std::cout <<"blank string using single quotes returns \""<<test->getParameter<std::string>("sb1")<<"\""<<std::endl;
-   std::cout <<"blank string using double quotes returns \""<<test->getParameter<std::string>("sb2")<<"\""<<std::endl;
+   //std::cout <<"blank string using single quotes returns \""<<test->getParameter<std::string>("sb1")<<"\""<<std::endl;
+   //std::cout <<"blank string using double quotes returns \""<<test->getParameter<std::string>("sb2")<<"\""<<std::endl;
    CPPUNIT_ASSERT("" == test->getParameter<std::string>("sb1"));
    CPPUNIT_ASSERT("" == test->getParameter<std::string>("sb2"));
    CPPUNIT_ASSERT(4  == test->getParameter<std::string>("sb3").size());
@@ -373,7 +372,7 @@ void testmakepset::typesTest()
    //std::cout <<"\""<<test->getParameter<std::vector<std::string> >("vs")[0]<<"\" \""<<test->getParameter<std::vector<std::string> >("vs")[1]<<"\" \""
    //<<test->getParameter<std::vector<std::string> >("vs")[2]<<"\""<<std::endl;
    
-   static const unsigned int vuia[] = {1,2};
+   static const unsigned int vuia[] = {1,2,1,255};
    static const std::vector<unsigned int> vui(vuia, vuia+sizeof(vuia)/sizeof(unsigned int));
    CPPUNIT_ASSERT(vui == test->getParameter<std::vector<unsigned int> >("vui"));
    
@@ -457,7 +456,7 @@ void testmakepset::multipleLabelTest()
   "uint32 a = 2\n";
 
   boost::shared_ptr<edm::ParameterSet> test = edm::pset::makePSet(kTest);
-  std::cout <<"a = "<<test->getParameter<unsigned int>("a")<<std::endl;
+  //std::cout <<"a = "<<test->getParameter<unsigned int>("a")<<std::endl;
 }
 /*
 void testmakepset::usingTest()
