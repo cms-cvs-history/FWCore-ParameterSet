@@ -2,6 +2,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <assert.h>
 
 #include "FWCore/Utilities/interface/EDMException.h"
 #include "DataFormats/Provenance/interface/ParameterSetID.h"
