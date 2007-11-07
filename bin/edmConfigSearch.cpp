@@ -11,8 +11,6 @@
 
 using namespace edm;
 using namespace edm::pset;
-using namespace std;
-
 int main(int argc, char * argv[])
 {
   if(argc < 3)
@@ -27,14 +25,14 @@ int main(int argc, char * argv[])
   int rc = 1;  // failure
   try  
   { 
-    string searchString = argv[1];
+    std::string searchString = argv[1];
     int nfiles = argc-2;
     for(int ifile = 0; ifile < nfiles; ++ifile)
     {
-      string fileName = argv[ifile+2];
+      std::string fileName = argv[ifile+2];
       edm::pset::ParseTree parseTree(read_whole_file(fileName));
 
-      ostringstream result;
+      std::ostringstream result;
       parseTree.top()->locate(searchString, result);
       if(!result.str().empty())
       {
