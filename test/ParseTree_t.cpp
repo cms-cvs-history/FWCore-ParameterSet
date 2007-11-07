@@ -14,8 +14,6 @@
 // parser.
 //------------------------------------------------------------
 
-using namespace std;
-
 int work(int argc, char* argv[])
 {
 
@@ -25,10 +23,10 @@ int work(int argc, char* argv[])
   if ( argc == 1 ) return 0;
 
   // If given an argument, that argument must be the name of a file to read.
-  string buffer;
+  std::string buffer;
   edm::pset::ParseTree tree(edm::pset::read_whole_file(argv[1]));
   assert(tree.value("rome.date") == "100");
-  vector<string> cohorts = tree.values("rome.legion.cohorts");
+  std::vector<std::string> cohorts = tree.values("rome.legion.cohorts");
   assert(cohorts.size() == 10);
   assert(cohorts[9] == "480");
 
@@ -48,12 +46,12 @@ int main(int argc, char* argv[])
   catch ( edm::Exception const& x )
     {
       rc = 1;
-      cerr << "Exception: " << x << '\n';
+      std::cerr << "Exception: " << x << '\n';
     }
   catch (...)
     {
       rc = 2;
-      cerr << "Unknown exception\n";
+      std::cerr << "Unknown exception\n";
     }
   return rc;
 }

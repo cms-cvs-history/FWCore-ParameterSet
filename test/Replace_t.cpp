@@ -14,7 +14,7 @@ public:
 
    assert(rome.getParameter<int>("date") == 100);
    assert(rome.getParameter<string>("motto") == "Toga! Toga!");
-   assert(rome.getParameter<vector<string> >("victorVector")[1] == "Russell Crowe");
+   assert(rome.getParameter<vector<std::string> >("victorVector")[1] == "Russell Crowe");
 
    edm::ParameterSet legion = rome.getParameter<edm::ParameterSet>("legion");
    assert(legion.getParameter<vector<int> >("cohorts").size() == 10);
@@ -64,7 +64,7 @@ public:
 
    edm::ParameterSet republic =
      p.getParameter<edm::ParameterSet>("republic");
-   assert(republic.getParameter<vector<string> >("victorVector")[1] == "Kirk Douglas");
+   assert(republic.getParameter<vector<std::string> >("victorVector")[1] == "Kirk Douglas");
 
    edm::ParameterSet tau = p.getParameter<edm::ParameterSet>("icone5Tau1");
    assert(tau.getParameter<edm::InputTag>("src").label() == "caloTowersTau1");

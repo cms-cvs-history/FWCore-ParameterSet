@@ -15,8 +15,6 @@
 // parser.
 //------------------------------------------------------------
 
-using namespace std;
-
 int work(int argc, char* argv[])
 {
   // Because 'scramv1 build runtests' will run this test, and because
@@ -25,9 +23,9 @@ int work(int argc, char* argv[])
   if ( argc == 1 ) return 0;
 
   // If given an argument, that argument must be the name of a file to read.
-  string buffer;
+  std::string buffer;
   edm::pset::ParseTree tree(edm::pset::read_whole_file(argv[1]));
-  tree.top()->print(cout, edm::pset::Node::COMPRESSED);
+  tree.top()->print(std::cout, edm::pset::Node::COMPRESSED);
 
   return 0;
 }
@@ -42,12 +40,12 @@ int main(int argc, char* argv[])
   catch ( edm::Exception const& x )
     {
       rc = 1;
-      cerr << "Exception: " << x << '\n';
+      std::cerr << "Exception: " << x << '\n';
     }
   catch (...)
     {
       rc = 2;
-      cerr << "Unknown exception\n";
+      std::cerr << "Unknown exception\n";
     }
   return rc;
 }

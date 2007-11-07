@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.48 2007/09/20 19:35:24 wmtan Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.49 2007/10/25 19:55:23 rpw Exp $
  */
 
 #include <algorithm>
@@ -22,6 +22,7 @@
 #include "boost/lambda/lambda.hpp"
 
 #include "FWCore/Utilities/interface/EDMException.h"
+#include "FWCore/Utilities/interface/Algorithms.h"
 #include "FWCore/ParameterSet/interface/ProcessDesc.h"
 #include "FWCore/ParameterSet/interface/Makers.h"
 
@@ -247,7 +248,7 @@ void testmakepset::fileinpathAux()
   using boost::lambda::_1;
   using boost::lambda::constant;
   std::cerr << "\nHere comes the vector...\n";
-  std::for_each(v.begin(), v.end(), std::cerr << constant("--> ") << _1 << '\n');
+  edm::for_all(v, std::cerr << constant("--> ") << _1 << '\n');
   std::cerr << "Done with vector\n";
   CPPUNIT_ASSERT( v.size() == 4 );
   CPPUNIT_ASSERT( std::count(v.begin(), v.end(), fip) == 1 );

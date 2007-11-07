@@ -1,6 +1,7 @@
 #include "FWCore/ParameterSet/interface/parse.h"
 #include "FWCore/ParameterSet/interface/ProcessDesc.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
+#include "FWCore/Utilities/interface/Algorithms.h"
 #include <iterator>
 #include <algorithm>
 #include <iostream>
@@ -11,7 +12,6 @@
 // parser.
 //------------------------------------------------------------
 
-using namespace std;
 using namespace edm;
 using namespace pset;
 
@@ -30,18 +30,16 @@ int main()
 
   if(!pr)
     {
-      cerr << "Null output from parser" << endl;
+      std::cerr << "Null output from parser" << std::endl;
       return -1;
     }
 
-  copy(pr->begin(),
-       pr->end(),
-       ostream_iterator<edm::pset::NodePtr>(cout,"\n"));
+  edm::copy_all(*pr, std::ostream_iterator<edm::pset::NodePtr>(cout,"\n"));
 
   ProcessDesc b(spec);
   boost::shared_ptr<ParameterSet> test = b.getProcessPSet();
 
-  cout << test->toString() << endl;
+  std::cout << test->toString() << std::endl;
 
   return 0;
 }

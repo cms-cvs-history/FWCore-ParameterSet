@@ -5,6 +5,7 @@
 #include <string>
 #include <cppunit/extensions/HelperMacros.h>
 #include <fstream>
+#include "FWCore/Utilities/interface/Algorithms.h"
 
 
 //------------------------------------------------------------
@@ -13,12 +14,10 @@
 // Changed by Viji on 13/07/2005
 //------------------------------------------------------------
 
-using namespace std;
-
 void read_from_stdin(std::string& buffer)
 {
   std::string line;
-  while (std::getline(cin, line)) { buffer += line; buffer += '\n'; }
+  while (std::getline(std::cin, line)) { buffer += line; buffer += '\n'; }
 }
                                                                                                                    
 class testparser: public CppUnit::TestFixture
@@ -115,18 +114,16 @@ const char* spec =
 "      { int32 i=2 int32 j=3 } \n"
 "} \n";
        
-  cout <<endl;
+  std::cout << std::endl;
   return;
   ParseResults pr = edm::pset::parse(spec);
 
   if(!pr)
     {
-      cerr << "Null output from parser" << endl;
+      std::cerr << "Null output from parser" << std::endl;
     }
 
-  copy(pr->begin(),
-       pr->end(),
-       ostream_iterator<edm::pset::NodePtr>(cout,"\n"));
+  edm::copy_all(*pr, std::ostream_iterator<edm::pset::NodePtr>(std::cout,"\n"));
 }
                                                                                                             
 void testparser::mainparser2Test()
@@ -178,18 +175,16 @@ const char* spec =
 "path t2 = { A,B,C,D }\n"
 "endpath te = { A&B }\n"
 "}\n";
-cout <<endl;
+std::cout << std::endl;
   return ;
   ParseResults pr = edm::pset::parse(spec);
 
   if(!pr)
     {
-      cerr << "Null output from parser" << endl;
+      std::cerr << "Null output from parser" << std::endl;
     }
 
-  copy(pr->begin(),
-       pr->end(),
-       ostream_iterator<edm::pset::NodePtr>(cout,"\n"));
+  edm::copy_all(*pr, std::ostream_iterator<edm::pset::NodePtr>(std::cout,"\n"));
 }
                                                                                                             
 void testparser::mainparser3Test()
@@ -209,18 +204,16 @@ const char* spec =
 "path t2 = { A,B,C,D }\n"
 "endpath te = { A&B }\n"
 "}\n";
-cout <<endl;
+std::cout << std::endl;
   return ;
   ParseResults pr = edm::pset::parse(spec);
 
   if(!pr)
     {
-      cerr << "Null output from parser" << endl;
+      std::cerr << "Null output from parser" << std::endl;
     }
 
-  copy(pr->begin(),
-       pr->end(),
-       ostream_iterator<edm::pset::NodePtr>(cout,"\n"));
+  edm::copy_all(*pr, std::ostream_iterator<edm::pset::NodePtr>(std::cout,"\n"));
 }
                                                                                                             
 void testparser::mainparser4Test()
@@ -237,18 +230,16 @@ const char* spec =
 "      px, \n"
 "      { int32 i=2 int32 j=3 } \n"
 "} \n";
-cout <<endl;
+std::cout << std::endl;
   return;
   ParseResults pr = edm::pset::parse(spec);
 
   if(!pr)
     {
-      cerr << "Null output from parser" << endl;
+      std::cerr << "Null output from parser" << std::endl;
     }
 
-  copy(pr->begin(),
-       pr->end(),
-       ostream_iterator<edm::pset::NodePtr>(cout,"\n"));
+  edm::copy_all(*pr, std::ostream_iterator<edm::pset::NodePtr>(std::cout,"\n"));
 }
                                                                                                             
 void testparser::mainparser5Test()
@@ -271,18 +262,16 @@ const char* spec =
 "        path t1 = { m1 }\n"
 "        endpath te = { a}\n"
 "} \n";
- cout <<endl;
+ std::cout << std::endl;
   return ;
   ParseResults pr = edm::pset::parse(spec);
 
   if(!pr)
     {
-      cerr << "Null output from parser" << endl;
+      std::cerr << "Null output from parser" << std::endl;
     }
 
-  copy(pr->begin(),
-       pr->end(),
-       ostream_iterator<edm::pset::NodePtr>(cout,"\n"));
+  edm::copy_all(*pr, std::ostream_iterator<edm::pset::NodePtr>(std::cout,"\n"));
 }
 
 void testparser::mainparserLooperTest()
@@ -303,16 +292,14 @@ void testparser::mainparserLooperTest()
   "}\n"
   "path p = { m1 }\n"
   "}\n";
-  cout <<endl;
+  std::cout << std::endl;
   return ;
   ParseResults pr = edm::pset::parse(spec);
   
   if(!pr)
   {
-    cerr << "Null output from parser" << endl;
+    std::cerr << "Null output from parser" << std::endl;
   }
   
-  copy(pr->begin(),
-       pr->end(),
-       ostream_iterator<edm::pset::NodePtr>(cout,"\n"));
+  edm::copy_all(*pr, std::ostream_iterator<edm::pset::NodePtr>(std::cout,"\n"));
 }

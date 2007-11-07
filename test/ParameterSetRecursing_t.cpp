@@ -34,7 +34,7 @@ void work()
   all_ids.insert(v1[1].id());
   all_ids.insert(level1.id());
 		 
-  vector<string> pset_names, vpset_names;
+  vector<std::string> pset_names, vpset_names;
   
   const bool tracked = true;
   // const bool untracked = false; // Not used. Causes compiler warning.
