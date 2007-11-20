@@ -1,7 +1,7 @@
 
 from Mixins import _ConfigureComponent
 from Mixins import _Labelable, _Unlabelable
-from Mixins import _ValidatingListBase
+from Mixins import _ValidatingParameterListBase
 from ExceptionHandling import *
 
 class _Sequenceable(object):
@@ -51,10 +51,12 @@ class _ModuleSequenceType(_ConfigureComponent, _Labelable):
             raise TypeError(msg)
     def __str__(self):
         return str(self._seq)
-    def dumpConfig(self,indent,deltaIndent):
+    def dumpConfig(self, options):
         return '{'+self._seq.dumpSequenceConfig()+'}\n'
-    def dumpPython(self,indent,deltaIndent):
-        return "cms."+type(self).__name__+'('+self._seq.dumpSequencePython()+')\n'
+    def dumpPython(self, options):
+        return repr(self)
+    def __repr__(self):
+        return "cms."+type(self).__name__+'('+str(self._seq)+')\n'
     def copy(self):
         returnValue =_ModuleSequenceType.__new__(type(self))
         returnValue.__init__(self._seq)
@@ -81,10 +83,12 @@ class _ModuleSequenceType(_ConfigureComponent, _Labelable):
         return deps
     def nameInProcessDesc_(self, myname):
         return myname
+    def fillNamesList(self, l):
+        return self._seq.fillNamesList(l)
     def insertInto(self, parameterSet, myname):
         # represented just as a list of names in the ParameterSet
         l = []
-        self._seq.fillNamesList(l)
+        self.fillNamesList(l)
         parameterSet.addVString(True, myname, l)
 
 class _SequenceOpAids(_Sequenceable):
@@ -96,8 +100,6 @@ class _SequenceOpAids(_Sequenceable):
         return '('+str(self.__left)+'*'+str(self.__right) +')'
     def dumpSequenceConfig(self):
         return '('+self.__left.dumpSequenceConfig()+','+self.__right.dumpSequenceConfig()+')'
-    def dumpSequencePython(self):
-        return '('+self.__left.dumpSequencePython()+'*'+self.__right.dumpSequencePython()+')'
     def _findDependencies(self,knownDeps,presentDeps):
         #do left first and then right since right depends on left
         self.__left._findDependencies(knownDeps,presentDeps)
@@ -117,8 +119,6 @@ class _SequenceNegation(_Sequenceable):
         return '~%s' %self.__operand
     def dumpSequenceConfig(self):
         return '!%s' %self.__operand.dumpSequenceConfig()
-    def dumpSequencePython(self):
-        return '!%s' %self.__operand.dumpSequencePython()
     def _findDependencies(self,knownDeps, presentDeps):
         self.__operand._findDependencies(knownDeps, presentDeps)
     def fillNamesList(self, l):
@@ -136,8 +136,6 @@ class _SequenceOpFollows(_Sequenceable):
         return '('+str(self.__left)+'+'+str(self.__right) +')'
     def dumpSequenceConfig(self):
         return '('+self.__left.dumpSequenceConfig()+'&'+self.__right.dumpSequenceConfig()+')'
-    def dumpSequencePython(self):
-        return '('+self.__left.dumpSequencePython()+'+'+self.__right.dumpSequencePython()+')'
     def _findDependencies(self,knownDeps,presentDeps):
         oldDepsL = presentDeps.copy()
         oldDepsR = presentDeps.copy()
@@ -183,7 +181,7 @@ class Sequence(_ModuleSequenceType,_Sequenceable):
         return lookuptable[id(self)]
 
 
-class Schedule(_ValidatingListBase,_ConfigureComponent,_Unlabelable):
+class Schedule(_ValidatingParameterListBase,_ConfigureComponent,_Unlabelable):
     def __init__(self,*arg,**argv):
         super(Schedule,self).__init__(*arg,**argv)
     @staticmethod
@@ -194,3 +192,6 @@ class Schedule(_ValidatingListBase,_ConfigureComponent,_Unlabelable):
         return copy.copy(self)
     def _place(self,label,process):
         process.setSchedule_(self)
+    def fillNamesList(self, l):
+        for seq in self:
+            seq.fillNamesList(l)
