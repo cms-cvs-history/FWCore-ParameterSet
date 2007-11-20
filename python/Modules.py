@@ -57,8 +57,12 @@ class ESPrefer(_ConfigureComponent,_TypedParameterizable,_Unlabelable,_Labelable
         if name == '':
             name=self.type_()
         proc._placeESPrefer(name,self)
+    def moduleLabel_(self,myname):
+       # the C++ parser can give it a name like "label@prefer".  Get rid of that.
+       return myname.split('@')[0]
     def nameInProcessDesc_(self, myname):
-       return "esprefer_" + self.type_() + "@" + myname
+       # the C++ parser can give it a name like "label@prefer".  Get rid of that.
+       return "esprefer_" + self.type_() + "@" + myname.split('@')[0]
 
 class _Module(_ConfigureComponent,_TypedParameterizable,_Labelable,_Sequenceable):
     """base class for classes which denote framework event based 'modules'"""
@@ -139,11 +143,18 @@ if __name__ == "__main__":
             self.assertEqual(aCopy.bar.value(), "it")
             withType = EDAnalyzer("Test",type = int32(1))
             self.assertEqual(withType.type.value(),1)
+            block = PSet(i = int32(9))
+            m = EDProducer("DumbProducer", block, j = int32(10))
+            self.assertEqual(9, m.i.value())
+            self.assertEqual(10, m.j.value())
+
         
         def testService(self):
             empty = Service("Empty")
             withParam = Service("Parameterized",foo=untracked(int32(1)), bar = untracked(string("it")))
             self.assertEqual(withParam.foo.value(), 1)
             self.assertEqual(withParam.bar.value(), "it")
+            self.assertEqual(empty.dumpPython(), "cms.Service(\"Empty\")\n")
+            self.assertEqual(withParam.dumpPython(), "cms.Service(\"Parameterized\",\n    foo = cms.untracked.int32(1),\n    bar = cms.untracked.string(\'it\')\n)\n")
 
     unittest.main()
