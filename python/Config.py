@@ -6,7 +6,7 @@ options = Options()
 
 
 ### imports
-from Mixins import _SimpleParameterTypeBase, _ParameterTypeBase, _Parameterizable, _ConfigureComponent, _TypedParameterizable
+from Mixins import PrintOptions,_SimpleParameterTypeBase, _ParameterTypeBase, _Parameterizable, _ConfigureComponent, _TypedParameterizable
 from Mixins import  _Labelable,  _Unlabelable 
 #from Mixins import _ValidatingListBase
 from Types import * 
@@ -273,112 +273,113 @@ class Process(object):
              this is identical to calling process.extend(include('filename'))
         """
         self.extend(include(filename))
-    def _dumpConfigNamedList(self,items,typeName,indent):
+    def _dumpConfigNamedList(self,items,typeName,options):
         returnValue = ''
         for name,item in items:
-            returnValue +=indent+typeName+' '+name+' = '+item.dumpConfig(indent,indent)
+            returnValue +=options.indentation()+typeName+' '+name+' = '+item.dumpConfig(options)
         return returnValue    
-    def _dumpConfigUnnamedList(self,items,typeName,indent):
+    def _dumpConfigUnnamedList(self,items,typeName,options):
         returnValue = ''
         for name,item in items:
-            returnValue +=indent+typeName+' = '+item.dumpConfig(indent,indent)
+            returnValue +=options.indentation()+typeName+' = '+item.dumpConfig(options)
         return returnValue
-    def _dumpConfigOptionallyNamedList(self,items,typeName,indent):
+    def _dumpConfigOptionallyNamedList(self,items,typeName,options):
         returnValue = ''
         for name,item in items:
             if name == item.type_():
                 name = ''
             else:
-                name = ' '+name
-            returnValue +=indent+typeName+name+' = '+item.dumpConfig(indent,indent)
+                # python sometimes gives '@'-suffixes, to allow
+                # multiple names.  Remove these for .cfg  
+                name = ' '+name.split('@')[0]
+                #name = ' '+name
+            returnValue +=options.indentation()+typeName+name+' = '+item.dumpConfig(options)
         return returnValue
-    def dumpConfig(self):
+    def dumpConfig(self, options=PrintOptions()):
         """return a string containing the equivalent process defined using the configuration language"""
         config = "process "+self.__name+" = {\n"
-        indent = "  "
+        options.indent()
         if self.source_():
-            config += indent+"source = "+self.source_().dumpConfig(indent,indent)
+            config += options.indentation()+"source = "+self.source_().dumpConfig(options)
         if self.looper_():
-            config += indent+"looper = "+self.looper_().dumpConfig(indent,indent)
+            config += options.indentation()+"looper = "+self.looper_().dumpConfig(options)
         config+=self._dumpConfigNamedList(self.producers_().iteritems(),
                                   'module',
-                                  indent)
+                                  options)
         config+=self._dumpConfigNamedList(self.filters_().iteritems(),
                                   'module',
-                                  indent)
+                                  options)
         config+=self._dumpConfigNamedList(self.analyzers_().iteritems(),
                                   'module',
-                                  indent)
+                                  options)
         config+=self._dumpConfigNamedList(self.outputModules_().iteritems(),
                                   'module',
-                                  indent)
+                                  options)
         config+=self._dumpConfigNamedList(self.sequences_().iteritems(),
                                   'sequence',
-                                  indent)
+                                  options)
         config+=self._dumpConfigNamedList(self.paths_().iteritems(),
                                   'path',
-                                  indent)
+                                  options)
         config+=self._dumpConfigNamedList(self.endpaths_().iteritems(),
                                   'endpath',
-                                  indent)
+                                  options)
         config+=self._dumpConfigUnnamedList(self.services_().iteritems(),
                                   'service',
-                                  indent)
+                                  options)
         config+=self._dumpConfigOptionallyNamedList(
             self.es_producers_().iteritems(),
             'es_module',
-            indent)
+            options)
         config+=self._dumpConfigOptionallyNamedList(
             self.es_sources_().iteritems(),
             'es_source',
-            indent)
+            options)
         config+=self._dumpConfigOptionallyNamedList(
             self.es_prefers_().iteritems(),
             'es_prefer',
-            indent)
+            options)
         for name,item in self.psets.iteritems():
-            config +=indent+item.configTypeName()+' '+name+' = '+item.configValue(indent,indent)
+            config +=options.indentation()+item.configTypeName()+' '+name+' = '+item.configValue(options)
         for name,item in self.vpsets.iteritems():
-            config +=indent+'VPSet '+name+' = '+item.configValue(indent,indent)
+            config +=options.indentation()+'VPSet '+name+' = '+item.configValue(options)
         if self.schedule:
             pathNames = [p.label() for p in self.schedule]
-            config +=indent+'schedule = {'+','.join(pathNames)+'}\n'
+            config +=options.indentation()+'schedule = {'+','.join(pathNames)+'}\n'
             
 #        config+=self._dumpConfigNamedList(self.vpsets.iteritems(),
 #                                  'VPSet',
-#                                  indent)
+#                                  options)
         config += "}\n"
+        options.unindent()
         return config
-    def _dumpPythonList(self,items):
-        indent = '    '
+    def _dumpPythonList(self,items, options):
         returnValue = ''
         for name,item in items:
-            returnValue +='process.'+name+' = '+item.dumpPython('',indent)+'\n'
+            returnValue +='process.'+name+' = '+item.dumpPython(options)+'\n\n'
         return returnValue
-    def dumpPython(self):
+    def dumpPython(self, options=PrintOptions()):
         """return a string containing the equivalent process defined using the configuration language"""
         result = "process = cms.Process(\""+self.__name+"\")\n\n"
-        indent = "    "
         if self.source_():
-            result += "process.source = "+self.source_().dumpPython('', indent)
+            result += "process.source = "+self.source_().dumpPython(options)
         if self.looper_():
-            result += "process.looper = "+self.looper_().dumpPython('', indent)
-        result+=self._dumpPythonList(self.producers_().iteritems())
-        result+=self._dumpPythonList(self.filters_().iteritems())
-        result+=self._dumpPythonList(self.analyzers_().iteritems())
-        result+=self._dumpPythonList(self.outputModules_().iteritems())
-        result+=self._dumpPythonList(self.sequences_().iteritems())
-        result+=self._dumpPythonList(self.paths_().iteritems())
-        result+=self._dumpPythonList(self.endpaths_().iteritems())
-        result+=self._dumpPythonList(self.services_().iteritems())
-        result+=self._dumpPythonList(self.es_producers_().iteritems())
-        result+=self._dumpPythonList(self.es_sources_().iteritems())
-        result+=self._dumpPythonList(self.es_prefers_().iteritems())
-        result+=self._dumpPythonList(self.psets.iteritems())
-        result+=self._dumpPythonList(self.vpsets.iteritems())
+            result += "process.looper = "+self.looper_().dumpPython()
+        result+=self._dumpPythonList(self.producers_().iteritems(), options)
+        result+=self._dumpPythonList(self.filters_().iteritems() , options)
+        result+=self._dumpPythonList(self.analyzers_().iteritems(), options)
+        result+=self._dumpPythonList(self.outputModules_().iteritems(), options)
+        result+=self._dumpPythonList(self.sequences_().iteritems(), options)
+        result+=self._dumpPythonList(self.paths_().iteritems(), options)
+        result+=self._dumpPythonList(self.endpaths_().iteritems(), options)
+        result+=self._dumpPythonList(self.services_().iteritems(), options)
+        result+=self._dumpPythonList(self.es_producers_().iteritems(), options)
+        result+=self._dumpPythonList(self.es_sources_().iteritems(), options)
+        result+=self._dumpPythonList(self.es_prefers_().iteritems(), options)
+        result+=self._dumpPythonList(self.psets.iteritems(), options)
+        result+=self._dumpPythonList(self.vpsets.iteritems(), options)
         if self.schedule:
-            pathNames = [p.label() for p in self.schedule]
-            result +=indent+'schedule = ('+','.join(pathNames)+')\n'
+            result += "process.schedule = "+self.schedule.dumpPython(options)
         return result
 
     def insertOneInto(self, parameterSet, label, item):
@@ -398,14 +399,38 @@ class Process(object):
     def insertServices(self, processDesc, itemDict):
         for name,value in itemDict.iteritems():
            value.insertInto(processDesc)
-    def insertTriggerPaths(self, processDesc):
+    def insertPaths(self, processDesc, processPSet):
+        scheduledPaths = []
+        triggerPaths = []
+        endpaths = []
+        if self.schedule_() == None:
+            # make one from triggerpaths & endpaths
+            for name,value in self.paths_().iteritems():
+                scheduledPaths.append(name)
+                triggerPaths.append(name)
+            for name,value in self.endpaths_().iteritems():
+                scheduledPaths.append(name)
+                endpaths.append(name)
+        else:
+            for path in self.schedule_():
+               pathname = path.label()
+               scheduledPaths.append(pathname)
+               if self.endpaths_().has_key(pathname):
+                   endpaths.append(pathname)
+               else:
+                   triggerPaths.append(pathname)
+        processPSet.addVString(True, "@end_paths", endpaths)
+        processPSet.addVString(True, "@paths", scheduledPaths)
+        # trigger_paths are a little different
         p = processDesc.newPSet()
-        l = []
-        for name,value in self.paths_().iteritems():
-          l.append(name)
-          value.insertInto(processDesc, name)
-        p.addVString(True, "@trigger_paths", l)
-        processDesc.addPSet(False, "@trigger_paths", p)
+        p.addVString(True, "@trigger_paths", triggerPaths)
+        processPSet.addPSet(False, "@trigger_paths", p)
+        # add all these paths
+        for triggername in triggerPaths:
+            self.paths_()[triggername].insertInto(processPSet, triggername)
+        for endpathname in endpaths:
+            self.endpaths_()[endpathname].insertInto(processPSet, endpathname)
+        
     def fillProcessDesc(self, processDesc, processPSet):
         processPSet.addString(True, "@process_name", self.name_())
         all_modules = self.producers_().copy()
@@ -418,9 +443,7 @@ class Process(object):
         self.insertManyInto(processPSet, "@all_esmodules", self.es_producers_())
         self.insertManyInto(processPSet, "@all_essources", self.es_sources_())
         self.insertManyInto(processPSet, "@all_esprefers", self.es_prefers_())
-        self.insertTriggerPaths(processPSet)
-        self.insertManyInto(processPSet, "@end_paths", self.endpaths_())
-        self.insertOneInto(processPSet,  "@paths", self.schedule_())
+        self.insertPaths(processDesc, processPSet)
         self.insertServices(processDesc, self.services_())
         return processDesc
 
@@ -545,7 +568,7 @@ if __name__=="__main__":
         def testSecSource(self):
             p = Process('test')
             p.a = SecSource("MySecSource")
-            self.assertEqual(p.dumpConfig(),"process test = {\n  secsource a = MySecSource { \n  }\n}\n")
+            self.assertEqual(p.dumpConfig(),"process test = {\n    secsource a = MySecSource { \n    }\n}\n")
 
         def testSequence(self):
             p = Process('test')
@@ -608,6 +631,14 @@ if __name__=="__main__":
             self.assertEqual(s[0],p.path1)
             self.assertEqual(s[1],p.path2)
             p.schedule = s
+
+        def testUsing(self):
+            p = Process('test')
+            p.block = PSet(a = int32(1))
+            p.modu = EDAnalyzer('Analyzer', p.block, b = int32(2))
+            self.assertEqual(p.modu.a.value(),1)
+            self.assertEqual(p.modu.b.value(),2)
+
         def testExamples(self):
             p = Process("Test")
             p.source = Source("PoolSource",fileNames = untracked(string("file:reco.root")))
