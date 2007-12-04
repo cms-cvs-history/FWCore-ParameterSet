@@ -761,6 +761,17 @@ class _Schedule(object):
     till the Paths have been created"""
     def __init__(self,labels):
         self.labels = labels
+    def dumpPython(self, options):
+        result = "cms.Schedule("
+        first = True
+        for  label in self.labels:
+           if not first:
+              result += ", "
+           first = False
+           result += "process."+label
+        result += ")\n"
+        return result
+
 
 def _makeSchedule(s,loc,toks):
     """create the appropriate parameter object from the tokens"""
@@ -1122,6 +1133,8 @@ def _finalizeProcessFragment(values,usingLabels):
         for replace in replaces:
             if not isinstance(getattr(adapted,replace.rootLabel()),cms.PSet):
                 replace.do(adapted)
+        # maybe the user said something like 'replace a.b = {using bl}
+        _findAndHandleProcessUsingBlock(values)
     except Exception, e:
         raise RuntimeError("the configuration contains the error \n"+str(e))    
     #FIX: now need to create Sequences, Paths, EndPaths from the available
@@ -1168,20 +1181,6 @@ def _dumpCfg(s,loc,toks):
     result = "import FWCore.ParameterSet.Config as cms\nprocess = cms.Process(\""+label+"\")\n"
     print result+dumpPython(values, options)
     return
-    result = "import FWCore.ParameterSet.Config as cms\nprocess = cms.Process(\""+label+"\")\n"
-    for key,value in values:
-        if isinstance(value,_IncludeNode):
-            value.createIfNeeded()
-            result += repr(value)+"\n"
-        elif isinstance(value,_ReplaceNode):
-            value.setPrefix("process.")
-            result += "process."+ repr(value)+"\n"
-        elif isinstance(value,_ModuleSeries):
-            result += "process."+key+" = "+value.cfgRepr(p)+"\n"
-        else:
-            result += "process."+key+" = "+value.dumpPython()+"\n"
-    print result
-
 
 def _makeProcess(s,loc,toks):
     """create a Process from the tokens"""
