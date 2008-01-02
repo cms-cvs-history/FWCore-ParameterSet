@@ -2,7 +2,7 @@
 //
 // This program tests the behavior of untracked parameters in
 // ParameterSet objects.
-// $Id: UntrackedParameters_t.cpp,v 1.6 2006/03/10 22:37:00 paterno Exp $
+// $Id: UntrackedParameters_t.cpp,v 1.7 2007/03/04 05:45:43 wmtan Exp $
 //----------------------------------------------------------------------
 #include <cassert>
 #include <iostream>
@@ -16,6 +16,7 @@
 
 using edm::ParameterSetID;
 using edm::ParameterSet;
+using edm::InputTag;
 typedef std::vector<edm::ParameterSet> VPSet;
 
 
@@ -148,6 +149,16 @@ void testUntrackedInternal()
     {
       assert( "Threw the wrong exception when getting i2" == 0);
     }
+  InputTag tag("label");
+  InputTag tag2("label:instance");
+  InputTag tag2b("label:instance");
+  InputTag tag3("label::process");
+  InputTag tag3b("label::process");
+  assert(tag2 == tag2b);
+  assert(tag3 == tag3b);
+  assert(tag.encode() == "label");
+  assert(tag2.encode() == "label:instance");
+  assert(tag3.encode() == "label::process");
 }
 
 void testUntrackedFromScript()
