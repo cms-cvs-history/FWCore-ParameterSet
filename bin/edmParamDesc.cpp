@@ -8,7 +8,7 @@
 //
 // Original Author:  Chris Jones
 //         Created:  Thu Aug  2 13:33:53 EDT 2007
-// $Id$
+// $Id: edmParamDesc.cpp,v 1.1 2007/09/17 21:04:37 chrjones Exp $
 //
 
 // system include files
@@ -17,7 +17,6 @@
 #include <cstdlib>
 #include <string>
 #include <memory>
-#include <boost/program_options.hpp>
 
 // user include files
 #include "FWCore/Utilities/interface/Exception.h"
