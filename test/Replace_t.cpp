@@ -1,5 +1,6 @@
 #include "FWCore/ParameterSet/test/ConfigFileTest.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h" 
+#include "FWCore/ParameterSet/test/ConfigTestMain.h"
 #include <iostream>
 
 using std::string;
