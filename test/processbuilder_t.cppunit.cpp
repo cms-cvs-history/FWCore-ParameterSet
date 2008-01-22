@@ -4,7 +4,7 @@
 
 @brief test suit for process building and schedule validation
 
-@version: $Id: processbuilder_t.cppunit.cpp,v 1.6 2007/06/15 18:41:50 wdd Exp $
+@version: $Id: processbuilder_t.cppunit.cpp,v 1.7 2007/08/06 20:47:30 wmtan Exp $
 @author : Stefano Argiro
 @date : 2005 06 17
 
@@ -411,4 +411,3 @@ void testProcessDesc::inconsistentMultiplePathTest(){
 
 }
 
-#include <Utilities/Testing/interface/CppUnit_testdriver.icpp>
