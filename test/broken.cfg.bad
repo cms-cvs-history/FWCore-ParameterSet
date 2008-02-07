@@ -35,10 +35,5 @@ process PROD =
   path p4 = { G & H }
 
 }
-# Trailing comments are legal.
-// This is also a legal comment.
-/* This is also a legal comment. */
-/*
- This, too, is legal.
-*/
-
+# The following line makes this malformed.
+module x = Boo { }

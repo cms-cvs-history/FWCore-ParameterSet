@@ -29,16 +29,10 @@ process PROD =
   // sequence m5 = MidpointCone5
 
   path p0 = { (A & B) , (C & D) }
-  path p1 = { A & B , C & D }
   path p2 = { A , B & C , D }
   path p3 = { E,F }
   path p4 = { G & H }
 
 }
-# Trailing comments are legal.
-// This is also a legal comment.
-/* This is also a legal comment. */
-/*
- This, too, is legal.
-*/
-
+# The following line makes this malformed.
+path p1 = { A & B , C & D }
