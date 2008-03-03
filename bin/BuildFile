@@ -37,3 +37,8 @@
  <use name=FWCore/PluginManager> 
 </bin> 
  
+<bin file=edmParameterSetDump.cpp>
+ <use name=boost>
+ <use name=FWCore/ParameterSet>
+</bin>
+
