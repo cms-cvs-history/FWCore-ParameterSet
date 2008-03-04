@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.49 2007/10/25 19:55:23 rpw Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.50 2007/11/07 05:47:18 wmtan Exp $
  */
 
 #include <algorithm>
@@ -159,6 +159,8 @@ void testmakepset::usingBlockAux()
     "  module m2 = Class2 {"
     "    int32 i = 2"
     "    int32 j = 3"
+    "    int64 l = 101010"
+    "    uint64 u = 1011"
     "    using b"
     "  }"
     "}";
@@ -177,6 +179,8 @@ void testmakepset::usingBlockAux()
   CPPUNIT_ASSERT(m1Params.getParameter<int>("i") == 1);
   CPPUNIT_ASSERT(m2Params.getParameter<int>("i") == 2);
   CPPUNIT_ASSERT(m2Params.getParameter<int>("j") == 3);
+  CPPUNIT_ASSERT(m2Params.getParameter<boost::int64_t>("l") == 101010);
+  CPPUNIT_ASSERT(m2Params.getParameter<boost::uint64_t>("u") == 1011);
 
   CPPUNIT_ASSERT(m1Params.getParameter<std::string>("s") == "original");
   CPPUNIT_ASSERT(m2Params.getParameter<std::string>("s") == "original");

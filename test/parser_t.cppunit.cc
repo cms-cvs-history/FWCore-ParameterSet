@@ -57,6 +57,7 @@ const char* spec =
 "int32 i1 = 1\n"
 "int32 i2 = 10 int32 i3 = 0x1234\n"
 "int32 i4 = -2\n"
+"int64 i64 = 101010101\n"
 "vint32 vi1 = { 1 }\n"
 "vint32 vi3 = {1, 2, 3}\n"
 "vint32 vi2 = { }\n"
