@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.50 2007/11/07 05:47:18 wmtan Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.51 2008/03/04 22:42:58 rpw Exp $
  */
 
 #include <algorithm>
@@ -229,6 +229,8 @@ void testmakepset::fileinpathAux()
   edm::ParameterSet innerps = ps->getParameter<edm::ParameterSet>("main");
   edm::FileInPath fip  = innerps.getParameter<edm::FileInPath>("fip");
   edm::FileInPath ufip = innerps.getUntrackedParameter<edm::FileInPath>("ufip");
+  CPPUNIT_ASSERT( innerps.existsAs<int>("extraneous") );
+  CPPUNIT_ASSERT( !innerps.existsAs<int>("absent") );
   CPPUNIT_ASSERT( fip.isLocal() == true );
   CPPUNIT_ASSERT( fip.relativePath()  == "FWCore/ParameterSet/test/sample.cfg" );
   CPPUNIT_ASSERT( ufip.relativePath() == "FWCore/ParameterSet/test/complete.cfg" );
