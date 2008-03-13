@@ -89,6 +89,14 @@ class PythonParseTree_t(unittest.TestCase):
         p3 = l2[0]
         self.assertEqual(p3.getVString(True, "dukes"), ["Bo", "Luke"])
 
+    def testIDs(self):
+        eid = libFWCoreParameterSet.EventID(1,2)
+        lbid = libFWCoreParameterSet.LuminosityBlockID(3,4)
+        self.pset.addEventID(True, "eid", eid)
+        self.pset.addLuminosityBlockID(False, "lbid", lbid)
+        self.assertEqual(self.pset.getEventID(True, "eid").run(), 1)
+        self.assertEqual(self.pset.getLuminosityBlockID(False, "lbid").luminosityBlock(), 4)
+ 
  
 if __name__=='__main__':
     unittest.main()
