@@ -5,10 +5,9 @@ from  Options import Options
 options = Options()
 
 
-### imports
-from Mixins import PrintOptions,_SimpleParameterTypeBase, _ParameterTypeBase, _Parameterizable, _ConfigureComponent, _TypedParameterizable
-from Mixins import  _Labelable,  _Unlabelable 
-#from Mixins import _ValidatingListBase
+## imports
+from Mixins import PrintOptions,_ParameterTypeBase,_SimpleParameterTypeBase, _Parameterizable, _ConfigureComponent, _TypedParameterizable, _Labelable,  _Unlabelable,  _ValidatingListBase
+from Mixins import *
 from Types import * 
 from Modules import *
 from SequenceTypes import *
@@ -161,16 +160,12 @@ class Process(object):
             else:
                 raise TypeError("an instance of "+str(type(value))+" can not be assigned the label '"+name+"'.\n"+
                                 "Please either use the label '"+value.type_()+" or use the 'add_' method instead.")
-        if not self._okToPlace(name, value, self.__dict__):
-            return
         #clone the item
         newValue =value.copy()
-
-        #NOTE: for now, ESPrefer's are assigned the same label as the item to which they 'choose'
-        # however, only one of them can take the attribute name and it by rights should go to
-        # the module and not the ESPrefer
-        if not isinstance(value,ESPrefer):
-            self.__dict__[name]=newValue
+        if not self._okToPlace(name, value, self.__dict__):
+            #print "WARNING: trying to override definition of process."+name
+            return
+        self.__dict__[name]=newValue
         if isinstance(newValue,_Labelable):
             newValue.setLabel(name)
             self._cloneToObjectDict[id(value)] = newValue
@@ -199,7 +194,9 @@ class Process(object):
             #  Need to add checks
             if mod._isModified:
                 if d[name]._isModified:
-                    raise RuntimeError("The module %s has been modified twice" %(name))
+                    #raise RuntimeError("The module %s has been modified twice" %(name))
+                    # often OK, if coming from the same cff
+                    return False
                 else:
                     return True
             else:
@@ -213,6 +210,8 @@ class Process(object):
                 d[name] = mod._postProcessFixup(self._cloneToObjectDict)
             else:
                 d[name] = mod
+            if isinstance(mod,_Labelable):
+               mod.setLabel(name)
 
     def _placeOutputModule(self,name,mod):
         self._place(name, mod, self.__outputmodules)
@@ -239,7 +238,7 @@ class Process(object):
     def _placeESProducer(self,name,mod):
         self._place(name, mod, self.__esproducers)
     def _placeESPrefer(self,name,mod):
-        self._place(name, mod, self.__esproducers)
+        self._place(name, mod, self.__esprefers)
     def _placeESSource(self,name,mod):
         self._place(name, mod, self.__essources)
     def _placePSet(self,name,mod):
@@ -319,12 +318,7 @@ class Process(object):
         for name,item in items:
             if name == item.type_():
                 name = ''
-            else:
-                # python sometimes gives '@'-suffixes, to allow
-                # multiple names.  Remove these for .cfg  
-                name = ' '+name.split('@')[0]
-                #name = ' '+name
-            returnValue +=options.indentation()+typeName+name+' = '+item.dumpConfig(options)
+            returnValue +=options.indentation()+typeName+' '+name+' = '+item.dumpConfig(options)
         return returnValue
     def dumpConfig(self, options=PrintOptions()):
         """return a string containing the equivalent process defined using the configuration language"""
@@ -366,10 +360,7 @@ class Process(object):
             self.es_sources_().iteritems(),
             'es_source',
             options)
-        config+=self._dumpConfigOptionallyNamedList(
-            self.es_prefers_().iteritems(),
-            'es_prefer',
-            options)
+        config += self._dumpConfigESPrefers(options)
         for name,item in self.psets.iteritems():
             config +=options.indentation()+item.configTypeName()+' '+name+' = '+item.configValue(options)
         for name,item in self.vpsets.iteritems():
@@ -384,6 +375,11 @@ class Process(object):
         config += "}\n"
         options.unindent()
         return config
+    def _dumpConfigESPrefers(self, options):
+        result = ''
+        for name, item in self.es_prefers_().iteritems():
+            result += item.dumpConfig(options)
+        return result
     def _dumpPythonList(self, d, options):
         returnValue = ''
         for name,item in d.iteritems():
@@ -457,6 +453,9 @@ class Process(object):
             result +='process.schedule = cms.Schedule('+','.join(pathNames)+')\n'
         return result
 
+    def _insertInto(self, parameterSet, itemDict):
+        for name,value in itemDict.iteritems():
+            value.insertInto(parameterSet, name)
     def _insertOneInto(self, parameterSet, label, item):
         vitems = []
         if not item == None:
@@ -502,9 +501,11 @@ class Process(object):
         processPSet.addPSet(False, "@trigger_paths", p)
         # add all these paths
         for triggername in triggerPaths:
-            self.paths_()[triggername].insertInto(processPSet, triggername)
+            #self.paths_()[triggername].insertInto(processPSet, triggername, self.sequences_())
+            self.paths_()[triggername].insertInto(processPSet, triggername, self.__dict__)
         for endpathname in endpaths:
-            self.endpaths_()[endpathname].insertInto(processPSet, endpathname)
+            #self.endpaths_()[endpathname].insertInto(processPSet, endpathname, self.sequences_())
+            self.endpaths_()[endpathname].insertInto(processPSet, endpathname, self.__dict__)
         
     def fillProcessDesc(self, processDesc, processPSet):
         processPSet.addString(True, "@process_name", self.name_())
@@ -512,6 +513,8 @@ class Process(object):
         all_modules.update(self.filters_())
         all_modules.update(self.analyzers_())
         all_modules.update(self.outputModules_())
+        self._insertInto(processPSet, self.psets_())
+        self._insertInto(processPSet, self.vpsets_())
         self._insertManyInto(processPSet, "@all_modules", all_modules)
         self._insertOneInto(processPSet,  "@all_sources", self.source_())
         self._insertOneInto(processPSet,  "@all_loopers",   self.looper_())
@@ -542,7 +545,11 @@ class Process(object):
     def _findPreferred(self, esname, d):
         # is esname a name in the dictionary?
         if esname in d:
-            self.__setattr__(esname, ESPrefer(d[esname].type_()))
+            typ = d[esname].type_()
+            if typ == esname:
+                self.__setattr__( esname+"_prefer", ESPrefer(typ) )
+            else:
+                self.__setattr__( esname+"_prefer", ESPrefer(typ, esname) )
             return True
         else:
             # maybe it's an unnamed ESModule?
@@ -552,7 +559,7 @@ class Process(object):
                   if found:
                       raise RuntimeError("More than one ES module for "+esname)
                   found = True
-                  self.add_( ESPrefer(d[esname].type_()) )
+                  self.__setattr__(esname+"_prefer",  ESPrefer(d[esname].type_()) )
             return found
          
 def include(fileName):
@@ -832,9 +839,11 @@ process.schedule = cms.Schedule(process.p2,process.p)
             p.a = EDProducer("A", a1=int32(2))
             self.assertEqual(p.a.a1.value(), 1)
             # try adding a modified module.  Should throw
+            # no longer, since the same (modified) say, geometry
+            # could come from more than one cff
             b = EDProducer("A", a1=int32(3))
             b.a1 = 4
-            self.assertRaises(RuntimeError, setattr, *(p,'a',b))
+            #self.assertRaises(RuntimeError, setattr, *(p,'a',b))
             
         def testExamples(self):
             p = Process("Test")
@@ -885,5 +894,7 @@ process.schedule = cms.Schedule(process.p2,process.p)
    endpath o = {out}
 }""")
             self.assertEqual(process.source.type_(),"PoolSource")
+        def testUB(self):
+            a = UsingBlock('a')
                                
     unittest.main()
