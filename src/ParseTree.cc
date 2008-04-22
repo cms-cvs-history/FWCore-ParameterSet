@@ -377,13 +377,6 @@ namespace edm {
       {
         blockItr->second->resolveUsingNodes(blocks_, strict_);
       }
-      // look for blocks-within-blocks first
-      for(NodePtrMap::iterator blockItr = blocks_.begin(), blockItrEnd = blocks_.end();
-          blockItr != blockItrEnd; ++blockItr)
-      {
-        blockItr->second->resolveUsingNodes(blocks_, strict_);
-      }
-
 
       for(NodePtrMap::iterator moduleItr = modulesAndSources_.begin(),
           moduleItrEnd = modulesAndSources_.end();
