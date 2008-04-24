@@ -107,7 +107,7 @@ bool test(const std::string & cfgPath, const std::string & pyPath)
   boost::shared_ptr<ProcessDesc> pythonProcessDesc
     = PythonProcessDesc(pyFile.fullPath()).processDesc();
 
-  ProcessDesc cfgProcessDesc(edm::pset::read_whole_file(cfgFile.fullPath()));
+  ProcessDesc cfgProcessDesc(edm::read_whole_file(cfgFile.fullPath()));
 
   // check services
   assert(pythonProcessDesc->getServicesPSets()->size() == 

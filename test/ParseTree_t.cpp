@@ -24,7 +24,7 @@ int work(int argc, char* argv[])
 
   // If given an argument, that argument must be the name of a file to read.
   std::string buffer;
-  edm::pset::ParseTree tree(edm::pset::read_whole_file(argv[1]));
+  edm::pset::ParseTree tree(edm::read_whole_file(argv[1]));
   assert(tree.value("rome.date") == "100");
   std::vector<std::string> cohorts = tree.values("rome.legion.cohorts");
   assert(cohorts.size() == 10);
