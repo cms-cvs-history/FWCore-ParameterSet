@@ -3,6 +3,7 @@ import FWCore.ParameterSet.parsecf.pyparsing as pp
 import FWCore.ParameterSet.Config as cms
 from FWCore.ParameterSet.DictTypes import SortedKeysDict
 from Mixins import PrintOptions
+import copy
 # Questions
 #  If an include includes a parameter already defined is that an error?
 #  If a 'using' block includes a parameter already defined, is that an error?
@@ -191,7 +192,7 @@ def _handleUsing(using,otherUsings,process,allUsingLabels):
             values.extend(newValues)
             usingLabels.append(label)
         else:
-            values.append((label,param))
+            values.append((label,copy.deepcopy(param)))
     for label in usingLabels:
         #remove the using nodes
         delattr(process[using.value()],label)
@@ -310,8 +311,15 @@ def _makeLabeledVInputTag(s,loc,toks):
     if len(toks[0])==4:
         tracked = False
         del toks[0][0]
+
     values = list(iter(toks[0][2]))
-    items = [cms.InputTag(*x) for x in values]
+    items = []
+    for x in values:
+        if isinstance(x, str):
+            items.append(cms.InputTag(x))
+        else:
+            items.append(cms.InputTag(*x))
+    #items = [cms.InputTag(*x) for x in values]
     p = cms.VInputTag(*items)
     if not tracked:
         cms.untracked(p)
@@ -630,7 +638,7 @@ inputTagParameter = pp.Group(untracked+pp.Keyword('InputTag')+label+_equalTo+
 
 vinputTagParameter =pp.Group(untracked+pp.Keyword("VInputTag")+label+_equalTo
                              +_scopeBegin
-                               +pp.Group(pp.Optional(pp.delimitedList(inputTagFormat)))
+                               +pp.Group(pp.Optional(pp.delimitedList(anyInputTag)))
                              +_scopeEnd
                           ).setParseAction(_makeLabeledVInputTag)
 
@@ -1776,6 +1784,11 @@ if __name__=="__main__":
             d=dict(iter(t))
             self.assertEqual(type(d['blah']),cms.VInputTag)
             self.assertEqual(d['blah'],[cms.InputTag('abc'),cms.InputTag('def')])
+            t=onlyParameters.parseString("VInputTag blah = {'abc', def}")
+            d=dict(iter(t))
+            self.assertEqual(type(d['blah']),cms.VInputTag)
+            self.assertEqual(d['blah'],[cms.InputTag('abc'),cms.InputTag('def')])
+
 
             t=onlyParameters.parseString("EventID eid= 1:2")
             d=dict(iter(t))
@@ -2637,6 +2650,33 @@ process USER =
             self.assertEqual(t[0].b.c.e[0].i.value(), 1)
             #make sure dump succeeds
             t[0].dumpConfig()
+
+            t=process.parseString("""
+process p = {
+
+  block roster = {
+    string thirdBase = 'Some dude'
+    PSet outfielders = {
+      string rightField = 'Some dude'
+    }
+  }
+
+  module bums = Ballclub {
+    using roster
+  }
+
+
+  module allstars = Ballclub {
+    using roster
+  }
+
+  replace allstars.thirdBase = 'Chuck Norris'
+  replace allstars.outfielders.rightField = 'Babe Ruth'
+}""")
+            self.assertEqual(t[0].bums.thirdBase.value(), 'Some dude')
+            self.assertEqual(t[0].bums.outfielders.rightField.value(), 'Some dude')
+            self.assertEqual(t[0].allstars.thirdBase.value(), 'Chuck Norris')
+            self.assertEqual(t[0].allstars.outfielders.rightField.value(), 'Babe Ruth')
 
             _allUsingLabels = set()
 
