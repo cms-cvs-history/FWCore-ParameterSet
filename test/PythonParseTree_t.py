@@ -25,6 +25,8 @@ class PythonParseTree_t(unittest.TestCase):
         # make sure vectors and single entries are separate
         self.assertRaises(RuntimeError, self.tree.value, "rome.legion.cohorts")
         self.assertRaises(RuntimeError, self.tree.values, "rome.date")
+        self.pset.addInt64(False, 'bears' , 20)
+        self.pset.addVUInt64(True, 'steelers', [9,10,13,14,40])
 
     def testReplace(self):
         self.tree.replaceValue("Y2.s", "serious")
