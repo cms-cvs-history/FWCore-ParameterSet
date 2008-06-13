@@ -2,43 +2,27 @@
 <use name=FWCore/ParameterSet>
 
 <bin name=EdmConfigToPython file=edmConfigToPython.cpp>
- <use name=boost>
- <use name=FWCore/ParameterSet>
 </bin>
 
 <bin file=edmConfigToPython.cpp> 
- <use name=boost> 
- <use name=FWCore/ParameterSet> 
 </bin> 
   
 <bin name=EdmConfigHash file=edmConfigHash.cpp>
- <use name=boost>
- <use name=FWCore/ParameterSet>
 </bin>
 
 <bin file=edmConfigHash.cpp> 
- <use name=boost> 
- <use name=FWCore/ParameterSet> 
 </bin> 
  
 <bin name=EdmConfigSearch file=edmConfigSearch.cpp>
- <use name=boost>
- <use name=FWCore/ParameterSet>
 </bin>
 
 <bin file=edmConfigSearch.cpp> 
- <use name=boost> 
- <use name=FWCore/ParameterSet> 
 </bin> 
 
 <bin file=edmParamDesc.cpp> 
- <use name=boost> 
- <use name=FWCore/ParameterSet> 
  <use name=FWCore/PluginManager> 
 </bin> 
  
 <bin file=edmParameterSetDump.cpp>
- <use name=boost>
- <use name=FWCore/ParameterSet>
 </bin>
 
