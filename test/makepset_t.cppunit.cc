@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.51 2008/03/04 22:42:58 rpw Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.52 2008/03/11 21:21:09 rpw Exp $
  */
 
 #include <algorithm>
@@ -209,9 +209,9 @@ void testmakepset::fileinpathAux()
      "process PROD = {"
     "  PSet main =  {"
     "    int32 extraneous = 12"
-    "    FileInPath fip  = 'FWCore/ParameterSet/test/sample.cfg'"
+    "    FileInPath fip  = 'FWCore/ParameterSet/python/Config.py'"
     "    FileInPath topo = 'Geometry/TrackerSimData/data/trackersens.xml'"
-    "    untracked FileInPath ufip  = 'FWCore/ParameterSet/test/complete.cfg'"
+    "    untracked FileInPath ufip  = 'FWCore/ParameterSet/python/Types.py'"
     "  }"
     "  source = DummySource { } "
     "}";
@@ -232,15 +232,15 @@ void testmakepset::fileinpathAux()
   CPPUNIT_ASSERT( innerps.existsAs<int>("extraneous") );
   CPPUNIT_ASSERT( !innerps.existsAs<int>("absent") );
   CPPUNIT_ASSERT( fip.isLocal() == true );
-  CPPUNIT_ASSERT( fip.relativePath()  == "FWCore/ParameterSet/test/sample.cfg" );
-  CPPUNIT_ASSERT( ufip.relativePath() == "FWCore/ParameterSet/test/complete.cfg" );
+  CPPUNIT_ASSERT( fip.relativePath()  == "FWCore/ParameterSet/python/Config.py" );
+  CPPUNIT_ASSERT( ufip.relativePath() == "FWCore/ParameterSet/python/Types.py" );
   std::string fullpath = fip.fullPath();
   std::cerr << "fullPath is: " << fip.fullPath() << std::endl;
   std::cerr << "copy of fullPath is: " << fullpath << std::endl;
 
   CPPUNIT_ASSERT( !fullpath.empty() );
 
-  std::string tmpout = fullpath.substr(0, fullpath.find("FWCore/ParameterSet/test/sample.cfg")) + "tmp.cfg";
+  std::string tmpout = fullpath.substr(0, fullpath.find("FWCore/ParameterSet/python/Config.py")) + "tmp.py";
 
   edm::FileInPath topo = innerps.getParameter<edm::FileInPath>("topo");
   CPPUNIT_ASSERT( topo.isLocal() == false );
@@ -273,7 +273,7 @@ void testmakepset::fileinpathAux()
   const char* kTest2 = 
      "process PROD = {"
     "  PSet main =  {"
-    "    FileInPath fip2  = 'tmp.cfg'"
+    "    FileInPath fip2  = 'tmp.py'"
     "  }"
     "  source = DummySource { } "
     "}";
@@ -292,7 +292,7 @@ void testmakepset::fileinpathAux()
   edm::ParameterSet innerps2 = ps2->getParameter<edm::ParameterSet>("main");
   edm::FileInPath fip2 = innerps2.getParameter<edm::FileInPath>("fip2");
   CPPUNIT_ASSERT( fip2.isLocal() == true );
-  CPPUNIT_ASSERT( fip2.relativePath() == "tmp.cfg" );
+  CPPUNIT_ASSERT( fip2.relativePath() == "tmp.py" );
   std::string fullpath2 = fip2.fullPath();
   std::cerr << "fullPath is: " << fip2.fullPath() << std::endl;
   std::cerr << "copy of fullPath is: " << fullpath2 << std::endl;
