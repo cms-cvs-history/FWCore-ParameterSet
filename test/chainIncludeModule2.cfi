@@ -1,5 +1,0 @@
-module iterativeConeNoBlock = IterativeConeJetProducer {
-       using CaloJetParameters
-       double coneRadius = 0.5
-}
-

@@ -1,8 +1,0 @@
-block CaloJetParameters = {
-        double inputEtMin = 0.5
-        double inputEMin = 0.
-        InputTag src = caloTowers
-        untracked string jetType = "CaloJet"
-        untracked bool verbose = false
-}
-
