@@ -1,5 +1,0 @@
-module Y  = ClassY
-{
-  string s = "silly"
-  include "FWCore/ParameterSet/test/include_3.stub"
-}
