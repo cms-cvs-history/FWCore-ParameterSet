@@ -2,7 +2,7 @@
 //
 // This program test the behavior of pset::Registry.
 //
-// $Id: Registry_t.cpp,v 1.10 2006/09/06 19:27:35 paterno Exp $
+// $Id: Registry_t.cpp,v 1.11 2007/03/04 05:45:43 wmtan Exp $
 //----------------------------------------------------------------------
 #include <cassert>
 #include <cmath>
@@ -125,9 +125,9 @@ int main()
       work2();
 
       // Look at what we have saved.
-      std::cout << "Here comes the registry..." << std::endl;
-      std::cout << *edm::pset::Registry::instance() << std::endl;
-      std::cout << "...done" << std::endl;
+      //std::cout << "Here comes the registry..." << std::endl;
+      //std::cout << *edm::pset::Registry::instance() << std::endl;
+      //std::cout << "...done" << std::endl;
       rc = 0;
   }
   catch (edm::Exception& x)
