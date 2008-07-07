@@ -2,7 +2,7 @@
 //
 // This program tests the behavior of untracked parameters in
 // ParameterSet objects.
-// $Id: UntrackedParameters_t.cpp,v 1.7 2007/03/04 05:45:43 wmtan Exp $
+// $Id: UntrackedParameters_t.cpp,v 1.8 2008/01/02 19:47:06 rpw Exp $
 //----------------------------------------------------------------------
 #include <cassert>
 #include <iostream>
@@ -164,22 +164,29 @@ void testUntrackedInternal()
 void testUntrackedFromScript()
 {
   std::string filetext = 
-    "process TEST =\n"
-    "{\n"
-    "source = DummySource { }\n"
-    "PSet p1 = { untracked int32 a = 6 }\n"
-    "untracked PSet p2 = { int32 b = 10 }\n"
-    "untracked PSet p3 = { untracked double d = 1.5}\n"
-    "untracked VPSet vp =\n"
-    "  {\n"
-    "    { int32 i = 1 },\n"
-    "    { untracked double f = 1.5 }\n"
-    "  }\n"
-    "}\n";
 
   boost::shared_ptr<ParameterSet> mainps;
-  boost::shared_ptr<VPSet > services;
-  edm::makeParameterSets(filetext, mainps, services);
+  "import FWCore.ParameterSet.Config as cms\n"
+  "process = cms.Process('TEST')\n"
+  "process.source = cms.Source('DummySource')\n"
+  "process.p1 = cms.PSet(\n"
+  "    a = cms.untracked.int32(6)\n"
+  ")\n"
+  "process.p2 = cms.untracked.PSet(\n"
+  "    b = cms.int32(10)\n"
+  ")\n"
+  "process.p3 = cms.untracked.PSet(\n"
+  "    d = cms.untracked.double(1.5)\n"
+  ")\n"
+  "process.vp = cms.untracked.VPSet(cms.PSet(\n"
+  "    i = cms.int32(1)\n"
+  "), \n"
+  "    cms.PSet(\n"
+  "        f = cms.untracked.double(1.5)\n"
+  "    ))\n";
+
+  boost::shared_ptr<ParameterSet> mainps = PythonProcessDesc(filetext).getProcessPSet();
+  //edm::makeParameterSets(filetext, mainps, services);
 
   ParameterSet p1 = mainps->getParameter<ParameterSet>("p1");
   assert( p1.getUntrackedParameter<int>("a")  == 6 );  
