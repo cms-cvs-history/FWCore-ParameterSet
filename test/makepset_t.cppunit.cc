@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.52 2008/03/11 21:21:09 rpw Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.53 2008/07/01 20:35:52 rpw Exp $
  */
 
 #include <algorithm>
@@ -24,6 +24,7 @@
 #include "FWCore/Utilities/interface/EDMException.h"
 #include "FWCore/Utilities/interface/Algorithms.h"
 #include "FWCore/ParameterSet/interface/ProcessDesc.h"
+#include "FWCore/ParameterSet/interface/PythonProcessDesc.h"
 #include "FWCore/ParameterSet/interface/Makers.h"
 
 
@@ -31,31 +32,19 @@
 class testmakepset: public CppUnit::TestFixture
 {
   CPPUNIT_TEST_SUITE(testmakepset);
-  //  CPPUNIT_TEST_EXCEPTION(emptyTest,edm::Exception);
   CPPUNIT_TEST(typesTest);
-//  CPPUNIT_TEST(usingTest);
-//  CPPUNIT_TEST_EXCEPTION(usingExcTest,edm::Exception);
-//  CPPUNIT_TEST(psetRefTest);
-//  CPPUNIT_TEST_EXCEPTION(psetRefExcTest,edm::Exception);
   CPPUNIT_TEST(secsourceTest);
   CPPUNIT_TEST(usingBlockTest);
   CPPUNIT_TEST(fileinpathTest);
-  CPPUNIT_TEST(multipleLabelTest);
   CPPUNIT_TEST_SUITE_END();
 
  public:
   void setUp(){}
   void tearDown(){}
-  //  void emptyTest();
   void typesTest();
-  //void usingTest();
-  //void usingExcTest();
-  //void psetRefTest();
-  //void psetRefExcTest();
   void secsourceTest();
   void usingBlockTest();
   void fileinpathTest();
-  void multipleLabelTest();
   
  private:
   void secsourceAux();
@@ -89,32 +78,34 @@ void testmakepset::secsourceTest()
 void testmakepset::secsourceAux()
 {
   const char* kTest = 
-    "process PROD = {"
-    "  untracked PSet maxEvents = {untracked int32 input = 2}"
-    "  source = PoolSource {"
-    "    untracked vstring fileNames = {'file:main.root'}"
-    "  }"
-    "  module out = PoolOutputModule {"
-    "    string fileName = 'file:CumHits.root'"
-    "  }"
-    "  module mix = MixingModule {"
-    "    secsource input = PoolSource  {"
-    "      untracked vstring fileNames = {'file:pileup.root'}"
-    "    }"
-    "    string type = 'fixed'"
-    "    double average_number = 14.3"
-    "    int32 min_bunch = -5"
-    "    int32 max_bunch = 3"
-    "  }"
-    "  path p = { mix }"
-    "  endpath ep = { out }"
-    "}";
+  "import FWCore.ParameterSet.Config as cms\n"
+  "process = cms.Process('PROD')\n"
+  "process.maxEvents = cms.untracked.PSet(\n"
+  "    input = cms.untracked.int32(2)\n"
+  ")\n"
+  "process.source = cms.Source('PoolSource',\n"
+  "    fileNames = cms.untracked.vstring('file:main.root')\n"
+  ")\n"
+  "process.out = cms.OutputModule('PoolOutputModule',\n"
+  "    fileName = cms.string('file:CumHits.root')\n"
+  ")\n"
+  "process.mix = cms.EDFilter('MixingModule',\n"
+  "    input = cms.SecSource('PoolSource',\n"
+  "        fileNames = cms.untracked.vstring('file:pileup.root')\n"
+  "    ),\n"
+  "    max_bunch = cms.int32(3),\n"
+  "    average_number = cms.double(14.3),\n"
+  "    min_bunch = cms.int32(-5),\n"
+  "    type = cms.string('fixed')\n"
+  ")\n"
+  "process.p = cms.Path(process.mix)\n"
+  "process.ep = cms.EndPath(process.out)\n";
 
   std::string config(kTest);
 
   // Create the ParameterSet object from this configuration string.
-  edm::ProcessDesc builder(config);
-  boost::shared_ptr<edm::ParameterSet> ps = builder.getProcessPSet();
+  PythonProcessDesc builder(config);
+  boost::shared_ptr<edm::ParameterSet> ps = builder.processDesc()->getProcessPSet();
 
   CPPUNIT_ASSERT(0 != ps.get());
 
@@ -143,33 +134,35 @@ void testmakepset::usingBlockTest()
 void testmakepset::usingBlockAux()
 {
   const char* kTest = 
-    "process PROD = {"
-    "  untracked PSet maxEvents = {untracked int32 input = 2}"
-    "  source = PoolSource {"
-    "    untracked vstring fileNames = {'file:main.root'}"
-    "  }"
-    "  block b = {"
-    "    double r = 1.5"
-    "    string s = 'original'"
-    "  }"
-    "  module m1 = Class1 {"
-    "    using b"
-    "    int32 i = 1"
-    "  }"
-    "  module m2 = Class2 {"
-    "    int32 i = 2"
-    "    int32 j = 3"
-    "    int64 l = 101010"
-    "    uint64 u = 1011"
-    "    using b"
-    "  }"
-    "}";
+  "import FWCore.ParameterSet.Config as cms\n"
+  "process = cms.Process('PROD')\n"
+  "process.maxEvents = cms.untracked.PSet(\n"
+  "    input = cms.untracked.int32(2)\n"
+  ")\n"
+  "process.source = cms.Source('PoolSource',\n"
+  "    fileNames = cms.untracked.vstring('file:main.root')\n"
+  ")\n"
+  "process.b = cms.PSet(\n"
+  "    s = cms.string('original'),\n"
+  "    r = cms.double(1.5)\n"
+  ")\n"
+  "process.m1 = cms.EDFilter('Class1',\n"
+  "    process.b,\n"
+  "    i = cms.int32(1)\n"
+  ")\n"
+  "process.m2 = cms.EDFilter('Class2',\n"
+  "    process.b,\n"
+  "    i = cms.int32(2),\n"
+  "    j = cms.int32(3),\n"
+  "    u = cms.uint64(1011),\n"
+  "    l = cms.int64(101010)\n"
+  ")\n";
+
 
   std::string config(kTest);
-
   // Create the ParameterSet object from this configuration string.
-  edm::ProcessDesc builder(config);
-  boost::shared_ptr<edm::ParameterSet> ps = builder.getProcessPSet();
+  PythonProcessDesc builder(config);
+  boost::shared_ptr<edm::ParameterSet> ps = builder.processDesc()->getProcessPSet();
 
   CPPUNIT_ASSERT(0 != ps.get());
 
@@ -206,21 +199,21 @@ void testmakepset::fileinpathTest()
 void testmakepset::fileinpathAux()
 {
   const char* kTest = 
-     "process PROD = {"
-    "  PSet main =  {"
-    "    int32 extraneous = 12"
-    "    FileInPath fip  = 'FWCore/ParameterSet/python/Config.py'"
-    "    FileInPath topo = 'Geometry/TrackerSimData/data/trackersens.xml'"
-    "    untracked FileInPath ufip  = 'FWCore/ParameterSet/python/Types.py'"
-    "  }"
-    "  source = DummySource { } "
-    "}";
+  "import FWCore.ParameterSet.Config as cms\n"
+  "process = cms.Process('PROD')\n"
+  "process.main = cms.PSet(\n"
+  "    topo = cms.FileInPath('Geometry/TrackerSimData/data/trackersens.xml'),\n"
+  "    fip = cms.FileInPath('FWCore/ParameterSet/python/Config.py'),\n"
+  "    ufip = cms.untracked.FileInPath('FWCore/ParameterSet/python/Types.py'),\n"
+  "    extraneous = cms.int32(12)\n"
+  ")\n"
+  "process.source = cms.Source('DummySource')\n";
 
   std::string config(kTest);
 
   // Create the ParameterSet object from this configuration string.
-  edm::ProcessDesc builder(config);
-  boost::shared_ptr<edm::ParameterSet> ps = builder.getProcessPSet();
+  PythonProcessDesc builder(config);
+  boost::shared_ptr<edm::ParameterSet> ps = builder.processDesc()->getProcessPSet();
   CPPUNIT_ASSERT(0 != ps.get());
   std::cerr << "\n-----------------------------\n";
   std::cerr << ps->toString();
@@ -271,18 +264,18 @@ void testmakepset::fileinpathAux()
   CPPUNIT_ASSERT(!(!out));
 
   const char* kTest2 = 
-     "process PROD = {"
-    "  PSet main =  {"
-    "    FileInPath fip2  = 'tmp.py'"
-    "  }"
-    "  source = DummySource { } "
-    "}";
+  "import FWCore.ParameterSet.Config as cms\n"
+  "process = cms.Process('PROD')\n"
+  "process.main = cms.PSet(\n"
+  "    fip2 = cms.FileInPath('tmp.py')\n"
+  ")\n"
+  "process.source = cms.Source('DummySource')\n";
 
   std::string config2(kTest2);
   // Create the ParameterSet object from this configuration string.
-  edm::ProcessDesc builder2(config2);
+  PythonProcessDesc builder2(config2);
   unlink(tmpout.c_str());
-  boost::shared_ptr<edm::ParameterSet> ps2 = builder2.getProcessPSet();
+  boost::shared_ptr<edm::ParameterSet> ps2 = builder2.processDesc()->getProcessPSet();
 
   CPPUNIT_ASSERT(0 != ps2.get());
   std::cerr << "\n-----------------------------\n";
@@ -299,114 +292,118 @@ void testmakepset::fileinpathAux()
   CPPUNIT_ASSERT( !fullpath2.empty() );
 }
 
-// This is a wrong test. Empty parameter sets are OK.
-                                                                                                                   
-// void testmakepset::emptyTest()
-// {
-//    const char* kTest ="PSet test = { } ";
-//    boost::shared_ptr<edm::pset::NodePtrList> nodeList = edm::pset::parse(kTest);
-//    CPPUNIT_ASSERT(0 != nodeList.get());
-   
-//    // this should not be allowed, but is for the time being
-//    // only psets coming in from process sections cannot be empty
-//    //BOOST_CHECK_THROW(makePSet(*nodeList), std::runtime_error);
-//    makePSet(*nodeList);
-// }
-
 void testmakepset::typesTest()
 {
    //vbool vb = {true, false};
    const char* kTest =
-     "uint32 ui=1\n"
-     "int32 i = +1\n"
-     "double d=1\n"
-     "double big = inf\n"
-     "double justasbig = +inf\n"
-     "double indebt = -inf\n"
-     "int32 h1 = 0x004A\n"
-     "uint32 h2 = 0Xff\n"
-     "untracked uint32 h3 = 0xCFDFEFFF\n" 
-     "vuint32 vui ={1,2, 0x1, 0XfF}\n"
-     "vint32 vi = {+1,-2}\n"
-     "untracked bool b = true\n"
-     "PSet ps = {untracked bool b2=true}\n"
-     "string s=\"this string\"\n"
-     "string sb2=\"\"\n"
-     "string sb1=''\n"
-     "string sb3='    '\n"
-     "vstring vs={\"1\",\"2\",\"a\"}\n"
-     "VPSet vps ={ {bool b3=false} }\n"
-     "InputTag input = Label\n"
-     "InputTag input1 = \"Label1:Instance1\"\n"
-     "InputTag input2 = Label2:Instance2\n"
-     "untracked InputTag input3 = Label3:Instance3\n"
-     "InputTag input4 = Label4:Instance4:Process4\n"
-     "InputTag input5 = Label5::Process5\n"
-     "InputTag input6 = source\n"
-     "InputTag input7 = source:sink\n"
-     "string input8 = \"deprecatedString:tag\""
-     "VInputTag vinput = { l1:i1, \"l2\", l3:i3:p3, l4::p4, source, source:sink }\n"
-     "EventID eventID = 1:1\n"
-     "VEventID vEventID = {1:1, 2:2, 3:3}\n"
+  "import FWCore.ParameterSet.Config as cms\n"
+  "process = cms.Process('t')\n"
+  "process.p = cms.PSet(\n"
+  "    input2 = cms.InputTag('Label2','Instance2'),\n"
+  "    sb3 = cms.string('    '),\n"
+  "    input1 = cms.InputTag('Label1','Instance1'),\n"
+  "    input6 = cms.InputTag('source'),\n"
+  "    #justasbig = cms.double(inf),\n"
+  "    input4 = cms.InputTag('Label4','Instance4','Process4'),\n"
+  "    input3 = cms.untracked.InputTag('Label3','Instance3'),\n"
+  "    h2 = cms.uint32(255),\n"
+  "    vi = cms.vint32(1, -2),\n"
+  "    input8 = cms.string('deprecatedString:tag'),\n"
+  "    h1 = cms.int32(74),\n"
+  "    vs = cms.vstring('1', \n"
+  "        '2', \n"
+  "        'a'),\n"
+  "    sb2 = cms.string(''),\n"
+  "    input7 = cms.InputTag('source','sink'),\n"
+  "    ps = cms.PSet(\n"
+  "        b2 = cms.untracked.bool(True)\n"
+  "    ),\n"
+  "    input5 = cms.InputTag('Label5','','Process5'),\n"
+  "    h3 = cms.untracked.uint32(3487559679),\n"
+  "    input = cms.InputTag('Label'),\n"
+  "    vps = cms.VPSet(cms.PSet(\n"
+  "        b3 = cms.bool(False)\n"
+  "    )),\n"
+  "    #indebt = cms.double(-inf),\n"
+  "    #big = cms.double(inf),\n"
+  "    vinput = cms.VInputTag(cms.InputTag('l1','i1'), cms.InputTag('l2'), cms.InputTag('l3','i3','p3'), cms.InputTag('l4','','p4'), cms.InputTag('source'), \n"
+  "        cms.InputTag('source','sink')),\n"
+  "    ui = cms.uint32(1),\n"
+  "    eventID = cms.EventID(1, 1),\n"
+  "    b = cms.untracked.bool(True),\n"
+  "    d = cms.double(1.0),\n"
+  "    i = cms.int32(1),\n"
+  "    vui = cms.vuint32(1, 2, 1, 255),\n"
+  "    s = cms.string('this string'),\n"
+  "    sb1 = cms.string(''),\n"
+  "    vEventID = cms.VEventID(\"1:1\", \"2:2\", \"3:3\")\n"
+  ")\n"
+
      ;
    
-   boost::shared_ptr<edm::ParameterSet> test = edm::pset::makePSet(kTest);
+   std::string config2(kTest);
+   // Create the ParameterSet object from this configuration string.
+   PythonProcessDesc builder2(config2);
+   boost::shared_ptr<edm::ParameterSet> ps2 = builder2.processDesc()->getProcessPSet();
+   edm::ParameterSet test = ps2->getParameter<edm::ParameterSet>("p");
+
+
    
-   CPPUNIT_ASSERT(1 == test->getParameter<int>("i"));
-   CPPUNIT_ASSERT(test->retrieve("i").isTracked());
-   CPPUNIT_ASSERT(1 == test->getParameter<unsigned int>("ui"));
-   CPPUNIT_ASSERT(1 == test->getParameter<double>("d"));
-   CPPUNIT_ASSERT(100000. < test->getParameter<double>("big"));
-   CPPUNIT_ASSERT(100000. < test->getParameter<double>("justasbig"));
-   CPPUNIT_ASSERT(-1000000. > test->getParameter<double>("indebt"));
+   CPPUNIT_ASSERT(1 == test.getParameter<int>("i"));
+   CPPUNIT_ASSERT(test.retrieve("i").isTracked());
+   CPPUNIT_ASSERT(1 == test.getParameter<unsigned int>("ui"));
+   CPPUNIT_ASSERT(1 == test.getParameter<double>("d"));
+   //CPPUNIT_ASSERT(100000. < test.getParameter<double>("big"));
+   //CPPUNIT_ASSERT(100000. < test.getParameter<double>("justasbig"));
+   //CPPUNIT_ASSERT(-1000000. > test.getParameter<double>("indebt"));
 
    // test hex numbers
-   CPPUNIT_ASSERT(74 == test->getParameter<int>("h1"));
-   CPPUNIT_ASSERT(255 == test->getParameter<unsigned int>("h2"));
-   CPPUNIT_ASSERT(3487559679U == test->getUntrackedParameter<unsigned int>("h3"));
+   CPPUNIT_ASSERT(74 == test.getParameter<int>("h1"));
+   CPPUNIT_ASSERT(255 == test.getParameter<unsigned int>("h2"));
+   CPPUNIT_ASSERT(3487559679U == test.getUntrackedParameter<unsigned int>("h3"));
 
-   //std::cout << test->getParameter<std::string>("s") << std::endl;
-   CPPUNIT_ASSERT("this string" == test->getParameter<std::string>("s"));
-   //std::cout <<"blank string using single quotes returns \""<<test->getParameter<std::string>("sb1")<<"\""<<std::endl;
-   //std::cout <<"blank string using double quotes returns \""<<test->getParameter<std::string>("sb2")<<"\""<<std::endl;
-   CPPUNIT_ASSERT("" == test->getParameter<std::string>("sb1"));
-   CPPUNIT_ASSERT("" == test->getParameter<std::string>("sb2"));
-   CPPUNIT_ASSERT(4  == test->getParameter<std::string>("sb3").size());
-   CPPUNIT_ASSERT(3 == test->getParameter<std::vector<std::string> >("vs").size());
-   CPPUNIT_ASSERT(test->getParameter<std::vector<std::string> >("vs").size() && "1" == test->getParameter<std::vector<std::string> >("vs")[0]);
-   CPPUNIT_ASSERT(test->getParameter<std::vector<std::string> >("vs").size() >1 && "2" == test->getParameter<std::vector<std::string> >("vs")[1]);
-   CPPUNIT_ASSERT(test->getParameter<std::vector<std::string> >("vs").size() >1 && "a" == test->getParameter<std::vector<std::string> >("vs")[2]);
-   //std::cout <<"\""<<test->getParameter<std::vector<std::string> >("vs")[0]<<"\" \""<<test->getParameter<std::vector<std::string> >("vs")[1]<<"\" \""
-   //<<test->getParameter<std::vector<std::string> >("vs")[2]<<"\""<<std::endl;
+   //std::cout << test.getParameter<std::string>("s") << std::endl;
+   CPPUNIT_ASSERT("this string" == test.getParameter<std::string>("s"));
+   //std::cout <<"blank string using single quotes returns \""<<test.getParameter<std::string>("sb1")<<"\""<<std::endl;
+   //std::cout <<"blank string using double quotes returns \""<<test.getParameter<std::string>("sb2")<<"\""<<std::endl;
+   CPPUNIT_ASSERT("" == test.getParameter<std::string>("sb1"));
+   CPPUNIT_ASSERT("" == test.getParameter<std::string>("sb2"));
+   CPPUNIT_ASSERT(4  == test.getParameter<std::string>("sb3").size());
+   CPPUNIT_ASSERT(3 == test.getParameter<std::vector<std::string> >("vs").size());
+   CPPUNIT_ASSERT(test.getParameter<std::vector<std::string> >("vs").size() && "1" == test.getParameter<std::vector<std::string> >("vs")[0]);
+   CPPUNIT_ASSERT(test.getParameter<std::vector<std::string> >("vs").size() >1 && "2" == test.getParameter<std::vector<std::string> >("vs")[1]);
+   CPPUNIT_ASSERT(test.getParameter<std::vector<std::string> >("vs").size() >1 && "a" == test.getParameter<std::vector<std::string> >("vs")[2]);
+   //std::cout <<"\""<<test.getParameter<std::vector<std::string> >("vs")[0]<<"\" \""<<test.getParameter<std::vector<std::string> >("vs")[1]<<"\" \""
+   //<<test.getParameter<std::vector<std::string> >("vs")[2]<<"\""<<std::endl;
    
    static const unsigned int vuia[] = {1,2,1,255};
    static const std::vector<unsigned int> vui(vuia, vuia+sizeof(vuia)/sizeof(unsigned int));
-   CPPUNIT_ASSERT(vui == test->getParameter<std::vector<unsigned int> >("vui"));
+   CPPUNIT_ASSERT(vui == test.getParameter<std::vector<unsigned int> >("vui"));
    
    static const  int via[] = {1,-2};
    static const std::vector< int> vi(via, via+sizeof(vuia)/sizeof(unsigned int));
-   test->getParameter<std::vector<int> >("vi");
-   CPPUNIT_ASSERT(true == test->getUntrackedParameter<bool>("b", false));
-   CPPUNIT_ASSERT(test->retrieve("vi").isTracked());
-   //test->getParameter<std::vector<bool> >("vb");
-   edm::ParameterSet ps = test->getParameter<edm::ParameterSet>("ps");
+   test.getParameter<std::vector<int> >("vi");
+   CPPUNIT_ASSERT(true == test.getUntrackedParameter<bool>("b", false));
+   CPPUNIT_ASSERT(test.retrieve("vi").isTracked());
+   //test.getParameter<std::vector<bool> >("vb");
+   edm::ParameterSet ps = test.getParameter<edm::ParameterSet>("ps");
    CPPUNIT_ASSERT(true == ps.getUntrackedParameter<bool>("b2", false));
-   std::vector<edm::ParameterSet> vps = test->getParameter<std::vector<edm::ParameterSet> >("vps");
+   std::vector<edm::ParameterSet> vps = test.getParameter<std::vector<edm::ParameterSet> >("vps");
    CPPUNIT_ASSERT(1 == vps.size());
    CPPUNIT_ASSERT(false == vps.front().getParameter<bool>("b3"));
    
    // InputTag
-   edm::InputTag inputProduct  = test->getParameter<edm::InputTag>("input");
-   edm::InputTag inputProduct1 = test->getParameter<edm::InputTag>("input1");
-   edm::InputTag inputProduct2 = test->getParameter<edm::InputTag>("input2");
-   edm::InputTag inputProduct3 = test->getUntrackedParameter<edm::InputTag>("input3");
-   edm::InputTag inputProduct4 = test->getParameter<edm::InputTag>("input4");
-   edm::InputTag inputProduct5 = test->getParameter<edm::InputTag>("input5");
-   edm::InputTag inputProduct6 = test->getParameter<edm::InputTag>("input6");
-   edm::InputTag inputProduct7 = test->getParameter<edm::InputTag>("input7");
-   edm::InputTag inputProduct8 = test->getParameter<edm::InputTag>("input8");
+   edm::InputTag inputProduct  = test.getParameter<edm::InputTag>("input");
+   edm::InputTag inputProduct1 = test.getParameter<edm::InputTag>("input1");
+   edm::InputTag inputProduct2 = test.getParameter<edm::InputTag>("input2");
+   edm::InputTag inputProduct3 = test.getUntrackedParameter<edm::InputTag>("input3");
+   edm::InputTag inputProduct4 = test.getParameter<edm::InputTag>("input4");
+   edm::InputTag inputProduct5 = test.getParameter<edm::InputTag>("input5");
+   edm::InputTag inputProduct6 = test.getParameter<edm::InputTag>("input6");
+   edm::InputTag inputProduct7 = test.getParameter<edm::InputTag>("input7");
+   edm::InputTag inputProduct8 = test.getParameter<edm::InputTag>("input8");
 
-   //edm::OutputTag outputProduct = test->getParameter<edm::OutputTag>("output");
+   //edm::OutputTag outputProduct = test.getParameter<edm::OutputTag>("output");
 
    CPPUNIT_ASSERT("Label"    == inputProduct.label());
    CPPUNIT_ASSERT("Label1"    == inputProduct1.label());
@@ -427,7 +424,7 @@ void testmakepset::typesTest()
 
    // vector of InputTags
 
-   std::vector<edm::InputTag> vtags = test->getParameter<std::vector<edm::InputTag> >("vinput");
+   std::vector<edm::InputTag> vtags = test.getParameter<std::vector<edm::InputTag> >("vinput");
    CPPUNIT_ASSERT("l1" == vtags[0].label());
    CPPUNIT_ASSERT("i1" == vtags[0].instance());
    CPPUNIT_ASSERT("l2" == vtags[1].label());
@@ -440,8 +437,8 @@ void testmakepset::typesTest()
    CPPUNIT_ASSERT("source" == vtags[4].label());
    CPPUNIT_ASSERT("source" == vtags[5].label());
 
-   edm::EventID eventID = test->getParameter<edm::EventID>("eventID");
-   std::vector<edm::EventID> vEventID = test->getParameter<std::vector<edm::EventID> >("vEventID");
+   edm::EventID eventID = test.getParameter<edm::EventID>("eventID");
+   std::vector<edm::EventID> vEventID = test.getParameter<std::vector<edm::EventID> >("vEventID");
    CPPUNIT_ASSERT(1 == eventID.run());
    CPPUNIT_ASSERT(1 == eventID.event());
    CPPUNIT_ASSERT(1 == vEventID[0].run());
@@ -456,74 +453,3 @@ void testmakepset::typesTest()
    //BOOST_CHECK_THROW(makePSet(*nodeList), std::runtime_error);
 }
 
-void testmakepset::multipleLabelTest()
-{
-  const char* kTest = 
-  "uint32 a = 1\n"
-  "uint32 a = 2\n";
-
-  boost::shared_ptr<edm::ParameterSet> test = edm::pset::makePSet(kTest);
-  //std::cout <<"a = "<<test->getParameter<unsigned int>("a")<<std::endl;
-}
-/*
-void testmakepset::usingTest()
-{
-   //vbool vb = {true, false};
-   const char* kTest ="using ublock";
-   boost::shared_ptr<edm::pset::NodePtrList> nodeList = edm::pset::parse(kTest);
-   CPPUNIT_ASSERT(0 != nodeList.get());
-   
-   //BOOST_CHECK_THROW(makePSet(*nodeList), std::runtime_error);
-
-   std::map< std::string, boost::shared_ptr<edm::ParameterSet> > blocks;
-   const std::string kName("ublock");
-   boost::shared_ptr<edm::ParameterSet> ublock(new edm::ParameterSet);
-   ublock->insert(true, kName, edm::Entry(true, true));
-   blocks.insert(make_pair(kName, ublock));
-   boost::shared_ptr<edm::ParameterSet> test = makePSet(*nodeList, blocks);
-
-   CPPUNIT_ASSERT(true == test->getParameter<bool>(kName));
-}
-
-void testmakepset::usingExcTest()
-{
-   //vbool vb = {true, false};
-   const char* kTest ="using ublock";
-   boost::shared_ptr<edm::pset::NodePtrList> nodeList = edm::pset::parse(kTest);
-   CPPUNIT_ASSERT(0 != nodeList.get());
-   
-   //BOOST_CHECK_THROW(makePSet(*nodeList), std::runtime_error);
-   makePSet(*nodeList);
-}
-
-void testmakepset::psetRefTest()
-{
-   //vbool vb = {true, false};
-   const char* kTest ="PSet test = ref";
-   boost::shared_ptr<edm::pset::NodePtrList> nodeList = edm::pset::parse(kTest);
-   CPPUNIT_ASSERT(0 != nodeList.get());
-   
-   //BOOST_CHECK_THROW(makePSet(*nodeList), std::runtime_error);
-   
-   std::map< std::string, boost::shared_ptr<edm::ParameterSet> > blocks;
-   std::map< std::string, boost::shared_ptr<edm::ParameterSet> > psets;
-   const std::string kName("ref");
-   boost::shared_ptr<edm::ParameterSet> ref(new edm::ParameterSet);
-   ref->insert(true, kName, edm::Entry(true, true));
-   psets.insert(make_pair(kName, ref));
-   boost::shared_ptr<edm::ParameterSet> test = makePSet(*nodeList, blocks,psets);
-   
-   CPPUNIT_ASSERT(true == test->getParameter<edm::ParameterSet>("test").getParameter<bool>("ref"));
-}
-
-void testmakepset::psetRefExcTest()
-{
-   //vbool vb = {true, false};
-   const char* kTest ="PSet test = ref";
-   boost::shared_ptr<edm::pset::NodePtrList> nodeList = edm::pset::parse(kTest);
-   CPPUNIT_ASSERT(0 != nodeList.get());
-   
-   //BOOST_CHECK_THROW(makePSet(*nodeList), std::runtime_error);
-   makePSet(*nodeList);
-}
-*/
