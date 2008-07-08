@@ -4,7 +4,7 @@
 
 @brief test suit for process building and schedule validation
 
-@version: $Id: processbuilder_t.cppunit.cpp,v 1.7 2007/08/06 20:47:30 wmtan Exp $
+@version: $Id: processbuilder_t.cppunit.cpp,v 1.9 2008/01/22 22:17:42 wmtan Exp $
 @author : Stefano Argiro
 @date : 2005 06 17
 
@@ -16,6 +16,7 @@
 
 #include <FWCore/ParameterSet/interface/ParameterSet.h>
 #include <FWCore/ParameterSet/interface/ProcessDesc.h>
+#include <FWCore/ParameterSet/interface/PythonProcessDesc.h>
 #include "FWCore/Utilities/interface/EDMException.h"
 
 #include <iostream>
@@ -63,32 +64,44 @@ CPPUNIT_TEST_SUITE_REGISTRATION(testProcessDesc);
 
 void testProcessDesc::trivialPathTest(){
 
-  std::string str = "process X = { \n"
-    " module a = A { int32 p = 3 } \n"
-    " path p = { a,b,c } \n"
-    " }";
+  std::string str = 
+  "import FWCore.ParameterSet.Config as cms\n"
+  "process = cms.Process('X')\n"
+  "process.a = cms.EDFilter('A',\n"
+  "    p = cms.int32(3)\n"
+  ")\n"
+  "process.b = cms.EDProducer('B')\n"
+  "process.c = cms.EDProducer('C')\n"
+  "process.p = cms.Path(process.a*process.b*process.c)\n";
 
-  edm::ProcessDesc b(str);
-  boost::shared_ptr<edm::ParameterSet> test = b.getProcessPSet();
+  boost::shared_ptr<edm::ProcessDesc> b = PythonProcessDesc(str).processDesc();
+  boost::shared_ptr<edm::ParameterSet> test = b->getProcessPSet();
 
   typedef std::vector<std::string> Strs;
 
   Strs s = (*test).getParameter<std::vector<std::string> >("p");
   CPPUNIT_ASSERT(s[0]=="a");
-  CPPUNIT_ASSERT(b.getDependencies("a")=="");
+  //CPPUNIT_ASSERT(b->getDependencies("a")=="");
 }
 
 void testProcessDesc::simplePathTest(){
 
-  std::string str = "process X = { \n"
-    " module a = A { int32 p = 3 } \n"
-    " module b = A { int32 p = 3 } \n"
-    " module c = A { int32 p = 3 } \n"
-    " path p = { a,b,c } \n"
-    " }";
+  std::string str =
+  "import FWCore.ParameterSet.Config as cms\n"
+  "process = cms.Process('X')\n"
+  "process.a = cms.EDFilter('A',\n"
+  "    p = cms.int32(3)\n"
+  ")\n"
+  "process.b = cms.EDFilter('A',\n"
+  "    p = cms.int32(3)\n"
+  ")\n"
+  "process.c = cms.EDFilter('A',\n"
+  "    p = cms.int32(3)\n"
+  ")\n"
+  "process.p = cms.Path(process.a*process.b*process.c)\n";
 
-  edm::ProcessDesc b(str);
-  boost::shared_ptr<edm::ParameterSet> test = b.getProcessPSet();
+  boost::shared_ptr<edm::ProcessDesc> b = PythonProcessDesc(str).processDesc();
+  boost::shared_ptr<edm::ParameterSet> test = b->getProcessPSet();
 
   typedef std::vector<std::string> Strs;
 
@@ -97,32 +110,43 @@ void testProcessDesc::simplePathTest(){
   CPPUNIT_ASSERT(s[1]=="b");
   CPPUNIT_ASSERT(s[2]=="c");
   
-  CPPUNIT_ASSERT (b.getDependencies("a")=="");
-  CPPUNIT_ASSERT (b.getDependencies("b")=="a,");
-  CPPUNIT_ASSERT (b.getDependencies("c")=="a,b,");
+  //CPPUNIT_ASSERT (b->getDependencies("a")=="");
+  //CPPUNIT_ASSERT (b->getDependencies("b")=="a,");
+  //CPPUNIT_ASSERT (b->getDependencies("c")=="a,b,");
 
 }
 
 
 void testProcessDesc:: attriggertest (){
 
-  const char * kTest = "process test = {\n"
-   "module cone1 = PhonyConeJet { int32 i = 5 }\n"
-   "module cone2 = PhonyConeJet { int32 i = 7 }\n"
-   "module somejet1 = PhonyJet { int32 i = 7 }\n"
-   "module somejet2 = PhonyJet { int32 i = 7 }\n"
-   "module jtanalyzer = PhonyConeJet { int32 i = 7 }\n"
-   "module output = OutputModule { }\n"
-   "sequence cones = { cone1, cone2 }\n"
-   "sequence jets = { somejet1, somejet2 }\n"
-   "path path1 = { cones,jets, jtanalyzer }\n"
-   "endpath epath = { output }\n"
-   "} ";
+  std::string str = 
+  "import FWCore.ParameterSet.Config as cms\n"
+  "process = cms.Process('test')\n"
+  "process.cone1 = cms.EDFilter('PhonyConeJet',\n"
+  "    i = cms.int32(5)\n"
+  ")\n"
+  "process.cone2 = cms.EDFilter('PhonyConeJet',\n"
+  "    i = cms.int32(7)\n"
+  ")\n"
+  "process.somejet1 = cms.EDFilter('PhonyJet',\n"
+  "    i = cms.int32(7)\n"
+  ")\n"
+  "process.somejet2 = cms.EDFilter('PhonyJet',\n"
+  "    i = cms.int32(7)\n"
+  ")\n"
+  "process.jtanalyzer = cms.EDFilter('PhonyConeJet',\n"
+  "    i = cms.int32(7)\n"
+  ")\n"
+  "process.output = cms.EDFilter('OutputModule')\n"
+  "process.cones = cms.Sequence(process.cone1*process.cone2)\n"
+  "process.jets = cms.Sequence(process.somejet1*process.somejet2)\n"
+  "process.path1 = cms.Path(process.cones*process.jets*process.jtanalyzer)\n"
+  "process.epath = cms.EndPath(process.output)\n";
 
-  std::cerr << "doing stuff" << "\n";
+
   try {
-  edm::ProcessDesc b(kTest);
-  boost::shared_ptr<edm::ParameterSet> test = b.getProcessPSet();
+  boost::shared_ptr<edm::ProcessDesc> b = PythonProcessDesc(str).processDesc();
+  boost::shared_ptr<edm::ParameterSet> test = b->getProcessPSet();
 
   typedef std::vector<std::string> Strs;
   
@@ -162,20 +186,29 @@ void testProcessDesc:: attriggertest (){
 }
 void testProcessDesc:: sequenceSubstitutionTest (){
 
-  const char * kTest = "process test = {\n"
-   "module cone1 = PhonyConeJet { int32 i = 5 }\n"
-   "module cone2 = PhonyConeJet { int32 i = 7 }\n"
-   "module somejet1 = PhonyJet { int32 i = 7 }\n"
-   "module somejet2 = PhonyJet { int32 i = 7 }\n"
-   "module jtanalyzer = PhonyConeJet { int32 i = 7 }\n"
-   "sequence cones = { cone1, cone2 }\n"
-   "sequence jets = { somejet1, somejet2 }\n"
-   "path path1 = { cones,jets, jtanalyzer }\n"
-   "} ";
+  std::string str = "import FWCore.ParameterSet.Config as cms\n"
+  "process = cms.Process('test')\n"
+  "process.cone1 = cms.EDFilter('PhonyConeJet',\n"
+  "    i = cms.int32(5)\n"
+  ")\n"
+  "process.cone2 = cms.EDFilter('PhonyConeJet',\n"
+  "    i = cms.int32(7)\n"
+  ")\n"
+  "process.somejet1 = cms.EDFilter('PhonyJet',\n"
+  "    i = cms.int32(7)\n"
+  ")\n"
+  "process.somejet2 = cms.EDFilter('PhonyJet',\n"
+  "    i = cms.int32(7)\n"
+  ")\n"
+  "process.jtanalyzer = cms.EDFilter('PhonyConeJet',\n"
+  "    i = cms.int32(7)\n"
+  ")\n"
+  "process.cones = cms.Sequence(process.cone1*process.cone2)\n"
+  "process.jets = cms.Sequence(process.somejet1*process.somejet2)\n"
+  "process.path1 = cms.Path(process.cones*process.jets*process.jtanalyzer)\n";
 
-
-  edm::ProcessDesc b(kTest);
-  boost::shared_ptr<edm::ParameterSet> test = b.getProcessPSet();
+  boost::shared_ptr<edm::ProcessDesc> b = PythonProcessDesc(str).processDesc();
+  boost::shared_ptr<edm::ParameterSet> test = b->getProcessPSet();
 
   typedef std::vector<std::string> Strs;
   
@@ -186,11 +219,11 @@ void testProcessDesc:: sequenceSubstitutionTest (){
   CPPUNIT_ASSERT(s[3]=="somejet2");
   CPPUNIT_ASSERT(s[4]=="jtanalyzer");
  
-  CPPUNIT_ASSERT (b.getDependencies("cone1")=="");
-  CPPUNIT_ASSERT (b.getDependencies("cone2")=="cone1,");
-  CPPUNIT_ASSERT (b.getDependencies("somejet1")=="cone1,cone2,");
-  CPPUNIT_ASSERT (b.getDependencies("somejet2")=="cone1,cone2,somejet1,");
-  CPPUNIT_ASSERT (b.getDependencies("jtanalyzer")=="cone1,cone2,somejet1,somejet2,");
+  //CPPUNIT_ASSERT (b->getDependencies("cone1")=="");
+  //CPPUNIT_ASSERT (b->getDependencies("cone2")=="cone1,");
+  //CPPUNIT_ASSERT (b->getDependencies("somejet1")=="cone1,cone2,");
+  //CPPUNIT_ASSERT (b->getDependencies("somejet2")=="cone1,cone2,somejet1,");
+  //CPPUNIT_ASSERT (b->getDependencies("jtanalyzer")=="cone1,cone2,somejet1,somejet2,");
 
 }
 
@@ -220,10 +253,10 @@ void testProcessDesc::nestedSequenceSubstitutionTest(){
  
 
 
-  CPPUNIT_ASSERT (b.getDependencies("a")=="");
-  CPPUNIT_ASSERT (b.getDependencies("b")=="a,");
-  CPPUNIT_ASSERT (b.getDependencies("c")=="a,b,");
-  CPPUNIT_ASSERT (b.getDependencies("d")=="a,b,c,");
+  //CPPUNIT_ASSERT (b.getDependencies("a")=="");
+  //CPPUNIT_ASSERT (b.getDependencies("b")=="a,");
+  //CPPUNIT_ASSERT (b.getDependencies("c")=="a,b,");
+  //CPPUNIT_ASSERT (b.getDependencies("d")=="a,b,c,");
 
 
 }
@@ -258,12 +291,12 @@ void testProcessDesc::sequenceSubstitutionTest2(){
   CPPUNIT_ASSERT(s[5]=="jtanalyzer");
  
 
-  CPPUNIT_ASSERT (b.getDependencies("cone1")=="");
-  CPPUNIT_ASSERT (b.getDependencies("cone2")=="cone1,");
-  CPPUNIT_ASSERT (b.getDependencies("cone3")=="cone1,cone2,");
-  CPPUNIT_ASSERT (b.getDependencies("somejet1")=="cone1,cone2,cone3,");
-  CPPUNIT_ASSERT (b.getDependencies("somejet2")=="cone1,cone2,cone3,somejet1,");
-  CPPUNIT_ASSERT (b.getDependencies("jtanalyzer")=="cone1,cone2,cone3,somejet1,somejet2,"); 
+  //CPPUNIT_ASSERT (b.getDependencies("cone1")=="");
+  //CPPUNIT_ASSERT (b.getDependencies("cone2")=="cone1,");
+  //CPPUNIT_ASSERT (b.getDependencies("cone3")=="cone1,cone2,");
+  //CPPUNIT_ASSERT (b.getDependencies("somejet1")=="cone1,cone2,cone3,");
+  //CPPUNIT_ASSERT (b.getDependencies("somejet2")=="cone1,cone2,cone3,somejet1,");
+  //CPPUNIT_ASSERT (b.getDependencies("jtanalyzer")=="cone1,cone2,cone3,somejet1,somejet2,"); 
 }
 
 void testProcessDesc::sequenceSubstitutionTest3(){
@@ -311,19 +344,19 @@ void testProcessDesc::sequenceSubstitutionTest3(){
 
   
 
-  CPPUNIT_ASSERT (b.getDependencies("a")=="");
-  CPPUNIT_ASSERT (b.getDependencies("b")=="a,");
-  CPPUNIT_ASSERT (b.getDependencies("c")=="a,b,");
-  CPPUNIT_ASSERT (b.getDependencies("aaa")=="a,b,c,");
-  CPPUNIT_ASSERT (b.getDependencies("bbb")=="a,aaa,b,c,");
-  CPPUNIT_ASSERT (b.getDependencies("ccc")=="a,aaa,b,bbb,c,");
-  CPPUNIT_ASSERT (b.getDependencies("ddd")=="a,aaa,b,bbb,c,ccc,");
-  CPPUNIT_ASSERT (b.getDependencies("eee")=="a,aaa,b,bbb,c,ccc,ddd,");
-  CPPUNIT_ASSERT (b.getDependencies("aa")=="a,aaa,b,bbb,c,ccc,ddd,eee,");
-  CPPUNIT_ASSERT (b.getDependencies("bb")=="a,aa,aaa,b,bbb,c,ccc,ddd,eee,");
-  CPPUNIT_ASSERT (b.getDependencies("cc")=="a,aa,aaa,b,bb,bbb,c,ccc,ddd,eee,");
-  CPPUNIT_ASSERT (b.getDependencies("dd")=="a,aa,aaa,b,bb,bbb,c,cc,ccc,ddd,eee,");
-  CPPUNIT_ASSERT (b.getDependencies("last")=="a,aa,aaa,b,bb,bbb,c,cc,ccc,dd,ddd,eee,");
+  //CPPUNIT_ASSERT (b.getDependencies("a")=="");
+  //CPPUNIT_ASSERT (b.getDependencies("b")=="a,");
+  //CPPUNIT_ASSERT (b.getDependencies("c")=="a,b,");
+  //CPPUNIT_ASSERT (b.getDependencies("aaa")=="a,b,c,");
+  //CPPUNIT_ASSERT (b.getDependencies("bbb")=="a,aaa,b,c,");
+  //CPPUNIT_ASSERT (b.getDependencies("ccc")=="a,aaa,b,bbb,c,");
+  //CPPUNIT_ASSERT (b.getDependencies("ddd")=="a,aaa,b,bbb,c,ccc,");
+  //CPPUNIT_ASSERT (b.getDependencies("eee")=="a,aaa,b,bbb,c,ccc,ddd,");
+  //CPPUNIT_ASSERT (b.getDependencies("aa")=="a,aaa,b,bbb,c,ccc,ddd,eee,");
+  //CPPUNIT_ASSERT (b.getDependencies("bb")=="a,aa,aaa,b,bbb,c,ccc,ddd,eee,");
+  //CPPUNIT_ASSERT (b.getDependencies("cc")=="a,aa,aaa,b,bb,bbb,c,ccc,ddd,eee,");
+  //CPPUNIT_ASSERT (b.getDependencies("dd")=="a,aa,aaa,b,bb,bbb,c,cc,ccc,ddd,eee,");
+  //CPPUNIT_ASSERT (b.getDependencies("last")=="a,aa,aaa,b,bb,bbb,c,cc,ccc,dd,ddd,eee,");
 
 }
 
@@ -358,19 +391,19 @@ void testProcessDesc::multiplePathsTest(){
   CPPUNIT_ASSERT(s[3]=="jtanalyzer");
 
 
-  CPPUNIT_ASSERT (b.getDependencies("cone1")=="");
-  CPPUNIT_ASSERT (b.getDependencies("cone2")=="cone1,");
-  CPPUNIT_ASSERT (b.getDependencies("cone3")=="cone1,cone2,");
-  CPPUNIT_ASSERT (b.getDependencies("jtanalyzer")=="cone1,cone2,cone3,");
+  //CPPUNIT_ASSERT (b.getDependencies("cone1")=="");
+  //CPPUNIT_ASSERT (b.getDependencies("cone2")=="cone1,");
+  //CPPUNIT_ASSERT (b.getDependencies("cone3")=="cone1,cone2,");
+  //CPPUNIT_ASSERT (b.getDependencies("jtanalyzer")=="cone1,cone2,cone3,");
   
   s = (*test).getParameter<std::vector<std::string> >("path2");
   CPPUNIT_ASSERT(s[0]=="somejet1");
   CPPUNIT_ASSERT(s[1]=="somejet2");
   CPPUNIT_ASSERT(s[2]=="anotherjtanalyzer");
  
-  CPPUNIT_ASSERT (b.getDependencies("somejet1")=="");
-  CPPUNIT_ASSERT (b.getDependencies("somejet2")=="somejet1,");
-  CPPUNIT_ASSERT (b.getDependencies("anotherjtanalyzer")=="somejet1,somejet2,");
+  //CPPUNIT_ASSERT (b.getDependencies("somejet1")=="");
+  //CPPUNIT_ASSERT (b.getDependencies("somejet2")=="somejet1,");
+  //CPPUNIT_ASSERT (b.getDependencies("anotherjtanalyzer")=="somejet1,somejet2,");
 
   Strs schedule = (*test).getParameter<std::vector<std::string> >("@paths");
 
