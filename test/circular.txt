@@ -1,6 +1,0 @@
-
-process FAIL =
-{
-  source = FakeSource { }
-  include "FWCore/ParameterSet/test/circular.txt"
-}
