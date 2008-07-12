@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.53 2008/07/01 20:35:52 rpw Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.54 2008/07/07 22:38:29 rpw Exp $
  */
 
 #include <algorithm>
@@ -336,12 +336,15 @@ void testmakepset::typesTest()
   "    vui = cms.vuint32(1, 2, 1, 255),\n"
   "    s = cms.string('this string'),\n"
   "    sb1 = cms.string(''),\n"
-  "    vEventID = cms.VEventID(\"1:1\", \"2:2\", \"3:3\")\n"
+  "    vEventID = cms.VEventID('1:1', '2:2','3:3'),\n"
+  "    lumi = cms.LuminosityBlockID(55, 65),\n"
+  "    vlumis = cms.VLuminosityBlockID('75:85', '95:105')\n"
   ")\n"
 
      ;
    
    std::string config2(kTest);
+std::cout << config2 << std::endl;
    // Create the ParameterSet object from this configuration string.
    PythonProcessDesc builder2(config2);
    boost::shared_ptr<edm::ParameterSet> ps2 = builder2.processDesc()->getProcessPSet();
@@ -445,6 +448,16 @@ void testmakepset::typesTest()
    CPPUNIT_ASSERT(1 == vEventID[0].event());
    CPPUNIT_ASSERT(3 == vEventID[2].run());
    CPPUNIT_ASSERT(3 == vEventID[2].event());
+
+   edm::LuminosityBlockID lumi = test.getParameter<edm::LuminosityBlockID >("lumi");
+   CPPUNIT_ASSERT(55 == lumi.run());
+   CPPUNIT_ASSERT(65 == lumi.luminosityBlock());
+   std::vector<edm::LuminosityBlockID> vlumis = test.getParameter<std::vector<edm::LuminosityBlockID> >("vlumis");
+   CPPUNIT_ASSERT(vlumis.size() == 2);
+   CPPUNIT_ASSERT(vlumis[0].run() == 75);
+   CPPUNIT_ASSERT(vlumis[0].luminosityBlock() == 85);
+   CPPUNIT_ASSERT(vlumis[1].run() == 95);
+   CPPUNIT_ASSERT(vlumis[1].luminosityBlock() == 105);
 
  
    //CPPUNIT_ASSERT("Label2" == outputProduct.label());
