@@ -174,11 +174,7 @@ class Process(object):
         return DictTypes.FixedKeysDict(self.__vpsets)
     vpsets = property(vpsets_,doc="dictionary containing the PSets for the process")
     def __setattr__(self,name,value):
-        # check if the name is well-formed (only _ and alphanumerics are allowed)  
-        if not name.replace('_','').isalnum():
-            raise ValueError('The label '+name+' contains forbiden characters')
-        
-        # private variable exempt from all this 
+        # private variable exempt from all this
         if name.startswith('_Process__'):
             self.__dict__[name]=value
             return
