@@ -1,4 +1,7 @@
 
+<use name=FWCore/ParameterSet>	
+
+
 <bin file=parser_t.cpp> 
   <use name=boost>
   <use name=FWCore/ParameterSet>
@@ -8,7 +11,6 @@
 #The executable "testParameterSet" will eventually run all the tests 
 <bin name=testParameterSet file=processbuilder_t.cppunit.cpp,makeprocess_t.cppunit.cc,makepset_t.cppunit.cc,ps_t.cppunit.cc,IncludeFileFinder_t.cppunit.cc>
   <use name=cppunit>	
-  <use name=FWCore/ParameterSet>	
 </bin>
 
 
