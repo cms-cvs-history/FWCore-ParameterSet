@@ -4,7 +4,7 @@
 
 @brief test suit for process building and schedule validation
 
-@version: $Id: processbuilder_t.cppunit.cpp,v 1.9 2008/01/22 22:17:42 wmtan Exp $
+@version: $Id: processbuilder_t.cppunit.cpp,v 1.10 2008/07/08 00:07:16 rpw Exp $
 @author : Stefano Argiro
 @date : 2005 06 17
 
@@ -137,7 +137,7 @@ void testProcessDesc:: attriggertest (){
   "process.jtanalyzer = cms.EDFilter('PhonyConeJet',\n"
   "    i = cms.int32(7)\n"
   ")\n"
-  "process.output = cms.EDFilter('OutputModule')\n"
+  "process.output = cms.OutputModule('OutputModule')\n"
   "process.cones = cms.Sequence(process.cone1*process.cone2)\n"
   "process.jets = cms.Sequence(process.somejet1*process.somejet2)\n"
   "process.path1 = cms.Path(process.cones*process.jets*process.jtanalyzer)\n"
