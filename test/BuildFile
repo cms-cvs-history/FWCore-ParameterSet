@@ -1,3 +1,9 @@
+<bin file=archive_t.cpp>
+  <use name=boost>
+  <lib name=boost_wserialization-gcc>
+  <use name=FWCore/ParameterSet>
+</bin>
+
 
 <bin file=parser_t.cpp> 
   <use name=boost>
