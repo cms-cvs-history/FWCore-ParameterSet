@@ -1,18 +1,13 @@
 <bin file=archive_t.cpp>
   <use name=boost>
-  <lib name=boost_wserialization-gcc>
+  <use name=boost_wserialization-gcc>
   <use name=FWCore/ParameterSet>
 </bin>
 
-
-<bin file=parser_t.cpp> 
-  <use name=boost>
-  <use name=FWCore/ParameterSet>
-</bin>
 
 
 #The executable "testParameterSet" will eventually run all the tests 
-<bin name=testParameterSet file=processbuilder_t.cppunit.cpp,makeprocess_t.cppunit.cc,makepset_t.cppunit.cc,ps_t.cppunit.cc,IncludeFileFinder_t.cppunit.cc>
+<bin name=testParameterSet file=processbuilder_t.cppunit.cpp,makeprocess_t.cppunit.cc,makepset_t.cppunit.cc,ps_t.cppunit.cc>
   <use name=cppunit>	
   <use name=FWCore/ParameterSet>	
 </bin>
