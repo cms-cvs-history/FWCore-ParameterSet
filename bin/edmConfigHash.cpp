@@ -12,46 +12,28 @@ using namespace edm::pset;
 
 int main(int argc, char **argv)
 {
+  // config can either be a name or a string
+  std::string config;
+
   if(argc == 1) {
     // Read input from cin into configstring..
-    std::string configstring;
     {
       std::string line;
       while (std::getline(std::cin, line))
        {
-    	configstring += line;
-    	configstring += '\n';
+    	config += line;
+    	config += '\n';
         }
     }
 
-    // Create the ParameterSets, and report the ParameterSetID of the
-    // main ParameterSet.
-
-    int rc = 1;  // failure
-    try  
-      { 
-        boost::shared_ptr<edm::ParameterSet> main;
-        boost::shared_ptr<std::vector<edm::ParameterSet> > serviceparams;
-        edm::makeParameterSets(configstring, main, serviceparams);
-        std::cout << main->id() << std::endl;
-        rc = 0;
-      }
-    catch ( edm::Exception const& x )
-      {
-        std::cerr << x << '\n';
-      }
-    catch ( ... )
-      {
-        std::cerr << "Unidentified exception caught\n";	
-      }
-    return rc;  
   }
   else if (argc == 2)
   {
-    std::string fileName(argv[1]);
-    boost::shared_ptr<edm::ProcessDesc> processDesc = edm::readConfigFile(fileName);
-
-    std::cout << processDesc->getProcessPSet()->id() << std::endl;
-    return 0;
+    config = std::string(argv[1]);
   }
+
+  boost::shared_ptr<edm::ProcessDesc> processDesc = edm::readConfig(config);
+
+  std::cout << processDesc->getProcessPSet()->id() << std::endl;
+  return 0;
 }
