@@ -8,7 +8,7 @@
 //
 // Original Author:  Rick Wilkinson
 //         Created:  Thu Aug  2 13:33:53 EDT 2007
-// $Id: edmParameterSetDump.cpp,v 1.1 2008/03/03 18:00:35 rpw Exp $
+// $Id: edmParameterSetDump.cpp,v 1.2 2008/07/01 22:06:36 rpw Exp $
 //
 
 // system include files
@@ -25,7 +25,7 @@ int main (int argc, char **argv)
     std::cout << "Usage: edmParameterSetDump <cfgfile>" << std::endl;
   }
   std::string fileName(argv[1]);
-  boost::shared_ptr<edm::ProcessDesc> processDesc = edm::readConfigFile(fileName);
+  boost::shared_ptr<edm::ProcessDesc> processDesc = edm::readConfig(fileName);
   std::cout << "====Main Process====" << std::endl;
   std::cout << processDesc->getProcessPSet()->dump() << std::endl;
   std::cout << "====Services====" << std::endl;
