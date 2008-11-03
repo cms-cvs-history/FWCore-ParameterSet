@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.55 2008/07/12 03:17:09 rpw Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.56 2008/10/31 23:02:17 rpw Exp $
  */
 
 #include <algorithm>
@@ -343,7 +343,6 @@ void testmakepset::typesTest()
      ;
    
    std::string config2(kTest);
-std::cout << config2 << std::endl;
    // Create the ParameterSet object from this configuration string.
    PythonProcessDesc builder2(config2);
    boost::shared_ptr<edm::ParameterSet> ps2 = builder2.processDesc()->getProcessPSet();
