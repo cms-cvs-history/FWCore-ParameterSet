@@ -8,7 +8,7 @@
 //
 // Original Author:  Chris Jones
 //         Created:  Thu Aug  2 13:33:53 EDT 2007
-// $Id: edmParamDesc.cpp,v 1.1 2007/09/17 21:04:37 chrjones Exp $
+// $Id: edmParamDesc.cpp,v 1.2 2008/01/18 20:10:27 wmtan Exp $
 //
 
 // system include files
@@ -76,7 +76,7 @@ int main (int argc, char **argv)
         try {
           std::auto_ptr<edm::ParameterSetDescriptionFillerBase> filler(factory->create(it->name_));
           edm::ParameterSetDescription desc;
-          filler->fill(desc);
+          filler->fill(desc, std::string());
           print(desc,"  "," ");
         }catch(const cms::Exception& e) {
           std::cout <<"  FAILED: could not read parameter info because \n"
