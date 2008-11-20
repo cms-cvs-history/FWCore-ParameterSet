@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.56 2008/10/31 23:02:17 rpw Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.57 2008/11/03 14:39:26 rpw Exp $
  */
 
 #include <algorithm>
@@ -214,9 +214,6 @@ void testmakepset::fileinpathAux()
   PythonProcessDesc builder(config);
   boost::shared_ptr<edm::ParameterSet> ps = builder.processDesc()->getProcessPSet();
   CPPUNIT_ASSERT(0 != ps.get());
-  std::cerr << "\n-----------------------------\n";
-  std::cerr << ps->toString();
-  std::cerr << "\n-----------------------------\n";
 
   edm::ParameterSet innerps = ps->getParameter<edm::ParameterSet>("main");
   edm::FileInPath fip  = innerps.getParameter<edm::FileInPath>("fip");
@@ -243,11 +240,6 @@ void testmakepset::fileinpathAux()
   std::vector<edm::FileInPath> v(1);
   CPPUNIT_ASSERT ( innerps.getAllFileInPaths(v) == 3 );
   
-  using boost::lambda::_1;
-  using boost::lambda::constant;
-  std::cerr << "\nHere comes the vector...\n";
-  edm::for_all(v, std::cerr << constant("--> ") << _1 << '\n');
-  std::cerr << "Done with vector\n";
   CPPUNIT_ASSERT( v.size() == 4 );
   CPPUNIT_ASSERT( std::count(v.begin(), v.end(), fip) == 1 );
   CPPUNIT_ASSERT( std::count(v.begin(), v.end(), topo) == 1 );
@@ -277,9 +269,6 @@ void testmakepset::fileinpathAux()
   boost::shared_ptr<edm::ParameterSet> ps2 = builder2.processDesc()->getProcessPSet();
 
   CPPUNIT_ASSERT(0 != ps2.get());
-  std::cerr << "\n-----------------------------\n";
-  std::cerr << ps2->toString();
-  std::cerr << "\n-----------------------------\n";
 
   edm::ParameterSet innerps2 = ps2->getParameter<edm::ParameterSet>("main");
   edm::FileInPath fip2 = innerps2.getParameter<edm::FileInPath>("fip2");
