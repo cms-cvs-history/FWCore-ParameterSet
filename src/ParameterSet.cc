@@ -1,5 +1,5 @@
 // ----------------------------------------------------------------------
-// $Id: ParameterSet.cc,v 1.38 2008/11/18 02:04:26 wmtan Exp $
+// $Id: ParameterSet.cc,v 1.39 2008/11/19 06:48:43 wmtan Exp $
 //
 // definition of ParameterSet's function members
 // ----------------------------------------------------------------------
@@ -11,7 +11,6 @@
 #include "FWCore/Utilities/interface/Digest.h"
 
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
-#include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/ParameterSet/interface/Registry.h"
 
 #include "FWCore/ParameterSet/interface/split.h"
@@ -22,6 +21,9 @@
 #include "boost/bind.hpp"
 
 #include <algorithm>
+#include <iostream>
+
+#include <sstream>
 
 // ----------------------------------------------------------------------
 // class invariant checker
@@ -30,18 +32,13 @@
 namespace edm {
 
   void
-  ParameterSet::validate() const
+  ParameterSet::checkIfFrozen() const
   {
-    std::string stringrep = this->toStringOfTracked();
-    cms::Digest md5alg(stringrep);
-    id_ = ParameterSetID(md5alg.digest().toString());
-    
-  }  // ParameterSet::validate()
-
-  void
-  ParameterSet::invalidate() const
-  {
-    id_ = ParameterSetID();
+    if(frozen_)
+    {
+      throw edm::Exception(errors::Configuration,"InsertFailure")
+        << "This ParameterSet has been frozen, so may not be changed";
+    }
   }
 
 
@@ -51,19 +48,67 @@ namespace edm {
 
   ParameterSet::ParameterSet() :
     tbl_(),
+    psetTable_(),
+    frozen_(false),
     id_()
   {
-    validate();
   }
 
   ParameterSet::~ParameterSet() {}
+
+  void ParameterSet::freeze() const
+  {
+    // there are three steps in freezing
+    if (!frozen_) {
+      for(psettable::const_iterator psetItr = psetTable_.begin();
+          psetItr != psetTable_.end(); ++psetItr)
+      {
+        psetItr->second.pset().freeze();
+      }
+
+      frozen_ = true;
+    }
+  }
+ 
+  void ParameterSet::fillID() const
+  {
+    freeze();
+    if(!id_.isValid())
+    {
+      calculateID();
+    }
+  }
+
+  void ParameterSet::calculateID() const
+  {
+    // make sure contained PSets are updated
+    for(psettable::const_iterator psetItr = psetTable_.begin();
+        psetItr != psetTable_.end(); ++psetItr)
+    {
+      psetItr->second.updateID();
+    }
+    // tracked parts always have a correct ID, and always have their registries updated
+    std::string stringrep = toString();
+    cms::Digest md5alg(stringrep);
+    id_ = ParameterSetID(md5alg.digest().toString());
+    assert(id_.isValid());
+    updateRegistry();
+  }
+
+  
+  void ParameterSet::updateRegistry() const
+  {
+    edm::pset::Registry* reg = edm::pset::Registry::instance();
+    reg->insertMapped(*this);
+  }
 
   // ----------------------------------------------------------------------
   // identification
   ParameterSetID
   ParameterSet::id() const
   {
-    if (!id_.isValid()) validate();
+    // checks if frozen and valid
+    fillID();
     return id_;
   }
 
@@ -72,6 +117,8 @@ namespace edm {
 
   ParameterSet::ParameterSet(std::string const& code) :
     tbl_(),
+    psetTable_(),
+    frozen_(false),
     id_()
   {
     if(! fromString(code))
@@ -80,7 +127,6 @@ namespace edm {
 	<< "passed to a ParameterSet during construction is invalid:\n"
 	<< code;
 
-    validate();
   }
 
 
@@ -165,6 +211,52 @@ namespace edm {
     return &it->second;
   }  // retrieve()
 
+
+  ParameterSetEntry const&
+  ParameterSet::retrieveParameterSet(std::string const& name) const {
+    psettable::const_iterator it = psetTable_.find(name);
+    if (it == psetTable_.end()) {
+        throw edm::Exception(errors::Configuration,"MissingParameter:")
+          << "ParameterSet '" << name
+          << "' not found.";
+    }
+    if (it->second.isTracked() == false) {
+      if (name[0] == '@') {
+        throw edm::Exception(errors::Configuration,"StatusMismatch:")
+          << "Framework Error:  ParameterSet '" << name
+          << "' is incorrectly designated as tracked in the framework.";
+      } else {
+        throw edm::Exception(errors::Configuration,"StatusMismatch:")
+          << "ParameterSet '" << name
+          << "' is designated as tracked in the code,\n"
+          << "but is designated as untracked in the configuration file.\n"
+          << "Please remove 'untracked' from the configuration file for parameter '"<< name << "'.";
+      }
+    }
+    return it->second;
+  }  // retrieve()
+
+  ParameterSetEntry const* const
+  ParameterSet::retrieveUntrackedParameterSet(std::string const& name) const {
+    psettable::const_iterator  it = psetTable_.find(name);
+
+    if (it == psetTable_.end()) return 0;
+    if (it->second.isTracked()) {
+      if (name[0] == '@') {
+        throw edm::Exception(errors::Configuration,"StatusMismatch:")
+          << "Framework Error:  ParameterSet '" << name
+          << "' is incorrectly designated as untracked in the framework.";
+      } else {
+        throw edm::Exception(errors::Configuration,"StatusMismatch:")
+          << "ParameterSet '" << name
+          << "' is designated as untracked in the code,\n"
+          << "but is not designated as untracked in the configuration file.\n"
+          << "Please change the configuration file to 'untracked <type> " << name << "'.";
+      }
+    }
+    return &it->second;
+  }  // retrieve()
+
   Entry const* const
   ParameterSet::retrieveUnknown(char const* name) const {
     return retrieveUnknown(std::string(name));
@@ -186,9 +278,6 @@ namespace edm {
 
   void
   ParameterSet::insert(bool okay_to_replace, std::string const& name, Entry const& value) {
-    // This preemptive invalidation may be more agressive than necessary.
-    invalidate();
-
     // We should probably get rid of 'okay_to_replace', which will
     // simplify the logic in this function.
     table::iterator  it = tbl_.find(name);
@@ -197,12 +286,30 @@ namespace edm {
       if(! tbl_.insert(std::make_pair(name, value)).second)
         throw edm::Exception(errors::Configuration,"InsertFailure")
 	  << "cannot insert " << name
-	  << " into a ParmeterSet\n";
+	  << " into a ParameterSet\n";
     }
     else if(okay_to_replace)  {
       it->second = value;
     }
   }  // insert()
+
+
+  void ParameterSet::insertParameterSet(bool okay_to_replace, std::string const& name, const ParameterSetEntry & entry) {
+    // We should probably get rid of 'okay_to_replace', which will
+    // simplify the logic in this function.
+    psettable::iterator  it = psetTable_.find(name);
+
+    if(it == psetTable_.end())  {
+      if(! psetTable_.insert(std::make_pair(name, entry)).second)
+        throw edm::Exception(errors::Configuration,"InsertFailure")
+          << "cannot insert " << name
+          << " into a ParameterSet\n";
+    }
+    else if(okay_to_replace)  {
+      it->second = entry;
+    }
+  }  // insert()
+
 
   // ----------------------------------------------------------------------
   // copy without overwriting
@@ -210,13 +317,16 @@ namespace edm {
   void
   ParameterSet::augment(ParameterSet const& from) {
     // This preemptive invalidation may be more agressive than necessary.
-    invalidate();
+    checkIfFrozen();
 
     if(& from == this)
       return;
 
     for(table::const_iterator b = from.tbl_.begin(), e = from.tbl_.end(); b != e; ++b) {
       this->insert(false, b->first, b->second);
+    }
+    for(psettable::const_iterator b2 = from.psetTable_.begin(), e2 = from.psetTable_.end(); b2 != e2; ++b2) {
+      this->insertParameterSet(false, b2->first, b2->second);
     }
   }  // augment()
 
@@ -226,7 +336,23 @@ namespace edm {
 
   std::string
   ParameterSet::toString() const {
-    if (tbl_.empty()) {
+  //edm::pset::Registry* reg = edm::pset::Registry::instance();
+  //edm::pset::loadAllNestedParameterSets(reg, *this);
+  /*
+    std::string rep;
+    std::stringstream stst;
+    boost::archive::text_oarchive ar(stst);
+    ar << *this;
+    rep = stst.str();
+    return rep;
+  */
+    // make sure the PSets get filled
+    if(!frozen_)
+    {
+      fillID();
+    }
+    std::string rep;
+    if (tbl_.empty() && psetTable_.empty()) {
       std::string emptyPSet = "<>";
       return emptyPSet;
     }
@@ -236,7 +362,12 @@ namespace edm {
       size += b->first.size();
       size += b->second.sizeOfString();
     }
-    std::string rep;
+    for(psettable::const_iterator b = psetTable_.begin(), e = psetTable_.end(); b != e; ++b) {
+      size += 2;
+      size += b->first.size();
+      size += b->second.sizeOfString();
+    }
+
     rep.reserve(size);
     rep += '<';
     for(table::const_iterator b = tbl_.begin(), e = tbl_.end(); b != e; ++b) {
@@ -245,6 +376,13 @@ namespace edm {
       rep += '=';
       rep += b->second.toString();
     }
+    for(psettable::const_iterator b = psetTable_.begin(), e = psetTable_.end(); b != e; ++b) {
+      if(b != psetTable_.begin() || !tbl_.empty()) rep += ';';
+      rep += b->first;
+      rep += '=';
+      rep += b->second.toString();
+    }
+
     rep += '>';
     return rep;
   }  // to_string()
@@ -253,6 +391,8 @@ namespace edm {
 
   std::string
   ParameterSet::toStringOfTracked() const {
+    return trackedPart().toString();
+    std::string rep;
     size_t size = 0;
     bool need_sep = false;
     for(table::const_iterator b = tbl_.begin(), e = tbl_.end(); b != e; ++b) {
@@ -269,7 +409,6 @@ namespace edm {
       return emptyPSet;
     }
     size += 2;
-    std::string rep;
     rep.reserve(size);
     rep += '<';
     need_sep = false;
@@ -291,7 +430,15 @@ namespace edm {
   bool
   ParameterSet::fromString(std::string const& from) {
     // This preemptive invalidation may be more agressive than necessary.
-    invalidate();
+    checkIfFrozen();
+    /*
+    std::stringstream stst(from);
+    boost::archive::text_iarchive ar(stst);
+    ParameterSet p;
+    ar >> p;
+    *this = p;
+    return true;
+    */
 
     std::vector<std::string> temp;
     if(! split(std::back_inserter(temp), from, '<', ';', '>'))
@@ -310,10 +457,21 @@ namespace edm {
       if(tbl_.find(name) != tbl_.end())
         return false;
 
-      // form value and insert name/value pair
-      Entry  value(name, std::string(q+1, b->end()));
-      if(! tbl_.insert(std::make_pair(name, value)).second)
-        return false;
+      std::string rep(q+1, b->end());
+      // entries are generically of the form tracked-type-rep
+      if(rep[1] == 'P')
+      {
+         ParameterSetEntry psetEntry( rep );
+         if(! psetTable_.insert(std::make_pair(name, psetEntry)).second)
+           return false;
+      }
+      else
+      {
+        // form value and insert name/value pair
+        Entry  value(name, rep);
+        if(! tbl_.insert(std::make_pair(name, value)).second)
+          return false;
+      }
     }
 
     return true;
@@ -337,30 +495,66 @@ namespace edm {
 
   std::vector<std::string>
   ParameterSet::getParameterNames() const {
-    std::vector<std::string> returnValue(tbl_.size());
-    std::transform(tbl_.begin(), tbl_.end(),returnValue.begin(),
+    std::vector<std::string> returnValue;
+    std::transform(tbl_.begin(), tbl_.end(), back_inserter(returnValue),
 		   boost::bind(&std::pair<std::string const, Entry>::first,_1));
+    std::transform(psetTable_.begin(), psetTable_.end(), back_inserter(returnValue),
+                   boost::bind(&std::pair<std::string const, ParameterSetEntry>::first,_1));
     return returnValue;
   }
 
 
   bool ParameterSet::exists(const std::string & parameterName) const
   {
-    return( tbl_.find(parameterName) != tbl_.end() );
+    return( tbl_.find(parameterName) != tbl_.end() || psetTable_.find(parameterName) != psetTable_.end());
   }
 
 
   ParameterSet
   ParameterSet::trackedPart() const
   {
-    return ParameterSet(this->toStringOfTracked());
+    ParameterSet result;
+    for(table::const_iterator tblItr = tbl_.begin(); tblItr != tbl_.end(); ++tblItr)
+    {
+      if(tblItr->second.isTracked()) 
+      {
+        result.tbl_.insert(*tblItr);
+      }
+    }
+    for(psettable::const_iterator psetItr = psetTable_.begin(); 
+        psetItr != psetTable_.end(); ++psetItr)
+    {
+      if(psetItr->second.isTracked())
+      {
+        result.addParameter(psetItr->first, psetItr->second.pset().trackedPart());
+        result.psetTable_[psetItr->first].updateID();
+      }
+    }
+
+    return result;
   }
 
    size_t
-   ParameterSet::getParameterSetNames(std::vector<std::string>& output,
-				      bool trackiness) const
+   ParameterSet::getParameterSetNames(std::vector<std::string>& output)
    {
-     return getNamesByCode_('P', trackiness, output);
+     std::transform(psetTable_.begin(), psetTable_.end(), back_inserter(output),
+                   boost::bind(&std::pair<std::string const, ParameterSetEntry>::first,_1));
+     return output.size();
+   }
+
+   size_t
+   ParameterSet::getParameterSetNames(std::vector<std::string>& output,
+                                      bool trackiness) const
+   {
+     for(psettable::const_iterator psetItr = psetTable_.begin();
+         psetItr != psetTable_.end(); ++psetItr)
+     {
+       if(psetItr->second.isTracked() == trackiness)
+       {
+         output.push_back(psetItr->first);
+       }
+     }
+     return output.size();
    }
 
    size_t
@@ -394,6 +588,12 @@ namespace edm {
   }
 
 
+  bool operator==(ParameterSet const& a, ParameterSet const& b) {
+    // Maybe can replace this with comparison of id_ values.
+    return a.toStringOfTracked() == b.toStringOfTracked();
+  }
+
+
   std::string ParameterSet::dump() const
   {
     std::ostringstream os;
@@ -403,6 +603,16 @@ namespace edm {
     {
       // indent a bit
       os << "  " << i->first << ": " << i->second << std::endl;
+    }
+    os << "}";
+    psettable::const_iterator j(psetTable_.begin()), e2(psetTable_.end());
+    os << "{" << std::endl;
+    for( ; j != e2; ++j)
+    {
+      // indent a bit
+      std::string n = j->first;
+      const ParameterSetEntry & pe = j->second;
+      os << "  " << n << ": " << pe <<  std::endl;
     }
     os << "}";
     return os.str();
@@ -427,10 +637,11 @@ namespace edm {
 
       // Get names of all ParameterSets; iterate through them,
       // recursively calling explode...
+        
       std::vector<std::string> names;
       const bool tracked = true;
       const bool untracked = false;
-      top.getParameterSetNames(names, tracked);
+      top.getParameterSetNames(names);
       std::vector<std::string>::const_iterator it = names.begin();
       std::vector<std::string>::const_iterator end = names.end();
       for( ; it != end; ++it )
@@ -440,16 +651,6 @@ namespace edm {
 	explode(next_top, results);
       }
 
-      names.clear();
-      top.getParameterSetNames(names, untracked);
-      it = names.begin();
-      end = names.end();
-      for( ; it != end; ++it )
-      {
-	ParameterSet next_top =
-	  top.getUntrackedParameter<ParameterSet>(*it);
-	explode(next_top, results);
-      }
  
       // Get names of all ParameterSets vectors; iterate through them,
       // recursively calling explode...

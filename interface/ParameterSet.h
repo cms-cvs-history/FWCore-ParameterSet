@@ -2,7 +2,7 @@
 #define FWCore_ParameterSet_ParameterSet_h
 
 // ----------------------------------------------------------------------
-// $Id: ParameterSet.h,v 1.47 2008/11/18 16:07:48 wmtan Exp $
+// $Id: ParameterSet.h,v 1.48 2008/11/19 06:48:43 wmtan Exp $
 //
 // Declaration for ParameterSet(parameter set) and related types
 // ----------------------------------------------------------------------
@@ -16,12 +16,12 @@
 
 #include "DataFormats/Provenance/interface/ParameterSetID.h"
 #include "FWCore/ParameterSet/interface/Entry.h"
+#include "FWCore/ParameterSet/interface/ParameterSetEntry.h"
 #include "FWCore/ParameterSet/interface/FileInPath.h"
 #include <string>
 #include <map>
 #include <vector>
 #include <iosfwd>
-
 
 // ----------------------------------------------------------------------
 // contents
@@ -42,18 +42,19 @@ namespace edm {
     ParameterSetID id() const;
 
     // Entry-handling
-    Entry const& retrieve(std::string const&) const;
     Entry const& retrieve(char const*) const;
-
-    Entry const* const retrieveUntracked(std::string const&) const;
+    Entry const& retrieve(std::string const&) const;
     Entry const* const retrieveUntracked(char const*) const;
+    Entry const* const retrieveUntracked(std::string const&) const;
+    ParameterSetEntry const& retrieveParameterSet(std::string const&) const;
+    ParameterSetEntry const* const retrieveUntrackedParameterSet(std::string const&) const;
 
     Entry const* const retrieveUnknown(std::string const&) const;
     Entry const* const retrieveUnknown(char const*) const;
 
-    void insert(bool ok_to_replace, std::string const& , Entry const&);
+    void insertParameterSet(bool okay_to_replace, std::string const& name, const ParameterSetEntry & entry);
     void insert(bool ok_to_replace, char const* , Entry const&);
-
+    void insert(bool ok_to_replace, std::string const&, Entry const&);
     void augment(ParameterSet const& from); 
     // encode
     std::string toString() const;
@@ -74,7 +75,7 @@ namespace edm {
     void 
     addParameter(std::string const& name, T value)
     {
-      invalidate();
+      checkIfFrozen();
       insert(true, name, Entry(name, value, true));
     }
 
@@ -82,7 +83,7 @@ namespace edm {
     void 
     addParameter(char const* name, T value)
     {
-      invalidate();
+      checkIfFrozen();
       insert(true, name, Entry(name, value, true));
     }
 
@@ -169,7 +170,7 @@ namespace edm {
     // untracked parameters.
     size_t getParameterSetNames(std::vector<std::string>& output,
 				bool trackiness = true) const;
-
+    size_t getParameterSetNames(std::vector<std::string>& output);
     // Return the names of all parameters of type
     // vector<ParameterSet>, pushing the names into the argument
     // 'output'. Return the number of names pushed into the vector. If
@@ -183,23 +184,29 @@ namespace edm {
 
     friend std::ostream & operator<<(std::ostream & os, ParameterSet const& pset);
 
-private:
+    /// needs to be called before saving or serializing
+    void fillID() const;
+
+  private:
     typedef std::map<std::string, Entry> table;
     table tbl_;
 
+    typedef std::map<std::string, ParameterSetEntry> psettable;
+    psettable psetTable_;
+
+    mutable bool frozen_;
     // If the id_ is invalid, that means a new value should be
     // calculated before the value is returned. Upon construction, the
     // id_ is made valid. Updating any parameter invalidates the id_.
     mutable ParameterSetID id_;
 
-    // make the id valid, matching the current tracked contents of
-    // this ParameterSet.  This function is logically const, because
-    // it affects only the cached value of the id_.
-    void validate() const;
-
-    // make the id invalid.  This function is logically const, because
-    // it affects only the cached value of the id_.
-    void invalidate() const;
+    void freeze() const;
+    void checkIfFrozen() const;
+   
+    // these two methods should only be called on tracked-parts
+    // of parameter sets, so we call them automatically in trackedPart();
+    void calculateID() const;
+    void updateRegistry() const;
 
     // get the untracked Entry object, throwing an exception if it is
     // not found.
@@ -215,12 +222,7 @@ private:
 
   };  // ParameterSet
 
-  inline
-  bool
-  operator==(ParameterSet const& a, ParameterSet const& b) {
-    // Maybe can replace this with comparison of id_ values.
-    return a.toStringOfTracked() == b.toStringOfTracked();
-  }
+  bool operator==(ParameterSet const& a, ParameterSet const& b);
 
   inline 
   bool
@@ -428,9 +430,9 @@ private:
   
   template<>
   inline 
-  ParameterSet
+  edm::ParameterSet
   ParameterSet::getParameter<ParameterSet>(std::string const& name) const {
-    return retrieve(name).getPSet();
+    return retrieveParameterSet(name).pset();
   }
   
   template<>
@@ -439,6 +441,39 @@ private:
   ParameterSet::getParameter<std::vector<ParameterSet> >(std::string const& name) const {
     return retrieve(name).getVPSet();
   }
+  
+  template <>
+  inline void
+  ParameterSet::addParameter(std::string const& name, ParameterSet value)
+  {
+    checkIfFrozen();
+    insertParameterSet(true, name, ParameterSetEntry(value, true));
+  }
+
+  template <>
+  inline void
+  ParameterSet::addParameter(char const * name, ParameterSet value)
+  {
+    checkIfFrozen();
+    insertParameterSet(true, name, ParameterSetEntry(value, true));
+  }
+
+
+  template <>
+  inline void
+  ParameterSet::addUntrackedParameter(std::string const& name, ParameterSet value)
+  {
+    insertParameterSet(true, name, ParameterSetEntry(value, false));
+  }
+
+  template <>
+  inline void
+  ParameterSet::addUntrackedParameter(char const * name, ParameterSet value)
+  {
+    insertParameterSet(true, name, ParameterSetEntry(value, false));
+  }
+
+
 
   // untracked parameters
   
@@ -787,38 +822,6 @@ private:
   }
 
   
-  // ----------------------------------------------------------------------
-  // PSet, vPSet
-  
-  template<>
-  inline 
-  ParameterSet
-  ParameterSet::getUntrackedParameter<ParameterSet>(std::string const& name, ParameterSet const& defaultValue) const {
-    Entry const* entryPtr = retrieveUntracked(name);
-    return entryPtr == 0 ? defaultValue : entryPtr->getPSet();
-  }
-
-  template<>
-  inline
-  ParameterSet
-  ParameterSet::getUntrackedParameter<ParameterSet>(std::string const& name) const {
-    return getEntryPointerOrThrow_(name)->getPSet();
-  }
-
-  template<>
-  inline 
-  std::vector<ParameterSet>
-  ParameterSet::getUntrackedParameter<std::vector<ParameterSet> >(std::string const& name, std::vector<ParameterSet> const& defaultValue) const {
-    Entry const* entryPtr = retrieveUntracked(name);
-    return entryPtr == 0 ? defaultValue : entryPtr->getVPSet();
-  }
-
-  template<>
-  inline
-  std::vector<ParameterSet>
-  ParameterSet::getUntrackedParameter<std::vector<ParameterSet> >(std::string const& name) const {
-    return getEntryPointerOrThrow_(name)->getVPSet();
-  }
 
   // specializations
   // ----------------------------------------------------------------------
@@ -1022,7 +1025,7 @@ private:
   inline 
   ParameterSet
   ParameterSet::getParameter<ParameterSet>(char const* name) const {
-    return retrieve(name).getPSet();
+    return retrieveParameterSet(name).pset();
   }
   
   template<>
@@ -1381,22 +1384,40 @@ private:
   
   // ----------------------------------------------------------------------
   // PSet, vPSet
+
+  template<>
+  inline ParameterSet
+  ParameterSet::getUntrackedParameter<ParameterSet>(char const * name, ParameterSet const& defaultValue) const {
+    ParameterSetEntry const* entryPtr = retrieveUntrackedParameterSet(name);
+    return entryPtr == 0 ? defaultValue : entryPtr->pset();
+  }
+
+  template<>
+  inline ParameterSet
+  ParameterSet::getUntrackedParameter<ParameterSet>(std::string const & name, ParameterSet const& defaultValue) const {
+    return getUntrackedParameter<ParameterSet>(name.c_str(), defaultValue);
+  }
+
+  template<>
+  inline ParameterSet
+  ParameterSet::getUntrackedParameter<ParameterSet>(char const * name) const {
+    ParameterSetEntry const* result = retrieveUntrackedParameterSet(name);
+    if (result == 0)
+      throw edm::Exception(errors::Configuration, "MissingParameter:")
+        << "The required ParameterSet '" << name
+        << "' was not specified.\n";
+    return result->pset();
+  }
+
+  template<>
+  inline ParameterSet
+  ParameterSet::getUntrackedParameter<ParameterSet>(std::string const & name) const {
+    return getUntrackedParameter<ParameterSet>(name.c_str());
+  }
+
+
+
   
-  template<>
-  inline 
-  ParameterSet
-  ParameterSet::getUntrackedParameter<ParameterSet>(char const* name, ParameterSet const& defaultValue) const {
-    Entry const* entryPtr = retrieveUntracked(name);
-    return entryPtr == 0 ? defaultValue : entryPtr->getPSet();
-  }
-
-  template<>
-  inline
-  ParameterSet
-  ParameterSet::getUntrackedParameter<ParameterSet>(char const* name) const {
-    return getEntryPointerOrThrow_(name)->getPSet();
-  }
-
   template<>
   inline 
   std::vector<ParameterSet>
@@ -1411,6 +1432,32 @@ private:
   ParameterSet::getUntrackedParameter<std::vector<ParameterSet> >(char const* name) const {
     return getEntryPointerOrThrow_(name)->getVPSet();
   }
+
+template<>
+  inline
+  std::vector<ParameterSet>
+  ParameterSet::getUntrackedParameter<std::vector<ParameterSet> >(std::string const & name, std::vector<ParameterSet> const& defaultValue) const {
+    Entry const* entryPtr = retrieveUntracked(name);
+    return entryPtr == 0 ? defaultValue : entryPtr->getVPSet();
+  }
+
+  template<>
+  inline
+  std::vector<ParameterSet>
+  ParameterSet::getUntrackedParameter<std::vector<ParameterSet> >(std::string const& name) const {
+    return getEntryPointerOrThrow_(name)->getVPSet();
+  }
+
+  template <>
+  inline
+  std::vector<std::string> 
+  ParameterSet::getParameterNamesForType<ParameterSet>(bool trackiness) const
+  {
+    std::vector<std::string> output;
+    getParameterSetNames(output, trackiness);
+    return output; 
+  }
+
 
   // Associated functions used elsewhere in the ParameterSet system
   namespace pset
