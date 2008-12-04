@@ -3,11 +3,11 @@
    Implementation of calss ProcessDesc
 
    \author Stefano ARGIRO
-   \version $Id: ProcessDesc.cc,v 1.31 2008/10/31 23:17:59 rpw Exp $
+   \version $Id: ProcessDesc.cc,v 1.32 2008/12/03 19:20:17 rpw Exp $
    \date 17 Jun 2005
 */
 
-static const char CVSId[] = "$Id: ProcessDesc.cc,v 1.31 2008/10/31 23:17:59 rpw Exp $";
+static const char CVSId[] = "$Id: ProcessDesc.cc,v 1.32 2008/12/03 19:20:17 rpw Exp $";
 
 
 #include "FWCore/ParameterSet/interface/ProcessDesc.h"
@@ -26,7 +26,6 @@ namespace edm
     services_(new std::vector<ParameterSet>())
   {
     setRegistry();
-    // std::cout << pset << std::endl;
   }
 
   ProcessDesc::~ProcessDesc()
@@ -42,9 +41,12 @@ namespace edm
 
   void ProcessDesc::setRegistry() const
   {
-    // Load every ParameterSet into the Registry
-    pset::Registry* reg = pset::Registry::instance();
-    pset::loadAllNestedParameterSets(reg, *pset_);
+    pset_->fillID();
+//    for(std::vector<ParameterSet>::const_iterator serviceItr = services_->begin();
+//        serviceItr != services_->end(); ++serviceItr)
+//    {
+//      serviceItr->freeze();
+//    }
   }
 
 
@@ -64,8 +66,9 @@ namespace edm
   {
     services_->push_back(pset);
    // Load into the Registry
-    pset::Registry* reg = pset::Registry::instance();
-    reg->insertMapped(pset);
+    //pset::Registry* reg = pset::Registry::instance();
+    //reg->insertMapped(pset);
+   pset.fillID();
   }
 
 
