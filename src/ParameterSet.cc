@@ -1,5 +1,5 @@
 // ----------------------------------------------------------------------
-// $Id: ParameterSet.cc,v 1.39.2.1 2008/12/04 02:05:06 rpw Exp $
+// $Id: ParameterSet.cc,v 1.39.2.2 2008/12/09 00:51:05 wmtan Exp $
 //
 // definition of ParameterSet's function members
 // ----------------------------------------------------------------------
@@ -110,6 +110,13 @@ namespace edm {
     // checks if frozen and valid
     fillID();
     return id_;
+  }
+
+
+  void ParameterSet::setID(const ParameterSetID & id)
+  {
+    frozen_ = true;
+    id_ = id;
   }
 
   // ----------------------------------------------------------------------
@@ -431,14 +438,6 @@ namespace edm {
   ParameterSet::fromString(std::string const& from) {
     // This preemptive invalidation may be more agressive than necessary.
     checkIfFrozen();
-    /*
-    std::stringstream stst(from);
-    boost::archive::text_iarchive ar(stst);
-    ParameterSet p;
-    ar >> p;
-    *this = p;
-    return true;
-    */
 
     std::vector<std::string> temp;
     if(! split(std::back_inserter(temp), from, '<', ';', '>'))
@@ -710,9 +709,8 @@ namespace edm {
   getParameterSet(ParameterSetID const& id) {
     ParameterSet result;
     if(!pset::Registry::instance()->getMapped(id, result)) {
-        throw edm::Exception(errors::Configuration,"MissingParameterSet:")
-          << "Parameter Set ID '" << id
-          << "' not found.";
+      throw edm::Exception(errors::Configuration,"MissingParameterSet:")
+        << "Parameter Set ID '" << id << "' not found.";
     }
     return result;
   }
