@@ -1,5 +1,5 @@
 // ----------------------------------------------------------------------
-// $Id: ParameterSet.cc,v 1.39 2008/11/19 06:48:43 wmtan Exp $
+// $Id: ParameterSet.cc,v 1.39.2.1 2008/12/04 02:05:06 rpw Exp $
 //
 // definition of ParameterSet's function members
 // ----------------------------------------------------------------------
@@ -459,12 +459,21 @@ namespace edm {
 
       std::string rep(q+1, b->end());
       // entries are generically of the form tracked-type-rep
-      if(rep[1] == 'P')
+      if(rep[1] == 'Q')
       {
          ParameterSetEntry psetEntry( rep );
          if(! psetTable_.insert(std::make_pair(name, psetEntry)).second)
            return false;
       }
+      else if(rep[1] == 'P')
+      {
+        //old representation of ParameterSet, included for backwards-compatibility
+        Entry value(name, rep);
+        ParameterSetEntry psetEntry( value.getPSet(), value.isTracked() );
+        if(! psetTable_.insert(std::make_pair(name, psetEntry)).second)
+          return false;
+      }
+
       else
       {
         // form value and insert name/value pair

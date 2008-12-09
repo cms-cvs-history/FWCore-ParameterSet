@@ -34,7 +34,7 @@ namespace edm {
 
   std::string ParameterSetEntry::toString() const
   {
-    std::string result = tracked ? "+P" : "-P";
+    std::string result = tracked ? "+Q" : "-Q";
     std::stringstream str;
     theID.print(str);
     result += str.str();
