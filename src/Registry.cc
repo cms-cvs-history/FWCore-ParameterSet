@@ -1,5 +1,5 @@
 // ----------------------------------------------------------------------
-// $Id: Registry.cc,v 1.9 2006/09/06 19:27:35 paterno Exp $
+// $Id: Registry.cc,v 1.10 2008/04/29 21:37:49 paterno Exp $
 //
 // ----------------------------------------------------------------------
 
@@ -52,7 +52,7 @@ namespace edm
 
     edm::ParameterSet result;
     if (!reg->getMapped(id, result))
-      throw edm::Exception(errors::EventCorruption, "Uknown ParameterSetID")
+      throw edm::Exception(errors::EventCorruption, "Unknown ParameterSetID")
 	<< "Unable to find the ParameterSet for id: "
 	<< id
 	<< ";\nthis was supposed to be the process ParameterSet\n";
