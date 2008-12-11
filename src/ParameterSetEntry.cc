@@ -24,7 +24,6 @@ namespace edm {
     thePSet(0),
     theID()
   {
-    assert(rep[0] == '+' || rep[0] == '-');
     tracked = (rep[0] == '+');
     ParameterSetID newID(std::string(rep.begin()+2, rep.end()) );
     theID.swap(newID);
@@ -72,7 +71,10 @@ namespace edm {
   {
 //    edm::pset::Registry* reg = edm::pset::Registry::instance();
 //    insertParameterSetIntoRegistry(reg, pset());
-    theID = pset().id();
+
+    //theID = pset().id();
+    theID = pset().trackedPart().id();
+    pset().setID(theID);
   }
 
   std::ostream & operator<<(std::ostream & os, ParameterSetEntry const& psetEntry)
