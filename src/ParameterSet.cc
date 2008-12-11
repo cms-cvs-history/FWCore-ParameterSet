@@ -1,5 +1,5 @@
 // ----------------------------------------------------------------------
-// $Id: ParameterSet.cc,v 1.39.2.2 2008/12/09 00:51:05 wmtan Exp $
+// $Id: ParameterSet.cc,v 1.39.2.3 2008/12/09 22:41:41 rpw Exp $
 //
 // definition of ParameterSet's function members
 // ----------------------------------------------------------------------
@@ -113,7 +113,7 @@ namespace edm {
   }
 
 
-  void ParameterSet::setID(const ParameterSetID & id)
+  void ParameterSet::setID(const ParameterSetID & id) const
   {
     frozen_ = true;
     id_ = id;

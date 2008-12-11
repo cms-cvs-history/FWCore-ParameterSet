@@ -2,7 +2,7 @@
 #define FWCore_ParameterSet_ParameterSet_h
 
 // ----------------------------------------------------------------------
-// $Id: ParameterSet.h,v 1.48.2.1 2008/12/04 02:04:57 rpw Exp $
+// $Id: ParameterSet.h,v 1.48.2.2 2008/12/09 22:41:31 rpw Exp $
 //
 // Declaration for ParameterSet(parameter set) and related types
 // ----------------------------------------------------------------------
@@ -41,7 +41,7 @@ namespace edm {
     // identification
     ParameterSetID id() const;
     // side effects: freezes the pset, and doesn't touch sub-psets
-    void setID(const ParameterSetID & id);
+    void setID(const ParameterSetID & id) const;
 
     // Entry-handling
     Entry const& retrieve(char const*) const;
