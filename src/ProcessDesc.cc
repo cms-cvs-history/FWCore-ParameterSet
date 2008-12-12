@@ -3,11 +3,11 @@
    Implementation of calss ProcessDesc
 
    \author Stefano ARGIRO
-   \version $Id: ProcessDesc.cc,v 1.32 2008/12/03 19:20:17 rpw Exp $
+   \version $Id: ProcessDesc.cc,v 1.32.2.1 2008/12/04 02:06:59 rpw Exp $
    \date 17 Jun 2005
 */
 
-static const char CVSId[] = "$Id: ProcessDesc.cc,v 1.32 2008/12/03 19:20:17 rpw Exp $";
+static const char CVSId[] = "$Id: ProcessDesc.cc,v 1.32.2.1 2008/12/04 02:06:59 rpw Exp $";
 
 
 #include "FWCore/ParameterSet/interface/ProcessDesc.h"
@@ -41,12 +41,16 @@ namespace edm
 
   void ProcessDesc::setRegistry() const
   {
-    pset_->fillID();
 //    for(std::vector<ParameterSet>::const_iterator serviceItr = services_->begin();
 //        serviceItr != services_->end(); ++serviceItr)
 //    {
 //      serviceItr->freeze();
 //    }
+    pset::Registry* reg = pset::Registry::instance();
+    ParameterSet trackedPart(pset_->toStringOfTracked());
+    trackedPart.fillID();
+    reg->extra().setID(trackedPart.id());
+
   }
 
 

@@ -1,5 +1,5 @@
 // ----------------------------------------------------------------------
-// $Id: Registry.cc,v 1.10 2008/04/29 21:37:49 paterno Exp $
+// $Id: Registry.cc,v 1.10.4.1 2008/12/10 00:28:06 wmtan Exp $
 //
 // ----------------------------------------------------------------------
 
@@ -26,7 +26,9 @@ namespace edm
       explode(main, all_main_psets);
       std::vector<ParameterSet>::const_iterator i = all_main_psets.begin();
       std::vector<ParameterSet>::const_iterator e = all_main_psets.end();
-      for (; i != e; ++i) reg->insertMapped(*i);
+      for (; i != e; ++i) {
+        reg->insertMapped(*i);
+      }
       reg->extra().setID(main.id());
     }
 
@@ -40,8 +42,9 @@ namespace edm
     {
       typedef Registry::const_iterator iter;
       fillme.clear();
-      for (iter i=reg->begin(), e=reg->end(); i!=e; ++i)
+      for (iter i=reg->begin(), e=reg->end(); i != e; ++i) {
 	fillme[i->first].pset_ = i->second.toStringOfTracked();
+      }
     }
   } // namespace pset
 

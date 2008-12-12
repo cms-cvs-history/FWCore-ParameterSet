@@ -1,5 +1,5 @@
 // ----------------------------------------------------------------------
-// $Id: ParameterSet.cc,v 1.39.2.3 2008/12/09 22:41:41 rpw Exp $
+// $Id: ParameterSet.cc,v 1.39.2.4 2008/12/11 04:10:39 rpw Exp $
 //
 // definition of ParameterSet's function members
 // ----------------------------------------------------------------------
@@ -76,6 +76,7 @@ namespace edm {
     if(!id_.isValid())
     {
       calculateID();
+      updateRegistry();
     }
   }
 
@@ -92,7 +93,6 @@ namespace edm {
     cms::Digest md5alg(stringrep);
     id_ = ParameterSetID(md5alg.digest().toString());
     assert(id_.isValid());
-    updateRegistry();
   }
 
   
@@ -398,7 +398,6 @@ namespace edm {
 
   std::string
   ParameterSet::toStringOfTracked() const {
-    return trackedPart().toString();
     std::string rep;
     size_t size = 0;
     bool need_sep = false;
