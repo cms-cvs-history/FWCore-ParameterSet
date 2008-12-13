@@ -12,19 +12,18 @@ namespace edm {
   {
   }
 
-  ParameterSetEntry::ParameterSetEntry(const ParameterSet & pset, bool isTracked)
+  ParameterSetEntry::ParameterSetEntry(ParameterSet const& pset, bool isTracked)
   : tracked(isTracked),
     thePSet(new ParameterSet(pset)),
     theID()
   {
   }
 
-  ParameterSetEntry::ParameterSetEntry(const std::string & rep)
-  : tracked(false),
-    thePSet(0),
+  ParameterSetEntry::ParameterSetEntry(std::string const& rep)
+  : tracked(rep[0] == '+'),
+    thePSet(),
     theID()
   {
-    tracked = (rep[0] == '+');
     ParameterSetID newID(std::string(rep.begin()+2, rep.end()) );
     theID.swap(newID);
   }
@@ -56,7 +55,7 @@ namespace edm {
   }
 
 
-  const ParameterSet & ParameterSetEntry::pset() const
+  ParameterSet const& ParameterSetEntry::pset() const
   {
     if(!thePSet)
     {
