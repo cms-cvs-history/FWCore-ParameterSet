@@ -43,7 +43,7 @@ namespace edm
 //    {
 //      serviceItr->freeze();
 //    }
-    ParameterSet trackedPart(pset_->toStringOfTracked());
+    ParameterSet trackedPart(pset_->trackedPart());
     trackedPart.fillIDandInsert();
     pset::Registry::instance()->extra().setID(trackedPart.id());
 
