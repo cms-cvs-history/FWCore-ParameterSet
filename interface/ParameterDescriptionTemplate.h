@@ -23,7 +23,7 @@
 //
 // Original Author:  Chris Jones
 //         Created:  Thu Aug  2 15:33:51 EDT 2007
-// $Id: ParameterDescriptionTemplate.h,v 1.5 2008/12/08 22:33:59 wdd Exp $
+// $Id: ParameterDescriptionTemplate.h,v 1.4.2.1 2008/12/09 01:03:55 wmtan Exp $
 //
 
 #include "FWCore/ParameterSet/interface/ParameterDescription.h"
@@ -74,7 +74,9 @@ namespace edm {
       // In the future, the current plan is to have this insert missing
       // parameters into the ParameterSet with the correct default value.
       // Cannot do that until we get a non const ParameterSet passed in.
-      if (!isOptional() && !exists) throwParameterNotDefined();
+      if (!isOptional() && !exists) {
+        throwParameterNotDefined();
+      }
     }
 
     virtual ParameterDescription* clone() const {

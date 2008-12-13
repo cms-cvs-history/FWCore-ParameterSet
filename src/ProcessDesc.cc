@@ -3,11 +3,8 @@
    Implementation of calss ProcessDesc
 
    \author Stefano ARGIRO
-   \version $Id: ProcessDesc.cc,v 1.32.2.1 2008/12/04 02:06:59 rpw Exp $
    \date 17 Jun 2005
 */
-
-static const char CVSId[] = "$Id: ProcessDesc.cc,v 1.32.2.1 2008/12/04 02:06:59 rpw Exp $";
 
 
 #include "FWCore/ParameterSet/interface/ProcessDesc.h"
@@ -21,7 +18,7 @@ static const char CVSId[] = "$Id: ProcessDesc.cc,v 1.32.2.1 2008/12/04 02:06:59 
 namespace edm
 {
 
-  ProcessDesc::ProcessDesc(const ParameterSet & pset)
+  ProcessDesc::ProcessDesc(ParameterSet const& pset)
   : pset_(new ParameterSet(pset)),
     services_(new std::vector<ParameterSet>())
   {
@@ -32,7 +29,7 @@ namespace edm
   {
   }
 
-  ProcessDesc::ProcessDesc(const std::string& config)
+  ProcessDesc::ProcessDesc(std::string const& config)
   : pset_(new ParameterSet),
     services_(new std::vector<ParameterSet>())
   {
@@ -46,44 +43,42 @@ namespace edm
 //    {
 //      serviceItr->freeze();
 //    }
-    pset::Registry* reg = pset::Registry::instance();
     ParameterSet trackedPart(pset_->toStringOfTracked());
-    trackedPart.fillID();
-    reg->extra().setID(trackedPart.id());
+    trackedPart.fillIDandInsert();
+    pset::Registry::instance()->extra().setID(trackedPart.id());
 
   }
 
 
   boost::shared_ptr<edm::ParameterSet>  
-  ProcessDesc::getProcessPSet() const{
+  ProcessDesc::getProcessPSet() const {
     return pset_;
-
   }
 
   boost::shared_ptr<std::vector<ParameterSet> > 
-  ProcessDesc::getServicesPSets() const{
+  ProcessDesc::getServicesPSets() const {
     return services_;
   }
 
   
-  void ProcessDesc::addService(const ParameterSet & pset) 
+  void ProcessDesc::addService(ParameterSet const& pset) 
   {
     services_->push_back(pset);
    // Load into the Registry
     //pset::Registry* reg = pset::Registry::instance();
     //reg->insertMapped(pset);
-   pset.fillID();
+   pset.fillIDandInsert();
   }
 
 
-  void ProcessDesc::addService(const std::string & service)
+  void ProcessDesc::addService(std::string const& service)
   {
     ParameterSet newpset;
     newpset.addParameter<std::string>("@service_type",service);
     addService(newpset);
   }
 
-  void ProcessDesc::addDefaultService(const std::string & service)
+  void ProcessDesc::addDefaultService(std::string const& service)
   {
     typedef std::vector<edm::ParameterSet>::iterator Iter;
     for(Iter it = services_->begin(), itEnd = services_->end(); it != itEnd; ++it) {

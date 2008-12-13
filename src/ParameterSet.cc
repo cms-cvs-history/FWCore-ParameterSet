@@ -1,5 +1,4 @@
 // ----------------------------------------------------------------------
-// $Id: ParameterSet.cc,v 1.39.2.4 2008/12/11 04:10:39 rpw Exp $
 //
 // definition of ParameterSet's function members
 // ----------------------------------------------------------------------
@@ -61,8 +60,7 @@ namespace edm {
     // there are three steps in freezing
     if (!frozen_) {
       for(psettable::const_iterator psetItr = psetTable_.begin();
-          psetItr != psetTable_.end(); ++psetItr)
-      {
+          psetItr != psetTable_.end(); ++psetItr) {
         psetItr->second.pset().freeze();
       }
 
@@ -70,11 +68,9 @@ namespace edm {
     }
   }
  
-  void ParameterSet::fillID() const
-  {
+  void ParameterSet::fillIDandInsert() const {
     freeze();
-    if(!id_.isValid())
-    {
+    if(!id_.isValid()) {
       calculateID();
       updateRegistry();
     }
@@ -108,12 +104,12 @@ namespace edm {
   ParameterSet::id() const
   {
     // checks if frozen and valid
-    fillID();
+    fillIDandInsert();
     return id_;
   }
 
 
-  void ParameterSet::setID(const ParameterSetID & id) const
+  void ParameterSet::setID(ParameterSetID const& id) const
   {
     frozen_ = true;
     id_ = id;
@@ -128,7 +124,7 @@ namespace edm {
     frozen_(false),
     id_()
   {
-    if(! fromString(code))
+    if(!fromString(code))
       throw edm::Exception(errors::Configuration,"InvalidInput")
 	<< "The encoded configuration string "
 	<< "passed to a ParameterSet during construction is invalid:\n"
@@ -271,11 +267,23 @@ namespace edm {
 
   Entry const* const
   ParameterSet::retrieveUnknown(std::string const& name) const {
-    table::const_iterator  it = tbl_.find(name);
-    if (it == tbl_.end()) return 0;
+    table::const_iterator it = tbl_.find(name);
+    if (it == tbl_.end()) {
+      return 0;
+    }
     return &it->second;
   }
 
+  ParameterSetEntry const* const
+  ParameterSet::retrieveUnknownParameterSet(std::string const& name) const {
+    psettable::const_iterator  it = psetTable_.find(name);
+    if (it == psetTable_.end()) {
+      return 0;
+    }
+    return &it->second;
+  }
+
+  // ----------------------------------------------------------------------
   // ----------------------------------------------------------------------
 
   void
@@ -290,7 +298,7 @@ namespace edm {
     table::iterator  it = tbl_.find(name);
 
     if(it == tbl_.end())  {
-      if(! tbl_.insert(std::make_pair(name, value)).second)
+      if(!tbl_.insert(std::make_pair(name, value)).second)
         throw edm::Exception(errors::Configuration,"InsertFailure")
 	  << "cannot insert " << name
 	  << " into a ParameterSet\n";
@@ -301,13 +309,13 @@ namespace edm {
   }  // insert()
 
 
-  void ParameterSet::insertParameterSet(bool okay_to_replace, std::string const& name, const ParameterSetEntry & entry) {
+  void ParameterSet::insertParameterSet(bool okay_to_replace, std::string const& name, ParameterSetEntry const& entry) {
     // We should probably get rid of 'okay_to_replace', which will
     // simplify the logic in this function.
     psettable::iterator  it = psetTable_.find(name);
 
     if(it == psetTable_.end())  {
-      if(! psetTable_.insert(std::make_pair(name, entry)).second)
+      if(!psetTable_.insert(std::make_pair(name, entry)).second)
         throw edm::Exception(errors::Configuration,"InsertFailure")
           << "cannot insert " << name
           << " into a ParameterSet\n";
@@ -354,9 +362,8 @@ namespace edm {
     return rep;
   */
     // make sure the PSets get filled
-    if(!frozen_)
-    {
-      fillID();
+    if(!frozen_) {
+      fillIDandInsert();
     }
     std::string rep;
     if (tbl_.empty() && psetTable_.empty()) {
@@ -398,37 +405,7 @@ namespace edm {
 
   std::string
   ParameterSet::toStringOfTracked() const {
-    std::string rep;
-    size_t size = 0;
-    bool need_sep = false;
-    for(table::const_iterator b = tbl_.begin(), e = tbl_.end(); b != e; ++b) {
-      if(b->second.isTracked())  {
-	if(need_sep) ++size;
-	++size;
-	size += b->first.size();
-	size += b->second.sizeOfStringOfTracked();
-	need_sep = true;
-      }
-    }
-    if (size == 0) {
-      std::string emptyPSet = "<>";
-      return emptyPSet;
-    }
-    size += 2;
-    rep.reserve(size);
-    rep += '<';
-    need_sep = false;
-    for(table::const_iterator b = tbl_.begin(), e = tbl_.end(); b != e; ++b) {
-      if(b->second.isTracked())  {
-	if(need_sep) rep += ';';
-	rep += b->first;
-	rep += '=';
-	rep += b->second.toStringOfTracked();
-	need_sep = true;
-      }
-    }
-    rep += '>';    
-    return rep;
+    return trackedPart().toString();
   } 
 
   // ----------------------------------------------------------------------
@@ -439,14 +416,13 @@ namespace edm {
     checkIfFrozen();
 
     std::vector<std::string> temp;
-    if(! split(std::back_inserter(temp), from, '<', ';', '>'))
+    if(!split(std::back_inserter(temp), from, '<', ';', '>'))
       return false;
 
     tbl_.clear();  // precaution
     for(std::vector<std::string>::const_iterator b = temp.begin(), e = temp.end(); b != e; ++b) {
       // locate required name/value separator
-      std::string::const_iterator  q
-        = find_in_all(*b, '=');
+      std::string::const_iterator q = find_in_all(*b, '=');
       if(q == b->end())
         return false;
 
@@ -460,7 +436,7 @@ namespace edm {
       if(rep[1] == 'Q')
       {
          ParameterSetEntry psetEntry( rep );
-         if(! psetTable_.insert(std::make_pair(name, psetEntry)).second)
+         if(!psetTable_.insert(std::make_pair(name, psetEntry)).second)
            return false;
       }
       else if(rep[1] == 'P')
@@ -468,7 +444,7 @@ namespace edm {
         //old representation of ParameterSet, included for backwards-compatibility
         Entry value(name, rep);
         ParameterSetEntry psetEntry( value.getPSet(), value.isTracked() );
-        if(! psetTable_.insert(std::make_pair(name, psetEntry)).second)
+        if(!psetTable_.insert(std::make_pair(name, psetEntry)).second)
           return false;
       }
 
@@ -476,7 +452,7 @@ namespace edm {
       {
         // form value and insert name/value pair
         Entry  value(name, rep);
-        if(! tbl_.insert(std::make_pair(name, value)).second)
+        if(!tbl_.insert(std::make_pair(name, value)).second)
           return false;
       }
     }
@@ -511,7 +487,7 @@ namespace edm {
   }
 
 
-  bool ParameterSet::exists(const std::string & parameterName) const
+  bool ParameterSet::exists(std::string const& parameterName) const
   {
     return( tbl_.find(parameterName) != tbl_.end() || psetTable_.find(parameterName) != psetTable_.end());
   }
@@ -574,24 +550,32 @@ namespace edm {
   size_t
   ParameterSet::getNamesByCode_(char code,
 				bool trackiness,
-				std::vector<std::string>& output) const
-  {
+				std::vector<std::string>& output) const {
     size_t count = 0;
+    if (code == 'P') {
+      psettable::const_iterator pit = psetTable_.begin();
+      psettable::const_iterator pend = psetTable_.end();
+      while (pit != pend) {
+        ParameterSetEntry const& e = pit->second;
+        if (e.isTracked() == trackiness) { // if it is a vector of ParameterSet
+	  ++count;
+	  output.push_back(pit->first); // save the name
+	}
+        ++pit;
+      }
+    }
     table::const_iterator it = tbl_.begin();
     table::const_iterator end = tbl_.end();
-    while ( it != end )
-    {
+    while ( it != end ) {
       Entry const& e = it->second;
       if (e.typeCode() == code &&
-	  e.isTracked() == trackiness) // if it is a vector of ParameterSet
-	{
+	  e.isTracked() == trackiness) { // if it is a vector of ParameterSet
 	  ++count;
 	  output.push_back(it->first); // save the name
-	}
+      }
       ++it;
     }
     return count;
-
   }
 
 
@@ -618,7 +602,7 @@ namespace edm {
     {
       // indent a bit
       std::string n = j->first;
-      const ParameterSetEntry & pe = j->second;
+      ParameterSetEntry const& pe = j->second;
       os << "  " << n << ": " << pe <<  std::endl;
     }
     os << "}";
@@ -626,7 +610,7 @@ namespace edm {
   }
 
 
-  std::ostream & operator<<(std::ostream & os, const ParameterSet & pset)
+  std::ostream & operator<<(std::ostream & os, ParameterSet const& pset)
   {
     os << pset.dump();
     return os;
@@ -646,8 +630,8 @@ namespace edm {
       // recursively calling explode...
         
       std::vector<std::string> names;
-      const bool tracked = true;
-      const bool untracked = false;
+      bool const tracked = true;
+      bool const untracked = false;
       top.getParameterSetNames(names);
       std::vector<std::string>::const_iterator it = names.begin();
       std::vector<std::string>::const_iterator end = names.end();
@@ -713,7 +697,8 @@ namespace edm {
     }
     return result;
   }
-  void ParameterSet::depricatedInputTagWarning(std::string const& name, 
+
+  void ParameterSet::deprecatedInputTagWarning(std::string const& name, 
 					       std::string const& label) const
   {
     edm::LogWarning("Configuration") << "Warning:\n\tstring " << name 

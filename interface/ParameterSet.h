@@ -2,8 +2,6 @@
 #define FWCore_ParameterSet_ParameterSet_h
 
 // ----------------------------------------------------------------------
-// $Id: ParameterSet.h,v 1.48.2.2 2008/12/09 22:41:31 rpw Exp $
-//
 // Declaration for ParameterSet(parameter set) and related types
 // ----------------------------------------------------------------------
 
@@ -41,20 +39,20 @@ namespace edm {
     // identification
     ParameterSetID id() const;
     // side effects: freezes the pset, and doesn't touch sub-psets
-    void setID(const ParameterSetID & id) const;
+    void setID(ParameterSetID const& id) const;
 
     // Entry-handling
     Entry const& retrieve(char const*) const;
     Entry const& retrieve(std::string const&) const;
     Entry const* const retrieveUntracked(char const*) const;
     Entry const* const retrieveUntracked(std::string const&) const;
+    Entry const* const retrieveUnknown(char const*) const;
+    Entry const* const retrieveUnknown(std::string const&) const;
     ParameterSetEntry const& retrieveParameterSet(std::string const&) const;
     ParameterSetEntry const* const retrieveUntrackedParameterSet(std::string const&) const;
+    ParameterSetEntry const* const retrieveUnknownParameterSet(std::string const&) const;
 
-    Entry const* const retrieveUnknown(std::string const&) const;
-    Entry const* const retrieveUnknown(char const*) const;
-
-    void insertParameterSet(bool okay_to_replace, std::string const& name, const ParameterSetEntry & entry);
+    void insertParameterSet(bool okay_to_replace, std::string const& name, ParameterSetEntry const& entry);
     void insert(bool ok_to_replace, char const* , Entry const&);
     void insert(bool ok_to_replace, std::string const&, Entry const&);
     void augment(ParameterSet const& from); 
@@ -125,7 +123,7 @@ namespace edm {
        return std::find(names.begin(), names.end(), parameterName) != names.end();
     }
 
-    void depricatedInputTagWarning(std::string const& name, std::string const& label) const;
+    void deprecatedInputTagWarning(std::string const& name, std::string const& label) const;
 
     template <typename T>
     std::vector<std::string> getParameterNamesForType(bool trackiness = 
@@ -158,9 +156,8 @@ namespace edm {
       insert(true, name, Entry(name, value, false));
     }
 
-    bool empty() const
-    {
-      return tbl_.empty();
+    bool empty() const {
+      return tbl_.empty() && psetTable_.empty();
     }
 
     ParameterSet trackedPart() const;
@@ -184,10 +181,12 @@ namespace edm {
     // need a simple interface for python
     std::string dump() const;
 
-    friend std::ostream & operator<<(std::ostream & os, ParameterSet const& pset);
+    friend std::ostream& operator << (std::ostream& os, ParameterSet const& pset);
 
     /// needs to be called before saving or serializing
     void fillID() const;
+
+    void fillIDandInsert() const;
 
   private:
     typedef std::map<std::string, Entry> table;
@@ -369,8 +368,8 @@ namespace edm {
         return e_input.getInputTag();
       case 'S':   // string
         std::string const& label = e_input.getString();
-	depricatedInputTagWarning(name, label);
-        return InputTag( label );
+	deprecatedInputTagWarning(name, label);
+        return InputTag(label);
     }
     throw edm::Exception(errors::Configuration, "ValueError") << "type of " 
        << name << " is expected to be InputTag or string (deprecated)";
@@ -454,7 +453,7 @@ namespace edm {
 
   template <>
   inline void
-  ParameterSet::addParameter(char const * name, ParameterSet value)
+  ParameterSet::addParameter(char const* name, ParameterSet value)
   {
     checkIfFrozen();
     insertParameterSet(true, name, ParameterSetEntry(value, true));
@@ -470,7 +469,7 @@ namespace edm {
 
   template <>
   inline void
-  ParameterSet::addUntrackedParameter(char const * name, ParameterSet value)
+  ParameterSet::addUntrackedParameter(char const* name, ParameterSet value)
   {
     insertParameterSet(true, name, ParameterSetEntry(value, false));
   }
@@ -962,8 +961,8 @@ namespace edm {
         return e_input.getInputTag();
       case 'S':   // string
         std::string const& label = e_input.getString();
-	depricatedInputTagWarning(name, label);
-        return InputTag( label );
+	deprecatedInputTagWarning(name, label);
+        return InputTag(label);
     }
     throw edm::Exception(errors::Configuration, "ValueError") << "type of " 
        << name << " is expected to be InputTag or string (deprecated)";
