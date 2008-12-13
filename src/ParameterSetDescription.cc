@@ -8,7 +8,7 @@
 //
 // Original Author:  Chris Jones
 //         Created:  Tue Jul 31 15:30:35 EDT 2007
-// $Id: ParameterSetDescription.cc,v 1.7 2008/12/03 21:10:14 wdd Exp $
+// $Id: ParameterSetDescription.cc,v 1.7.2.1 2008/12/13 06:07:14 wmtan Exp $
 //
 
 #include "FWCore/ParameterSet/interface/ParameterSetDescription.h"
@@ -85,7 +85,7 @@ namespace edm {
         bool & foundMatch) {
 
     if (parameterName == description->label()) {
-      if ('P' == description->type()) {
+      if ('Q' == description->type()) {
         ParameterSetEntry const* entry = pset.retrieveUnknownParameterSet(parameterName);
         if (entry && entry->isTracked() == description->isTracked()) {
           foundMatch = true;
