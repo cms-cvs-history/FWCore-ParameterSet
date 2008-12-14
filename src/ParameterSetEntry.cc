@@ -24,14 +24,14 @@ namespace edm {
     thePSet(),
     theID()
   {
+    assert(rep[0] == '+' || rep[0] == '-');
     ParameterSetID newID(std::string(rep.begin()+2, rep.end()) );
     theID.swap(newID);
   }
     
   ParameterSetEntry::~ParameterSetEntry() {}
 
-  std::string ParameterSetEntry::toString() const
-  {
+  std::string ParameterSetEntry::toString() const {
     std::string result = tracked ? "+Q" : "-Q";
     std::stringstream str;
     theID.print(str);
@@ -39,26 +39,20 @@ namespace edm {
     return result;
   }
   
-  int ParameterSetEntry::sizeOfString() const 
-  {
+  int ParameterSetEntry::sizeOfString() const {
     return toString().size();
   }
 
-  ParameterSet & ParameterSetEntry::pset() 
-  {
-    if(!thePSet)
-    {
+  ParameterSet & ParameterSetEntry::pset() {
+    if(!thePSet) {
       // get it from the registry, and save it here
       thePSet = value_ptr<ParameterSet>(new ParameterSet( getParameterSet(theID) ));
     }
     return *thePSet;
   }
 
-
-  ParameterSet const& ParameterSetEntry::pset() const
-  {
-    if(!thePSet)
-    {
+  ParameterSet const& ParameterSetEntry::pset() const {
+    if(!thePSet) {
       // get it from the registry, and save it here
       thePSet = value_ptr<ParameterSet>(new ParameterSet( getParameterSet(theID) ));
     }
@@ -66,8 +60,7 @@ namespace edm {
 
   }
 
-  void ParameterSetEntry::updateID() const
-  {
+  void ParameterSetEntry::updateID() const {
 //    edm::pset::Registry* reg = edm::pset::Registry::instance();
 //    insertParameterSetIntoRegistry(reg, pset());
 
@@ -76,8 +69,7 @@ namespace edm {
     pset().setID(theID);
   }
 
-  std::ostream & operator<<(std::ostream & os, ParameterSetEntry const& psetEntry)
-  {
+  std::ostream & operator<<(std::ostream & os, ParameterSetEntry const& psetEntry) {
     os << "cms.";
     if(!psetEntry.isTracked()) os << "untracked.";
     os << "PSet(" << psetEntry.pset() << ")";

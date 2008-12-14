@@ -16,6 +16,7 @@
 #include "DataFormats/Provenance/interface/ProvenanceFwd.h"
 #include "FWCore/ParameterSet/interface/Entry.h"
 #include "FWCore/ParameterSet/interface/ParameterSetEntry.h"
+#include "FWCore/ParameterSet/interface/VParameterSetEntry.h"
 #include "FWCore/ParameterSet/interface/FileInPath.h"
 #include <string>
 #include <map>
@@ -26,9 +27,11 @@
 // contents
 
 namespace edm {
+  typedef std::vector<ParameterSet> VParameterSet;
 
   class ParameterSet {
   public:
+
     // default-construct
     ParameterSet();
 
@@ -52,8 +55,12 @@ namespace edm {
     ParameterSetEntry const& retrieveParameterSet(std::string const&) const;
     ParameterSetEntry const* const retrieveUntrackedParameterSet(std::string const&) const;
     ParameterSetEntry const* const retrieveUnknownParameterSet(std::string const&) const;
+    VParameterSetEntry const& retrieveVParameterSet(std::string const&) const;
+    VParameterSetEntry const* const retrieveUntrackedVParameterSet(std::string const&) const;
+    VParameterSetEntry const* const retrieveUnknownVParameterSet(std::string const&) const;
 
     void insertParameterSet(bool okay_to_replace, std::string const& name, ParameterSetEntry const& entry);
+    void insertVParameterSet(bool okay_to_replace, std::string const& name, VParameterSetEntry const& entry);
     void insert(bool ok_to_replace, char const* , Entry const&);
     void insert(bool ok_to_replace, std::string const&, Entry const&);
     void augment(ParameterSet const& from); 
@@ -154,7 +161,7 @@ namespace edm {
     }
 
     bool empty() const {
-      return tbl_.empty() && psetTable_.empty();
+      return tbl_.empty() && psetTable_.empty() && vpsetTable_.empty();
     }
 
     ParameterSet trackedPart() const;
@@ -191,6 +198,9 @@ namespace edm {
 
     typedef std::map<std::string, ParameterSetEntry> psettable;
     psettable psetTable_;
+
+    typedef std::map<std::string, VParameterSetEntry> vpsettable;
+    vpsettable vpsetTable_;
 
     mutable bool frozen_;
     // If the id_ is invalid, that means a new value should be
@@ -234,7 +244,7 @@ namespace edm {
     // Put into 'results' each parameter set in 'top', including 'top'
     // itself.
     void explode(ParameterSet const& top,
-	       std::vector<ParameterSet>& results);
+	       VParameterSet& results);
   }
 
   // Free function to retrieve a parameter set, given the parameter set ID.
@@ -371,24 +381,40 @@ namespace edm {
   ParameterSet::getParameter<ParameterSet>(std::string const& name) const;
   
   template<>
-  std::vector<ParameterSet>
-  ParameterSet::getParameter<std::vector<ParameterSet> >(std::string const& name) const;
+  VParameterSet
+  ParameterSet::getParameter<VParameterSet>(std::string const& name) const;
   
   template <>
   void
-  ParameterSet::addParameter(std::string const& name, ParameterSet value);
+  ParameterSet::addParameter<ParameterSet>(std::string const& name, ParameterSet value);
 
   template <>
   void
-  ParameterSet::addParameter(char const* name, ParameterSet value);
+  ParameterSet::addParameter<ParameterSet>(char const* name, ParameterSet value);
 
   template <>
   void
-  ParameterSet::addUntrackedParameter(std::string const& name, ParameterSet value);
+  ParameterSet::addUntrackedParameter<ParameterSet>(std::string const& name, ParameterSet value);
 
   template <>
   void
-  ParameterSet::addUntrackedParameter(char const* name, ParameterSet value);
+  ParameterSet::addUntrackedParameter<ParameterSet>(char const* name, ParameterSet value);
+
+  template <>
+  void
+  ParameterSet::addParameter<VParameterSet>(std::string const& name, VParameterSet value);
+
+  template <>
+  void
+  ParameterSet::addParameter<VParameterSet>(char const* name, VParameterSet value);
+
+  template <>
+  void
+  ParameterSet::addUntrackedParameter<VParameterSet>(std::string const& name, VParameterSet value);
+
+  template <>
+  void
+  ParameterSet::addUntrackedParameter<VParameterSet>(char const* name, VParameterSet value);
 
   // untracked parameters
   
@@ -721,8 +747,8 @@ namespace edm {
   ParameterSet::getParameter<ParameterSet>(char const* name) const;
   
   template<>
-  std::vector<ParameterSet>
-  ParameterSet::getParameter<std::vector<ParameterSet> >(char const* name) const;
+  VParameterSet
+  ParameterSet::getParameter<VParameterSet>(char const* name) const;
 
   // untracked parameters
   
@@ -942,24 +968,28 @@ namespace edm {
   ParameterSet::getUntrackedParameter<ParameterSet>(std::string const& name) const;
 
   template<>
-  std::vector<ParameterSet>
-  ParameterSet::getUntrackedParameter<std::vector<ParameterSet> >(char const* name, std::vector<ParameterSet> const& defaultValue) const;
+  VParameterSet
+  ParameterSet::getUntrackedParameter<VParameterSet>(char const* name, VParameterSet const& defaultValue) const;
 
   template<>
-  std::vector<ParameterSet>
-  ParameterSet::getUntrackedParameter<std::vector<ParameterSet> >(char const* name) const;
+  VParameterSet
+  ParameterSet::getUntrackedParameter<VParameterSet>(char const* name) const;
 
   template<>
-  std::vector<ParameterSet>
-  ParameterSet::getUntrackedParameter<std::vector<ParameterSet> >(std::string const& name, std::vector<ParameterSet> const& defaultValue) const;
+  VParameterSet
+  ParameterSet::getUntrackedParameter<VParameterSet>(std::string const& name, VParameterSet const& defaultValue) const;
 
   template<>
-  std::vector<ParameterSet>
-  ParameterSet::getUntrackedParameter<std::vector<ParameterSet> >(std::string const& name) const;
+  VParameterSet
+  ParameterSet::getUntrackedParameter<VParameterSet>(std::string const& name) const;
 
   template <>
   std::vector<std::string> 
   ParameterSet::getParameterNamesForType<ParameterSet>(bool trackiness) const;
+
+  template <>
+  std::vector<std::string> 
+  ParameterSet::getParameterNamesForType<VParameterSet>(bool trackiness) const;
 
 }  // namespace edm
 #endif

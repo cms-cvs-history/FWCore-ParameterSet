@@ -8,7 +8,7 @@
 //
 // Original Author:  Chris Jones
 //         Created:  Tue Jul 31 15:30:35 EDT 2007
-// $Id: ParameterSetDescription.cc,v 1.7.2.1 2008/12/13 06:07:14 wmtan Exp $
+// $Id: ParameterSetDescription.cc,v 1.7.2.2 2008/12/13 18:46:22 wmtan Exp $
 //
 
 #include "FWCore/ParameterSet/interface/ParameterSetDescription.h"
@@ -90,6 +90,11 @@ namespace edm {
         if (entry && entry->isTracked() == description->isTracked()) {
           foundMatch = true;
         }
+      } else if ('q' == description->type()) {
+        VParameterSetEntry const* entry = pset.retrieveUnknownVParameterSet(parameterName);
+        if (entry && entry->isTracked() == description->isTracked()) {
+          foundMatch = true;
+        }
       } else {
         Entry const* entry = pset.retrieveUnknown(parameterName);
         if (entry &&
@@ -108,8 +113,13 @@ namespace edm {
     Entry const* entry = pset.retrieveUnknown(parameterName);
 
     std::string tr;
-    if (entry->isTracked()) tr = std::string("as a tracked");
-    else tr = std::string("as an untracked");
+    if (!entry) {
+      tr = std::string("as an unknown");
+    } else if (entry->isTracked()) {
+      tr = std::string("as a tracked");
+    } else {
+      tr = std::string("as an untracked");
+    }
 
     ParameterTypes type = static_cast<ParameterTypes>(entry->typeCode());
 
