@@ -29,7 +29,9 @@ namespace edm {
   {
     assert(rep[0] == '+' || rep[0] == '-');
     std::vector<std::string> temp;
-    split(std::back_inserter(temp), rep, '{', ',', '}');
+    // need a substring that starts at the '{'
+    std::string bracketedRepr(rep.begin()+2, rep.end());
+    split(std::back_inserter(temp), bracketedRepr, '{', ',', '}');
     for (std::vector<std::string>::const_iterator i = temp.begin(), e = temp.end(); i != e; ++i) {
       thePSetEntries.push_back(ParameterSetEntry(*i));
     }
