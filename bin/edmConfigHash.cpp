@@ -7,11 +7,7 @@
 #include "FWCore/ParameterSet/interface/MakeParameterSets.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h" 
 
-using namespace edm;
-using namespace edm::pset;
-
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
   // config can either be a name or a string
   std::string config;
 
@@ -19,16 +15,13 @@ int main(int argc, char **argv)
     // Read input from cin into configstring..
     {
       std::string line;
-      while (std::getline(std::cin, line))
-       {
+      while (std::getline(std::cin, line)) {
     	config += line;
     	config += '\n';
-        }
+      }
     }
 
-  }
-  else if (argc == 2)
-  {
+  } else if (argc == 2) {
     config = std::string(argv[1]);
   }
 

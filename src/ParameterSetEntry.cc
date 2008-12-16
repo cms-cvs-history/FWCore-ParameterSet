@@ -61,11 +61,7 @@ namespace edm {
   }
 
   void ParameterSetEntry::updateID() const {
-//    edm::pset::Registry* reg = edm::pset::Registry::instance();
-//    insertParameterSetIntoRegistry(reg, pset());
-
-    //theID = pset().id();
-    theID = pset().trackedPart().id();
+    theID = pset().id();
     pset().setID(theID);
   }
 

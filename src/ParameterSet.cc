@@ -51,6 +51,24 @@ namespace edm {
   {
   }
 
+  // ----------------------------------------------------------------------
+  // from coded string
+
+  ParameterSet::ParameterSet(std::string const& code) :
+    tbl_(),
+    psetTable_(),
+    vpsetTable_(),
+    frozen_(false),
+    id_()
+  {
+    if(!fromString(code))
+      throw edm::Exception(errors::Configuration,"InvalidInput")
+	<< "The encoded configuration string "
+	<< "passed to a ParameterSet during construction is invalid:\n"
+	<< code;
+
+  }
+
   ParameterSet::~ParameterSet() {}
 
   void ParameterSet::freeze() const {
@@ -119,24 +137,6 @@ namespace edm {
   void ParameterSet::setID(ParameterSetID const& id) const {
     frozen_ = true;
     id_ = id;
-  }
-
-  // ----------------------------------------------------------------------
-  // coded string
-
-  ParameterSet::ParameterSet(std::string const& code) :
-    tbl_(),
-    psetTable_(),
-    vpsetTable_(),
-    frozen_(false),
-    id_()
-  {
-    if(!fromString(code))
-      throw edm::Exception(errors::Configuration,"InvalidInput")
-	<< "The encoded configuration string "
-	<< "passed to a ParameterSet during construction is invalid:\n"
-	<< code;
-
   }
 
   // ----------------------------------------------------------------------
@@ -412,16 +412,6 @@ namespace edm {
 
   std::string
   ParameterSet::toString() const {
-  //pset::Registry* reg = pset::Registry::instance();
-  //pset::loadAllNestedParameterSets(reg, *this);
-  /*
-    std::string rep;
-    std::stringstream stst;
-    boost::archive::text_oarchive ar(stst);
-    ar << *this;
-    rep = stst.str();
-    return rep;
-  */
     // make sure the PSets get filled
     if(!frozen_) {
       fillIDandInsert();
@@ -667,7 +657,7 @@ namespace edm {
 
   bool operator==(ParameterSet const& a, ParameterSet const& b) {
     // Maybe can replace this with comparison of id_ values.
-    return a.toStringOfTracked() == b.toStringOfTracked();
+    return a.toString() == b.toString();
   }
 
   std::string ParameterSet::dump() const {
@@ -700,67 +690,6 @@ namespace edm {
   std::ostream & operator<<(std::ostream & os, ParameterSet const& pset) {
     os << pset.dump();
     return os;
-  }
-
-  namespace pset {
-    void explode(ParameterSet const& top,
-	       std::vector<ParameterSet>& results) {
-      using namespace edm;
-      results.push_back(top);
-
-      // Get names of all ParameterSets; iterate through them,
-      // recursively calling explode...
-        
-      std::vector<std::string> names;
-      bool const tracked = true;
-      bool const untracked = false;
-      top.getParameterSetNames(names);
-      std::vector<std::string>::const_iterator it = names.begin();
-      std::vector<std::string>::const_iterator end = names.end();
-      for(; it != end; ++it) {
-	ParameterSet next_top =
-	  top.getParameter<ParameterSet>(*it);
-	explode(next_top, results);
-      }
-
-      // Get names of all ParameterSets vectors; iterate through them,
-      // recursively calling explode...
-      names.clear();
-      top.getParameterSetVectorNames(names, tracked);
-      it = names.begin();
-      end = names.end();
-      for(; it != end; ++it) {
-	VParameterSet next_bunch =
-	  top.getParameter<VParameterSet>(*it);
-
-	VParameterSet::const_iterator first =
-	  next_bunch.begin();
-	VParameterSet::const_iterator last
-	  = next_bunch.end();
-
-	for(; first != last; ++first) {
-	    explode(*first, results);
-        }	
-      }
-
-      names.clear();
-      top.getParameterSetVectorNames(names, untracked);
-      it = names.begin();
-      end = names.end();
-      for(; it != end; ++it) {
-	VParameterSet next_bunch =
-	  top.getUntrackedParameter<VParameterSet>(*it);
-
-	VParameterSet::const_iterator first =
-	  next_bunch.begin();
-	VParameterSet::const_iterator last
-	  = next_bunch.end();
-
-	for(; first != last; ++first) {
-	    explode(*first, results);
-	}	
-      }
-    }
   }
 
   // Free function to return a parameterSet given its ID.

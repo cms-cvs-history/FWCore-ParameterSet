@@ -1,9 +1,6 @@
 <use name=boost>
 <use name=FWCore/ParameterSet>
 
-<bin name=EdmConfigHash file=edmConfigHash.cpp>
-</bin>
-
 <bin file=edmConfigHash.cpp> 
 </bin> 
  

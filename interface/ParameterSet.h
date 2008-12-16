@@ -238,15 +238,6 @@ namespace edm {
     return !(a == b);
   }
 
-  // Associated functions used elsewhere in the ParameterSet system
-  namespace pset
-  {
-    // Put into 'results' each parameter set in 'top', including 'top'
-    // itself.
-    void explode(ParameterSet const& top,
-	       VParameterSet& results);
-  }
-
   // Free function to retrieve a parameter set, given the parameter set ID.
   ParameterSet
   getParameterSet(ParameterSetID const& id);
