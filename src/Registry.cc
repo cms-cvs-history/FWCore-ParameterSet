@@ -1,5 +1,5 @@
 // ----------------------------------------------------------------------
-// $Id: Registry.cc,v 1.9 2006/09/06 19:27:35 paterno Exp $
+// $Id: Registry.cc,v 1.10 2008/04/29 21:37:49 paterno Exp $
 //
 // ----------------------------------------------------------------------
 
@@ -36,7 +36,7 @@ namespace edm
       return reg->extra().id();
     }
 
-    void fill(Registry* reg, regmap_type& fillme)
+    void fillMap(Registry* reg, regmap_type& fillme)
     {
       typedef Registry::const_iterator iter;
       fillme.clear();
