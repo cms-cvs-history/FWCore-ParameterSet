@@ -1,5 +1,5 @@
 // ----------------------------------------------------------------------
-// $Id: ParameterSet.cc,v 1.38 2008/11/18 02:04:26 wmtan Exp $
+// $Id: ParameterSet.cc,v 1.39 2008/11/19 06:48:43 wmtan Exp $
 //
 // definition of ParameterSet's function members
 // ----------------------------------------------------------------------
@@ -28,6 +28,12 @@
 // ----------------------------------------------------------------------
 
 namespace edm {
+
+
+  void
+  ParameterSet::fillIDandInsert() const {
+      pset::Registry::instance()->insertMapped(*this);
+  }
 
   void
   ParameterSet::validate() const
@@ -224,11 +230,11 @@ namespace edm {
   // coding
   // ----------------------------------------------------------------------
 
-  std::string
-  ParameterSet::toString() const {
+  void
+  ParameterSet::toString(std::string& rep) const {
     if (tbl_.empty()) {
-      std::string emptyPSet = "<>";
-      return emptyPSet;
+      rep = "<>";
+      return;
     }
     size_t size = 1;
     for(table::const_iterator b = tbl_.begin(), e = tbl_.end(); b != e; ++b) {
@@ -236,7 +242,6 @@ namespace edm {
       size += b->first.size();
       size += b->second.sizeOfString();
     }
-    std::string rep;
     rep.reserve(size);
     rep += '<';
     for(table::const_iterator b = tbl_.begin(), e = tbl_.end(); b != e; ++b) {
@@ -246,8 +251,14 @@ namespace edm {
       rep += b->second.toString();
     }
     rep += '>';
-    return rep;
   }  // to_string()
+
+  std::string
+  ParameterSet::toString() const {
+    std::string result;
+    toString(result);
+    return result;
+  }
 
   // ----------------------------------------------------------------------
 

@@ -2,7 +2,7 @@
 #define FWCore_ParameterSet_Registry_h
 
 // ----------------------------------------------------------------------
-// $Id: Registry.h,v 1.11 2007/06/14 04:55:59 wmtan Exp $
+// $Id: Registry.h,v 1.12 2008/04/29 21:37:49 paterno Exp $
 //
 // Declaration for pset::Registry. This is an implementation detail of
 // the ParameterSet library.
@@ -66,7 +66,7 @@ namespace edm
     /// Fill the given map with the persistent form of each
     /// ParameterSet in the given registry.
     typedef std::map<edm::ParameterSetID, edm::ParameterSetBlob> regmap_type;
-    void fill(Registry* reg, regmap_type& fillme);
+    void fillMap(Registry* reg, regmap_type& fillme);
 
   }  // namespace pset
 

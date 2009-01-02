@@ -2,7 +2,7 @@
 #define FWCore_ParameterSet_ParameterSet_h
 
 // ----------------------------------------------------------------------
-// $Id: ParameterSet.h,v 1.47 2008/11/18 16:07:48 wmtan Exp $
+// $Id: ParameterSet.h,v 1.48 2008/11/19 06:48:43 wmtan Exp $
 //
 // Declaration for ParameterSet(parameter set) and related types
 // ----------------------------------------------------------------------
@@ -41,6 +41,12 @@ namespace edm {
     // identification
     ParameterSetID id() const;
 
+    // For transition
+    ParameterSetID trackedID() const {return id();}
+    void fillIDandInsert() const;
+    void setID(ParameterSetID const&) const {}
+    void setFullyTracked() const {}
+
     // Entry-handling
     Entry const& retrieve(std::string const&) const;
     Entry const& retrieve(char const*) const;
@@ -57,6 +63,7 @@ namespace edm {
     void augment(ParameterSet const& from); 
     // encode
     std::string toString() const;
+    void toString(std::string& result) const;
     std::string toStringOfTracked() const;
     // decode
     bool fromString(std::string const&);
