@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.59 2009/01/07 00:17:45 wmtan Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.60 2009/01/07 23:02:24 rpw Exp $
  */
 
 #include <algorithm>
@@ -300,7 +300,7 @@ void testmakepset::typesTest()
   "    h1 = cms.int32(74),\n"
   "    vs = cms.vstring('','1', \n"
   "        '2', \n"
-  "        'a'),\n"
+  "        'a', 'XXX'),\n"
   "    vs2 = cms.vstring(), vs3 = cms.vstring(''),\n"
   "    sb2 = cms.string(''),\n"
   "    input7 = cms.InputTag('source','sink'),\n"
@@ -364,8 +364,7 @@ void testmakepset::typesTest()
    int vssize = vs.size();
    //FIXME doesn't do spaces right
    edm::Entry e(test.retrieve("vs"));
-   std::cout << "THIS " << e.toString() << std::endl;
-   CPPUNIT_ASSERT(4 == vssize);
+   CPPUNIT_ASSERT(5 == vssize);
    CPPUNIT_ASSERT(vssize && "" == vs[0]);
    CPPUNIT_ASSERT(vssize >1 && "1" == vs[1]);
    CPPUNIT_ASSERT(vssize >1 && "a" == vs[3]);
