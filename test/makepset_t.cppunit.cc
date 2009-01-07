@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.58 2008/11/20 05:42:45 rpw Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.59 2009/01/07 00:17:45 wmtan Exp $
  */
 
 #include <algorithm>
@@ -301,6 +301,7 @@ void testmakepset::typesTest()
   "    vs = cms.vstring('','1', \n"
   "        '2', \n"
   "        'a'),\n"
+  "    vs2 = cms.vstring(), vs3 = cms.vstring(''),\n"
   "    sb2 = cms.string(''),\n"
   "    input7 = cms.InputTag('source','sink'),\n"
   "    ps = cms.PSet(\n"
@@ -362,12 +363,19 @@ void testmakepset::typesTest()
    std::vector<std::string> vs = test.getParameter<std::vector<std::string> >("vs");
    int vssize = vs.size();
    //FIXME doesn't do spaces right
-   //CPPUNIT_ASSERT(4 == vssize);
-   //CPPUNIT_ASSERT(vssize && "" == vs[0]);
-   //CPPUNIT_ASSERT(vssize >1 && "1" == vs[1]);
-   //CPPUNIT_ASSERT(vssize >1 && "a" == vs[3]);
+   edm::Entry e(test.retrieve("vs"));
+   std::cout << "THIS " << e.toString() << std::endl;
+   CPPUNIT_ASSERT(4 == vssize);
+   CPPUNIT_ASSERT(vssize && "" == vs[0]);
+   CPPUNIT_ASSERT(vssize >1 && "1" == vs[1]);
+   CPPUNIT_ASSERT(vssize >1 && "a" == vs[3]);
    //std::cout <<"\""<<test.getParameter<std::vector<std::string> >("vs")[0]<<"\" \""<<test.getParameter<std::vector<std::string> >("vs")[1]<<"\" \""
    //<<test.getParameter<std::vector<std::string> >("vs")[2]<<"\""<<std::endl;
+   vs = test.getParameter<std::vector<std::string> >("vs2");
+   CPPUNIT_ASSERT(vs.size() == 0);
+   vs = test.getParameter<std::vector<std::string> >("vs3");
+   CPPUNIT_ASSERT(vs.size() == 1);
+   CPPUNIT_ASSERT(vs[0] == "");
    
    static const unsigned int vuia[] = {1,2,1,255};
    static const std::vector<unsigned int> vui(vuia, vuia+sizeof(vuia)/sizeof(unsigned int));
