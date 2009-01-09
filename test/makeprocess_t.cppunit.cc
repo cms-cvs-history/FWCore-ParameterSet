@@ -89,9 +89,9 @@ void testmakeprocess::usingTest()
    
    ProcDescPtr test = procDesc(kTest);
 
-   //CPPUNIT_ASSERT(test->getProcessPSet()->getParameterSet("dummy").getBool("b") == true);   
-   CPPUNIT_ASSERT(test->getProcessPSet()->getParameterSet("m1").getParameter<bool>("b") == true);   
-   CPPUNIT_ASSERT(test->getProcessPSet()->getParameterSet("m2").getParameter<bool>("d") == true);   
+   //CPPUNIT_ASSERT(test->getProcessPSet()->getParameter<edm::ParameterSet>("dummy").getBool("b") == true);   
+   CPPUNIT_ASSERT(test->getProcessPSet()->getParameter<edm::ParameterSet>("m1").getParameter<bool>("b") == true);   
+   CPPUNIT_ASSERT(test->getProcessPSet()->getParameter<edm::ParameterSet>("m2").getParameter<bool>("d") == true);   
 }
 
 void testmakeprocess::pathTest()
@@ -161,7 +161,7 @@ void testmakeprocess::moduleTest()
    const edm::ParameterSet kCone(modulePSet("cones", "Module"));
    std::ostringstream out;
    out << kCone.toString() << std::endl;
-   out << test->getProcessPSet()->getParameterSet("cones").toString() << std::endl;
+   out << test->getProcessPSet()->getParameter<edm::ParameterSet>("cones").toString() << std::endl;
    
    const edm::ParameterSet kMainInput(modulePSet("@main_input","InputSource"));
    
@@ -170,23 +170,23 @@ void testmakeprocess::moduleTest()
    const edm::ParameterSet kNoLabelRetriever(modulePSet("", "NoLabelRetriever"));
    const edm::ParameterSet kLabelRetriever(modulePSet("label", "LabelRetriever"));
    
-   CPPUNIT_ASSERT(kEmpty != (test->getProcessPSet()->getParameterSet("cones")));
-   CPPUNIT_ASSERT(kCone == test->getProcessPSet()->getParameterSet("cones"));
+   CPPUNIT_ASSERT(kEmpty != (test->getProcessPSet()->getParameter<edm::ParameterSet>("cones")));
+   CPPUNIT_ASSERT(kCone == test->getProcessPSet()->getParameter<edm::ParameterSet>("cones"));
    
-   CPPUNIT_ASSERT(kEmpty != (test->getProcessPSet()->getParameterSet("@main_input")));
-   CPPUNIT_ASSERT(kMainInput == (test->getProcessPSet()->getParameterSet("@main_input")));
+   CPPUNIT_ASSERT(kEmpty != (test->getProcessPSet()->getParameter<edm::ParameterSet>("@main_input")));
+   CPPUNIT_ASSERT(kMainInput == (test->getProcessPSet()->getParameter<edm::ParameterSet>("@main_input")));
 
-   CPPUNIT_ASSERT(kEmpty != (test->getProcessPSet()->getParameterSet("NoLabelModule@")));
-   CPPUNIT_ASSERT(kNoLabelModule == test->getProcessPSet()->getParameterSet("NoLabelModule@"));
+   CPPUNIT_ASSERT(kEmpty != (test->getProcessPSet()->getParameter<edm::ParameterSet>("NoLabelModule@")));
+   CPPUNIT_ASSERT(kNoLabelModule == test->getProcessPSet()->getParameter<edm::ParameterSet>("NoLabelModule@"));
    
-   CPPUNIT_ASSERT(kEmpty != (test->getProcessPSet()->getParameterSet("LabelModule@labeled")));
-   CPPUNIT_ASSERT(kLabelModule == test->getProcessPSet()->getParameterSet("LabelModule@labeled"));
+   CPPUNIT_ASSERT(kEmpty != (test->getProcessPSet()->getParameter<edm::ParameterSet>("LabelModule@labeled")));
+   CPPUNIT_ASSERT(kLabelModule == test->getProcessPSet()->getParameter<edm::ParameterSet>("LabelModule@labeled"));
 
-   CPPUNIT_ASSERT(kEmpty != (test->getProcessPSet()->getParameterSet("NoLabelRetriever@")));
-   CPPUNIT_ASSERT(kNoLabelRetriever == test->getProcessPSet()->getParameterSet("NoLabelRetriever@"));
+   CPPUNIT_ASSERT(kEmpty != (test->getProcessPSet()->getParameter<edm::ParameterSet>("NoLabelRetriever@")));
+   CPPUNIT_ASSERT(kNoLabelRetriever == test->getProcessPSet()->getParameter<edm::ParameterSet>("NoLabelRetriever@"));
 
-   CPPUNIT_ASSERT(kEmpty != (test->getProcessPSet()->getParameterSet("LabelRetriever@label")));
-   CPPUNIT_ASSERT(kLabelRetriever == test->getProcessPSet()->getParameterSet("LabelRetriever@label"));
+   CPPUNIT_ASSERT(kEmpty != (test->getProcessPSet()->getParameter<edm::ParameterSet>("LabelRetriever@label")));
+   CPPUNIT_ASSERT(kLabelRetriever == test->getProcessPSet()->getParameter<edm::ParameterSet>("LabelRetriever@label"));
 }
 
 void testmakeprocess::serviceTest()
@@ -251,7 +251,7 @@ void testmakeprocess::windowsLineEndingTest()
 
    edm::ParameterSet const& p = *(test->getProcessPSet());
    
-   edm::ParameterSet src = p.getParameterSet("@main_input");
+   edm::ParameterSet src = p.getParameter<edm::ParameterSet>("@main_input");
    CPPUNIT_ASSERT(src.getParameter<int>("i") == 1);
    std::string s1 = src.getParameter<std::string>("s1");
    std::string s2 = src.getParameter<std::string>("s2");
