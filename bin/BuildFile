@@ -8,6 +8,12 @@
  <use name=FWCore/PluginManager> 
 </bin> 
  
+<bin file=edmWriteConfigs.cpp>
+ <use name=boost_program_options>
+ <use name=FWCore/PluginManager>
+ <use name=FWCore/Utilities>
+</bin>
+
 <bin file=edmParameterSetDump.cpp>
 </bin>
 

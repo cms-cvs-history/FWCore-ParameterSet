@@ -8,7 +8,7 @@
 //
 // Original Author:  Chris Jones
 //         Created:  Thu Aug  2 13:33:53 EDT 2007
-// $Id: edmParamDesc.cpp,v 1.2 2008/01/18 20:10:27 wmtan Exp $
+// $Id: edmParamDesc.cpp,v 1.3 2008/11/14 19:41:22 wdd Exp $
 //
 
 // system include files
@@ -23,10 +23,12 @@
 #include "FWCore/ParameterSet/interface/ParameterSetDescriptionFillerPluginFactory.h"
 #include "FWCore/ParameterSet/interface/ParameterSetDescriptionFillerBase.h"
 #include "FWCore/ParameterSet/interface/ParameterSetDescription.h"
+#include "FWCore/ParameterSet/interface/ConfigurationDescriptions.h"
 
 #include "FWCore/PluginManager/interface/PluginManager.h"
 #include "FWCore/PluginManager/interface/standard.h"
 
+/*
 static void print(const edm::ParameterSetDescription& iDesc, 
                   const std::string& iIndent,
                   const std::string& iDelta)
@@ -46,6 +48,7 @@ static void print(const edm::ParameterSetDescription& iDesc,
     }
   }
 }
+*/
 
 int main (int argc, char **argv)
 {
@@ -75,9 +78,15 @@ int main (int argc, char **argv)
         std::cout <<it->name_<<"\n";
         try {
           std::auto_ptr<edm::ParameterSetDescriptionFillerBase> filler(factory->create(it->name_));
-          edm::ParameterSetDescription desc;
-          filler->fill(desc, std::string());
-          print(desc,"  "," ");
+	  edm::ConfigurationDescriptions configurationDescriptions;
+          filler->fill(configurationDescriptions);
+          // Somehow need to print this configurationDescriptions object
+          // I'm thinking to delete the print function referenced in the old
+          // code commented out below and to use the functions I use to write
+          // the cfi's also for the printout ...
+          // edm::ParameterSetDescription desc;
+          // filler->fill(desc, std::string());
+          // print(desc,"  "," ");
         }catch(const cms::Exception& e) {
           std::cout <<"  FAILED: could not read parameter info because \n"
           <<"   "<<e.what();
