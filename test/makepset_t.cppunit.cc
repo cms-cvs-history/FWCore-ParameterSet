@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.58 2008/11/20 05:42:45 rpw Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.61 2009/01/07 23:19:18 rpw Exp $
  */
 
 #include <algorithm>
@@ -109,8 +109,8 @@ void testmakepset::secsourceAux()
   CPPUNIT_ASSERT(0 != ps.get());
 
   // Make sure this ParameterSet object has the right contents
-  edm::ParameterSet mixingModuleParams = ps->getParameter<edm::ParameterSet>("mix");
-  edm::ParameterSet secondarySourceParams = mixingModuleParams.getParameter<edm::ParameterSet>("input");
+  edm::ParameterSet const& mixingModuleParams = ps->getParameterSet("mix");
+  edm::ParameterSet const& secondarySourceParams = mixingModuleParams.getParameterSet("input");
   CPPUNIT_ASSERT(secondarySourceParams.getParameter<std::string>("@module_type") == "PoolSource"); 
   CPPUNIT_ASSERT(secondarySourceParams.getParameter<std::string>("@module_label") == "input");
   CPPUNIT_ASSERT(secondarySourceParams.getUntrackedParameter<std::vector<std::string> >("fileNames")[0] == "file:pileup.root");
@@ -166,8 +166,8 @@ void testmakepset::usingBlockAux()
   CPPUNIT_ASSERT(0 != ps.get());
 
   // Make sure this ParameterSet object has the right contents
-  edm::ParameterSet m1Params = ps->getParameter<edm::ParameterSet>("m1");
-  edm::ParameterSet m2Params = ps->getParameter<edm::ParameterSet>("m2");
+  edm::ParameterSet const& m1Params = ps->getParameterSet("m1");
+  edm::ParameterSet const& m2Params = ps->getParameterSet("m2");
   CPPUNIT_ASSERT(m1Params.getParameter<int>("i") == 1);
   CPPUNIT_ASSERT(m2Params.getParameter<int>("i") == 2);
   CPPUNIT_ASSERT(m2Params.getParameter<int>("j") == 3);
@@ -215,7 +215,7 @@ void testmakepset::fileinpathAux()
   boost::shared_ptr<edm::ParameterSet> ps = builder.processDesc()->getProcessPSet();
   CPPUNIT_ASSERT(0 != ps.get());
 
-  edm::ParameterSet innerps = ps->getParameter<edm::ParameterSet>("main");
+  edm::ParameterSet const& innerps = ps->getParameterSet("main");
   edm::FileInPath fip  = innerps.getParameter<edm::FileInPath>("fip");
   edm::FileInPath ufip = innerps.getUntrackedParameter<edm::FileInPath>("ufip");
   CPPUNIT_ASSERT( innerps.existsAs<int>("extraneous") );
@@ -270,7 +270,7 @@ void testmakepset::fileinpathAux()
 
   CPPUNIT_ASSERT(0 != ps2.get());
 
-  edm::ParameterSet innerps2 = ps2->getParameter<edm::ParameterSet>("main");
+  edm::ParameterSet const& innerps2 = ps2->getParameterSet("main");
   edm::FileInPath fip2 = innerps2.getParameter<edm::FileInPath>("fip2");
   CPPUNIT_ASSERT( fip2.isLocal() == true );
   CPPUNIT_ASSERT( fip2.relativePath() == "tmp.py" );
@@ -336,7 +336,7 @@ void testmakepset::typesTest()
    // Create the ParameterSet object from this configuration string.
    PythonProcessDesc builder2(config2);
    boost::shared_ptr<edm::ParameterSet> ps2 = builder2.processDesc()->getProcessPSet();
-   edm::ParameterSet test = ps2->getParameter<edm::ParameterSet>("p");
+   edm::ParameterSet const& test = ps2->getParameterSet("p");
 
 
    
@@ -368,13 +368,13 @@ void testmakepset::typesTest()
    CPPUNIT_ASSERT(vssize && "" == vs[0]);
    CPPUNIT_ASSERT(vssize >1 && "1" == vs[1]);
    CPPUNIT_ASSERT(vssize >1 && "a" == vs[3]);
-
    //std::cout <<"\""<<test.getParameter<std::vector<std::string> >("vs")[0]<<"\" \""<<test.getParameter<std::vector<std::string> >("vs")[1]<<"\" \""
    //<<test.getParameter<std::vector<std::string> >("vs")[2]<<"\""<<std::endl;
    vs = test.getParameter<std::vector<std::string> >("vs2");
    CPPUNIT_ASSERT(vs.size() == 0);
    vs = test.getParameter<std::vector<std::string> >("vs3");
    CPPUNIT_ASSERT(vs.size() == 1);
+   CPPUNIT_ASSERT(vs[0] == "");
    
    static const unsigned int vuia[] = {1,2,1,255};
    static const std::vector<unsigned int> vui(vuia, vuia+sizeof(vuia)/sizeof(unsigned int));
@@ -386,9 +386,9 @@ void testmakepset::typesTest()
    CPPUNIT_ASSERT(true == test.getUntrackedParameter<bool>("b", false));
    CPPUNIT_ASSERT(test.retrieve("vi").isTracked());
    //test.getParameter<std::vector<bool> >("vb");
-   edm::ParameterSet ps = test.getParameter<edm::ParameterSet>("ps");
+   edm::ParameterSet const& ps = test.getParameterSet("ps");
    CPPUNIT_ASSERT(true == ps.getUntrackedParameter<bool>("b2", false));
-   std::vector<edm::ParameterSet> vps = test.getParameter<std::vector<edm::ParameterSet> >("vps");
+   std::vector<edm::ParameterSet> const& vps = test.getParameterSetVector("vps");
    CPPUNIT_ASSERT(1 == vps.size());
    CPPUNIT_ASSERT(false == vps.front().getParameter<bool>("b3"));
    
