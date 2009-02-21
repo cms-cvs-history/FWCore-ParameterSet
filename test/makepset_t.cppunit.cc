@@ -5,7 +5,7 @@
  *  Created by Chris Jones on 5/18/05.
  *  Changed by Viji Sundararajan on 11-Jul-05.
  *
- * $Id: makepset_t.cppunit.cc,v 1.61 2009/01/07 23:19:18 rpw Exp $
+ * $Id: makepset_t.cppunit.cc,v 1.63 2009/01/18 19:59:23 wmtan Exp $
  */
 
 #include <algorithm>
@@ -327,7 +327,14 @@ void testmakepset::typesTest()
   "    sb1 = cms.string(''),\n"
   "    vEventID = cms.VEventID('1:1', '2:2','3:3'),\n"
   "    lumi = cms.LuminosityBlockID(55, 65),\n"
-  "    vlumis = cms.VLuminosityBlockID('75:85', '95:105')\n"
+  "    vlumis = cms.VLuminosityBlockID('75:85', '95:105'),\n"
+  "    einput1 = cms.ESInputTag(),\n"
+  "    einput2 = cms.ESInputTag(data='blah'),\n"
+  "    einput3 = cms.ESInputTag('ESProd'),\n"
+  "    einput4 = cms.ESInputTag('ESProd','something'),\n"
+  "    einput5 = cms.ESInputTag('ESProd:something'),\n"
+  "    veinput1 = cms.VESInputTag(),\n"
+  "    veinput2 = cms.VESInputTag(cms.ESInputTag(data='blah'),cms.ESInputTag('ESProd'))\n"
   ")\n"
 
      ;
@@ -437,6 +444,32 @@ void testmakepset::typesTest()
    CPPUNIT_ASSERT("source" == vtags[4].label());
    CPPUNIT_ASSERT("source" == vtags[5].label());
 
+   // ESInputTag
+   edm::ESInputTag einput1 = test.getParameter<edm::ESInputTag>("einput1");
+   edm::ESInputTag einput2 = test.getParameter<edm::ESInputTag>("einput2");
+   edm::ESInputTag einput3 = test.getParameter<edm::ESInputTag>("einput3");
+   edm::ESInputTag einput4 = test.getParameter<edm::ESInputTag>("einput4");
+   edm::ESInputTag einput5 = test.getParameter<edm::ESInputTag>("einput5");
+   CPPUNIT_ASSERT("" == einput1.module());
+   CPPUNIT_ASSERT("" == einput1.data());
+   CPPUNIT_ASSERT("" == einput2.module());
+   CPPUNIT_ASSERT("blah" == einput2.data());
+   CPPUNIT_ASSERT("ESProd" == einput3.module());
+   CPPUNIT_ASSERT("" == einput3.data());
+   CPPUNIT_ASSERT("ESProd" == einput4.module());
+   CPPUNIT_ASSERT("something" == einput4.data());
+   CPPUNIT_ASSERT("ESProd" == einput5.module());
+   CPPUNIT_ASSERT("something" == einput5.data());
+
+   std::vector<edm::ESInputTag> veinput1 = test.getParameter<std::vector<edm::ESInputTag> >("veinput1");
+   std::vector<edm::ESInputTag> veinput2 = test.getParameter<std::vector<edm::ESInputTag> >("veinput2");
+   CPPUNIT_ASSERT(0 == veinput1.size());
+   CPPUNIT_ASSERT(2 == veinput2.size());
+   CPPUNIT_ASSERT("" == veinput2[0].module());
+   CPPUNIT_ASSERT("blah" == veinput2[0].data());
+   CPPUNIT_ASSERT("ESProd" == veinput2[1].module());
+   CPPUNIT_ASSERT("" == veinput2[1].data());
+   
    edm::EventID eventID = test.getParameter<edm::EventID>("eventID");
    std::vector<edm::EventID> vEventID = test.getParameter<std::vector<edm::EventID> >("vEventID");
    CPPUNIT_ASSERT(1 == eventID.run());
