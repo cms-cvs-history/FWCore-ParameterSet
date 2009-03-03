@@ -239,6 +239,7 @@ class _TypedParameterizable(_Parameterizable):
         #    del args['type_']
         arg = tuple([x for x in arg if x != None])
         super(_TypedParameterizable,self).__init__(*arg,**kargs)
+        saveOrigin(self, 1) 
     def _place(self,name,proc):
         self._placeImpl(name,proc)
     def type_(self):
@@ -266,8 +267,7 @@ class _TypedParameterizable(_Parameterizable):
             args.append(None)
         if len(params):
             #need to treat items both in params and myparams specially
-            for key in params.iterkeys():
-                value = params[key]
+            for key,value in params.iteritems():
                 if key in myparams:                    
                     if isinstance(value,_ParameterTypeBase):
                         myparams[key] =value
@@ -283,6 +283,7 @@ class _TypedParameterizable(_Parameterizable):
                              **myparams)
         returnValue._isModified = False
         returnValue._isFrozen = False
+        saveOrigin(returnValue, 1)
         return returnValue
 
     @staticmethod
@@ -372,6 +373,8 @@ class _Labelable(object):
     def setLabel(self,label):
         self.__label = label
     def label_(self):
+        if not hasattr(self, "_Labelable__label"):
+           raise RuntimeError("module has no label.  Perhaps it wasn't inserted into the process?")
         return self.__label
     def label(self):
         #print "WARNING: _Labelable::label() needs to be changed to label_()"
@@ -450,8 +453,10 @@ class _ValidatingListBase(list):
         return result
 
 class _ValidatingParameterListBase(_ValidatingListBase,_ParameterTypeBase):
-    def __init__(self,*arg,**args):
+    def __init__(self,*arg,**args):        
         _ParameterTypeBase.__init__(self)
+        if len (arg) == 1 and isinstance (arg[0], list):
+            arg = arg[0]
         super(_ValidatingParameterListBase,self).__init__(*arg,**args)
     def value(self):
         return list(self)
