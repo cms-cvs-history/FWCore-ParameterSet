@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include "FWCore/ParameterSet/interface/BoostPython.h"
+
 namespace edm {
 void
 pythonToCppException(const std::string& iType);
@@ -27,20 +28,13 @@ pythonToCppException(const std::string& iType);
   std::vector<T> toVector(boost::python::list & l)
   {
     std::vector<T> result;
-    try {
-      boost::python::object iter_obj 
-        = boost::python::object(boost::python::handle<>(PyObject_GetIter(l.ptr())));
-      while(1) {
-	boost::python::object obj = boost::python::extract<boost::python::object>(iter_obj.attr("next")());
-	result.push_back(boost::python::extract<T>(obj)); 
-      }
+    unsigned n = PyList_Size(l.ptr());
+    boost::python::object iter_obj(boost::python::handle<>(PyObject_GetIter(l.ptr())));
+    for(unsigned i = 0; i < n; ++i)
+    {
+      boost::python::object obj = boost::python::extract<boost::python::object>(iter_obj.attr("next")());
+      result.push_back(boost::python::extract<T>(obj)); 
     }
-    catch(boost::python::error_already_set) {
-      // This is how it finds the end of the list.
-      //  By throwing an exception.
-      PyErr_Clear(); 
-    }
-
     return result;
   }
 }
