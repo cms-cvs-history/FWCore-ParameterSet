@@ -1,3 +1,10 @@
+
+// This will return the ParameterSetID of the parameter set
+// defined in the python file or configuration string.
+// Warning, this may not be the same as the ParameterSetID
+// of a cmsRun process, because validation code may insert
+// additional parameters into the configuration.
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -26,6 +33,7 @@ int main(int argc, char **argv) {
   }
 
   boost::shared_ptr<edm::ProcessDesc> processDesc = edm::readConfig(config);
+  processDesc->getProcessPSet()->registerIt();
 
   std::cout << processDesc->getProcessPSet()->id() << std::endl;
   return 0;

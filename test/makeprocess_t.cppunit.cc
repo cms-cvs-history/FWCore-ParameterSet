@@ -6,7 +6,7 @@
  *  Changed by Viji Sundararajan on 8-Jul-05.
  *  Copyright 2005 __MyCompanyName__. All rights reserved.
  * 
- * $Id: makeprocess_t.cppunit.cc,v 1.20 2009/01/07 00:17:45 wmtan Exp $
+ * $Id: makeprocess_t.cppunit.cc,v 1.22 2009/01/18 19:59:23 wmtan Exp $
  */
 
 
@@ -114,9 +114,10 @@ void testmakeprocess::pathTest()
    ProcDescPtr test = procDesc(kTest);
    //CPPUNIT_ASSERT(test->pathFragments().size() == 5);
 
-   const edm::ParameterSet& myparams = *(test->getProcessPSet());
+   edm::ParameterSet& myparams = *(test->getProcessPSet());
 //    std::cout << "ParameterSet looks like:\n";
 //    std::cout << myparams.toString() << std::endl;
+   myparams.registerIt();
    std::string rep = myparams.toString();
    edm::ParameterSet copy(rep);
    CPPUNIT_ASSERT(copy == myparams);
@@ -215,9 +216,10 @@ void testmakeprocess::emptyModuleTest()
 
    ProcDescPtr test = procDesc(kTest);
 
-   const edm::ParameterSet& myparams = *(test->getProcessPSet());
+   edm::ParameterSet& myparams = *(test->getProcessPSet());
 //    std::cout << "ParameterSet looks like:\n";
 //    std::cout << myparams.toString() << std::endl;
+   myparams.registerIt();
    std::string rep = myparams.toString();
    edm::ParameterSet copy(rep);
    CPPUNIT_ASSERT(copy == myparams);
