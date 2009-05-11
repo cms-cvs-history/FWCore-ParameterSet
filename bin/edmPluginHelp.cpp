@@ -1,14 +1,13 @@
 // -*- C++ -*-
 //
 // Package:     ParameterSet
-// Class  :     edmParamDesc
+// Class  :     edmPluginHelp
 // 
 // Implementation:
 //     <Notes on implementation>
 //
-// Original Author:  Chris Jones
+// Original Author:  Chris Jones, W. David Dagenhart
 //         Created:  Thu Aug  2 13:33:53 EDT 2007
-// $Id: edmParamDesc.cpp,v 1.4 2009/01/09 22:34:11 wdd Exp $
 //
 
 #include "FWCore/PluginManager/interface/PluginInfo.h"
@@ -119,12 +118,12 @@ namespace {
       filler.reset(factory->create(pluginInfo.name_));
     }
     catch(cms::Exception& e) {
-      os << "\nSTART ERROR FROM edmParamDesc\n";
-      os << "The executable \"edmParamDesc\" encountered a problem while creating a\n"
+      os << "\nSTART ERROR FROM edmPluginHelp\n";
+      os << "The executable \"edmPluginHelp\" encountered a problem while creating a\n"
                    "ParameterSetDescriptionFiller, probably related to loading a plugin.\n"
                    "This plugin is being skipped.  Here is the info from the exception:\n" 
                 << e.what() << std::endl;
-      os << "END ERROR FROM edmParamDesc\n\n";
+      os << "END ERROR FROM edmPluginHelp\n\n";
       return;
     }
 
@@ -134,13 +133,13 @@ namespace {
       filler->fill(descriptions);
     }
     catch(cms::Exception& e) {
-      os << "\nSTART ERROR FROM edmParamDesc\n";
-      os << "The executable \"edmParamDesc\" encountered a problem while filling a\n"
+      os << "\nSTART ERROR FROM edmPluginHelp\n";
+      os << "The executable \"edmPluginHelp\" encountered a problem while filling a\n"
             "ParameterSetDescription.  We give up for this plugin and skip printing out\n"
             "this description and any following descriptions for this plugin.  Here\n"
             "is the info from the exception:\n" 
          << e.what() << std::endl;
-      os << "END ERROR FROM edmParamDesc\n\n";
+      os << "END ERROR FROM edmPluginHelp\n\n";
       return;
     }
 
@@ -149,13 +148,13 @@ namespace {
       descriptions.print(os, moduleLabel, brief, printOnlyLabels, lineWidth, indentation, iPlugin);
     }
     catch(cms::Exception& e) {
-      os << "\nSTART ERROR FROM edmParamDesc\n";
-      os << "The executable \"edmParamDesc\" encountered a problem while printing out a\n"
+      os << "\nSTART ERROR FROM edmPluginHelp\n";
+      os << "The executable \"edmPluginHelp\" encountered a problem while printing out a\n"
             "ParameterSetDescription.  We give up for this plugin and skip printing out\n"
             "this description and any following descriptions for this plugin.  Here\n"
             "is the info from the exception:\n" 
          << e.what() << std::endl;
-      os << "END ERROR FROM edmParamDesc\n\n";
+      os << "END ERROR FROM edmPluginHelp\n\n";
       return;
     }
   }
@@ -313,12 +312,12 @@ int main (int argc, char **argv)
     infos = itPlugins->second;
 
   } catch(cms::Exception& e) {
-    std::cerr << "The executable \"edmParamDesc\" failed while retrieving the list of parameter description plugins from the cache.\n"
+    std::cerr << "The executable \"edmPluginHelp\" failed while retrieving the list of parameter description plugins from the cache.\n"
               << "The following problem occurred:\n" 
               << e.what() << std::endl;
     return 1;
   } catch(const std::exception& e) {
-    std::cerr << "The executable \"edmParamDesc\" failed while retrieving the list of parameter description plugins from the cache.\n"
+    std::cerr << "The executable \"edmPluginHelp\" failed while retrieving the list of parameter description plugins from the cache.\n"
               << "The following problem occurred:\n" 
               << e.what() << std::endl;
     return 1;
@@ -341,13 +340,13 @@ int main (int argc, char **argv)
                                     boost::cref(plugin)));
   }
   catch(cms::Exception& e) {
-    std::cerr << "The executable \"edmParamDesc\" failed while selecting plugins.\n"
+    std::cerr << "The executable \"edmPluginHelp\" failed while selecting plugins.\n"
               << "The following problem occurred:\n" 
               << e.what() << std::endl;
     return 1;
   }
   catch(const std::exception& e) {
-    std::cerr << "The executable \"edmParamDesc\" failed while selecting plugins.\n"
+    std::cerr << "The executable \"edmPluginHelp\" failed while selecting plugins.\n"
               << "The following problem occurred:\n" 
               << e.what() << std::endl;
     return 1;
@@ -369,11 +368,11 @@ int main (int argc, char **argv)
                                             lineWidth,
                                             boost::ref(iPlugin)));
   } catch(cms::Exception& e) {
-    std::cerr << "\nThe executable \"edmParamDesc\" failed. The following problem occurred:\n" 
+    std::cerr << "\nThe executable \"edmPluginHelp\" failed. The following problem occurred:\n" 
               << e.what() << std::endl;
     return 1;
   } catch(const std::exception& e) {
-    std::cerr << "\nThe executable \"edmParamDesc\" failed. The following problem occurred:\n" 
+    std::cerr << "\nThe executable \"edmPluginHelp\" failed. The following problem occurred:\n" 
               << e.what() << std::endl;
     return 1;
   }

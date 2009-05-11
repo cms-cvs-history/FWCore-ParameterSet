@@ -4,7 +4,7 @@
 <bin file=edmConfigHash.cpp> 
 </bin> 
  
-<bin file=edmParamDesc.cpp> 
+<bin file=edmPluginHelp.cpp> 
  <use name=boost_program_options>
  <use name=FWCore/PluginManager> 
  <use name=FWCore/Utilities>
