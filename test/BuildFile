@@ -1,8 +1,9 @@
 
 #The executable "testParameterSet" will eventually run all the tests
-<bin name=testParameterSet file=processbuilder_t.cppunit.cpp,makeprocess_t.cppunit.cc,makepset_t.cppunit.cc,ps_t.cppunit.cc>
+<bin name=testParameterSet file=ps_t.cppunit.cc>
   <use name=cppunit>
   <use name=FWCore/ParameterSet>
+  <use name=FWCore/Utilities>
 </bin>
 
 <bin name=TestFWCoreParameterSetDescription file=parameterSetDescription_t.cc>
