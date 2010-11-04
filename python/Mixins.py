@@ -66,6 +66,15 @@ class _SimpleParameterTypeBase(_ParameterTypeBase):
         return str(self._value)
     def pythonValue(self, options=PrintOptions()):
         return self.configValue(options)
+    def __eq__(self,other):
+        if isinstance(other,_SimpleParameterTypeBase):
+            return self._value == other._value
+        return self._value == other
+    def __ne__(self,other):
+        if isinstance(other,_SimpleParameterTypeBase):
+            return self._value != other._value
+        return self._value != other
+
 
 class UsingBlock(_SimpleParameterTypeBase):
     """For injection purposes, pretend this is a new parameter type
@@ -555,8 +564,11 @@ class _ValidatingParameterListBase(_ValidatingListBase,_ParameterTypeBase):
 def saveOrigin(obj, level):
     #frame = inspect.stack()[level+1]
     frame = inspect.getframeinfo(inspect.currentframe(level+1))
-    obj._filename = frame.filename
-    obj._lineNumber = frame.lineno
+    # not safe under old python versions
+    #obj._filename = frame.filename
+    #obj._lineNumber = frame.lineno
+    obj._filename = frame[0]
+    obj._lineNumber = frame[1]
 
 if __name__ == "__main__":
 
